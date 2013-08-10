@@ -1,8 +1,8 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe Sepa::Helper do
-  include Sepa::Helper
+describe SEPA::Helper do
+  include SEPA::Helper
 
   it "should convert to upper case" do
     convert_text('2&2 GmbH & Co. KG').should == '2&2 GMBH & CO. KG'

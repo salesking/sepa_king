@@ -1,7 +1,7 @@
 # encoding: utf-8
-module Sepa
+module SEPA
   class Booking
-    include Sepa::Helper
+    include SEPA::Helper
 
     # Die am häufigsten benötigten Textschlüssel
     LASTSCHRIFT_ABBUCHUNG            = '04000'

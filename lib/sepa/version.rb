@@ -1,3 +1,3 @@
-module Sepa
+module SEPA
   VERSION='0.0.0'
 end

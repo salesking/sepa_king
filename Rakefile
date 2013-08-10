@@ -11,7 +11,7 @@ task :default => :spec
 desc 'Generate documentation'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'docs/rdoc'
-  rdoc.title    = 'Sepa King'
+  rdoc.title    = 'SEPA King'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')

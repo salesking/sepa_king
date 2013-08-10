@@ -1,5 +1,5 @@
 # encoding: utf-8
-module Sepa
+module SEPA
   module Helper
     #Zeichen umsetzen gemäss DTA-Norm
     def convert_text( text)

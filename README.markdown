@@ -34,10 +34,10 @@ How to create a SEPA File. Also check out the specs to have a running example of
 
 ```ruby
 # create a new dtaus object
-dta = Sepa::Dtaus.new('LK')
+dta = SEPA::Dtaus.new('LK')
 
 # set sender account
-dta.account = Sepa::Account.new(
+dta.account = SEPA::Account.new(
                     :bank_account_number => "123456789",
                     :bank_number => "69069096",
                     :owner_name => "Return to Sender",
@@ -45,13 +45,13 @@ dta.account = Sepa::Account.new(
 
 # following should be done in a loop to add multiple bookings
 # create receiving account
-receiver = Sepa::Account.new(
+receiver = SEPA::Account.new(
                     :bank_account_number => "987456123",
                     :bank_number => "99099096",
                     :owner_name => "Gimme More Lt.",
                     :bank_name => "Banking Bandits")
 # create booking
-booking = Sepa::Booking.new(receiver, 100.00 )
+booking = SEPA::Booking.new(receiver, 100.00 )
 
 # set booking text if you want to
 booking.text = "Thanks for your purchase"

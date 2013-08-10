@@ -1,8 +1,8 @@
 # encoding: utf-8
-module Sepa
+module SEPA
   # Bank account and owner information
   class Account
-    include Sepa::Helper
+    include SEPA::Helper
 
     attr_accessor :bank_street, :bank_city,
                   :bank_zip, :bank_name, :bank_country_code, :bank_iban,

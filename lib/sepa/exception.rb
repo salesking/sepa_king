@@ -1,5 +1,5 @@
 # encoding: utf-8
-module Sepa
+module SEPA
   class Exception < ::Exception
   end
 end
