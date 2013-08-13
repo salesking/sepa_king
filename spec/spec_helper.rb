@@ -7,7 +7,7 @@ SimpleCov.start 'rails'
 SimpleCov.coverage_dir 'coverage'
 
 require 'rubygems'
-require 'king_dtaus'
+require 'sepa'
 require 'rspec'
 require 'ostruct'
 require 'date'
