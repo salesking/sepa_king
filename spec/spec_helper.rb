@@ -11,7 +11,7 @@ require 'sepa'
 require 'rspec'
 require 'ostruct'
 require 'date'
-require 'nokogiri'
+require 'xml'
 
 RSpec.configure do |config|
 end
@@ -106,6 +106,3 @@ end
 # the test account responds to everything
 class TestKonto < OpenStruct; end
 
-def load_fixture(filename)
-  File.read("spec/fixtures/#{filename}")
-end
