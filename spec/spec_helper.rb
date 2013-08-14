@@ -2,6 +2,7 @@
 $:.unshift(File.dirname(__FILE__))
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
+Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 require 'simplecov'
 SimpleCov.start 'rails'
 SimpleCov.coverage_dir 'coverage'
