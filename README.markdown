@@ -16,7 +16,7 @@ We are starting with parts of our old dtaus lib, so please be patient as we get 
 * Create debit transfer
 * Create credit transfer
 * 100% test coverage to ensure software quality
-* works with ruby 1.9.2
+* Tested with Ruby 1.9.3 and 2.0.0
 
 ## TODOs
 
