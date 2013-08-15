@@ -4,8 +4,6 @@ coverage/*
 rdoc/*
 pkg/*
 .DS_Store
-DTAUS0.TXT
-dta.txt
 Gemfile.lock
 # tmp disable
 docs/
