@@ -22,10 +22,9 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.6.2}
 
   s.add_runtime_dependency 'i18n'
-  s.add_development_dependency 'rdoc'
+
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'simplecov'
-  s.add_development_dependency 'mocha'
   s.add_development_dependency 'rake', '>= 0.9.2'
   s.add_development_dependency 'libxml-ruby'
 end
