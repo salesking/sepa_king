@@ -1,6 +1,0 @@
-require "i18n"
-require "bigdecimal"
-require "sepa/helper"
-require "sepa/account"
-require "sepa/booking"
-require "sepa/exception"

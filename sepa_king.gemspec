@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path('../lib', __FILE__)
-require 'sepa/version'
+require 'sepa_king/version'
 
 Gem::Specification.new do |s|
   s.name = %q{king_sepa}
