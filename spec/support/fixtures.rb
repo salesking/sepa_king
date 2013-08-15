@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 # a full account, address infos are only needed if BIC or IBAN is unknown
 def sender_opts
   {
