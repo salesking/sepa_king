@@ -49,35 +49,11 @@ def swiss_receiver
   }
 end
 
-def test_kto1
-  opts = {
-            :bank_account_number => '7828970037',
-            :bank_number => '37040044',
-            :owner_name =>'Gimme your Money AG',
-            :bank_name => 'Commerzbank Köln',
-            :zweck => 'Monatsbeitrag',
-            :owner_number => ""
-          }
-  TestKonto.new(opts)
-end
-
 def test_kto2
   opts = {
             :bank_account_number => '2787777',
             :bank_number => '37040044',
             :owner_name =>'Peter & May GmbH',
-            :bank_name => 'Commerzbank Köln',
-            :zweck => 'Monatsbeitrag',
-            :owner_number => ""
-          }
-  TestKonto.new(opts)
-end
-
-def test_kto3
-  opts = {
-            :bank_account_number => '2787777',
-            :bank_number => '37040044',
-            :owner_name =>'Andrew Müller',
             :bank_name => 'Commerzbank Köln',
             :zweck => 'Monatsbeitrag',
             :owner_number => ""
