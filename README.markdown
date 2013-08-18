@@ -30,14 +30,12 @@ We are starting with parts of our old dtaus lib, so please be patient as we get 
 
 How to create a SEPA File. Also check out the specs to have a running example of an export.
 
-### DTA
-
 ```ruby
-# create a new dtaus object
-dta = SEPA::Dtaus.new('LK')
+# Build a new SEPA file for Direct Debit
+sepa = SEPA::DirectDebitInitiation.new
 
 # set sender account
-dta.account = SEPA::Account.new(
+sepa.account = SEPA::Account.new(
                     :bank_account_number => "123456789",
                     :bank_number => "69069096",
                     :owner_name => "Return to Sender",
@@ -57,12 +55,11 @@ booking = SEPA::Booking.new(receiver, 100.00 )
 booking.text = "Thanks for your purchase"
 
 # add booking
-dta.add( booking )
+sepa.add( booking )
 # end loop
 
-# create datausstring and do with it whatever fits your workflow
-my_str = dta.create
-
+# create XML string and do with it whatever fits your workflow
+xml_string = sepa.generate_xml
 ```
 
 also make sure to read the code and the specs

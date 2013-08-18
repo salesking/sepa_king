@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.6.2}
 
   s.add_runtime_dependency 'i18n'
+  s.add_runtime_dependency 'builder'
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'simplecov'

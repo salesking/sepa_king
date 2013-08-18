@@ -1,7 +1,11 @@
 require 'i18n'
 require 'bigdecimal'
+require 'builder'
 
 require 'sepa_king/helper'
 require 'sepa_king/account'
 require 'sepa_king/booking'
 require 'sepa_king/exception'
+require 'sepa_king/base'
+require 'sepa_king/direct_debit_initiation'
+require 'sepa_king/credit_transfer_initiation'
