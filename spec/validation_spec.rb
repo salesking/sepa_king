@@ -11,9 +11,3 @@ describe 'Direct Debit Initiation' do
     XML::Document.file('spec/fixtures/pain.008.002.02.xml').should validate_against('pain.008.002.02.xsd')
   end
 end
-
-describe 'Payment Status Report' do
-  it "should validate example file" do
-    XML::Document.file('spec/fixtures/pain.002.002.03.xml').should validate_against('pain.002.002.03.xsd')
-  end
-end
