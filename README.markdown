@@ -66,6 +66,10 @@ also make sure to read the code and the specs
 
 ## Credits
 
+This project uses some code from https://github.com/conanite/sepa by Conan Dalton
 
 
-Copyright (c) 20013 Georg Leciejewski (SalesKing), Georg Ledermann (https://github.com/ledermann) released under the MIT license
+## License
+
+Copyright (c) 20013 Georg Leciejewski (SalesKing), Georg Ledermann (https://github.com/ledermann)
+Released under the MIT license
