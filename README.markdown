@@ -64,10 +64,6 @@ xml_string = sepa.generate_xml
 
 also make sure to read the code and the specs
 
-## Credits
-
-This project uses some code from https://github.com/conanite/sepa by Conan Dalton
-
 
 ## License
 
