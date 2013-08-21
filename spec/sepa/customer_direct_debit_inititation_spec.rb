@@ -79,8 +79,7 @@ describe SEPA::CustomerDirectDebitInitiation do
                 )
               )
             )
-          ],
-          :control_sum => '123.00'
+          ]
         )
       ]
     )

@@ -1,9 +1,15 @@
 # encoding: utf-8
 class SEPA::Base
-  def self.attribute(name, tag, type=:string, member_type=nil, options={})
-    attribute_defs[name] = { :tag => tag, :type => type, :member_type => member_type, :options => options }
+  def self.attribute(name, tag, type=:string, member_type=nil, options={}, &block)
+    attribute_defs[name] = { :tag => tag, :type => type, :member_type => member_type, :options => options, :block => block }
 
-    attr_accessor name
+    if block_given?
+      define_method name do
+        block.call(self)
+      end
+    else
+      attr_accessor name
+    end
 
     (options[:attributes] || {}).each_pair do |k,v|
       attr_accessor v

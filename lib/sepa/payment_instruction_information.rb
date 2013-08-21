@@ -19,7 +19,14 @@ class SEPA::PaymentInstructionInformation < SEPA::Base
   attribute :number_of_transactions              , 'NbOfTxs'
 
   # Summe der Beträge aller Einzeltransaktionen innerhalb des Payment Information Blocks
-  attribute :control_sum                         , 'CtrlSum'
+  attribute :control_sum                         , 'CtrlSum' do |instance|
+    sum = 0
+    instance.direct_debit_transaction_information.each do |t|
+      sum += BigDecimal.new(t.instructed_amount)
+    end
+
+    '%.2f' % sum
+  end
 
   # Transaktionstyp
   attribute :payment_type_information            , 'PmtTpInf'    , SEPA::PaymentTypeInformation
