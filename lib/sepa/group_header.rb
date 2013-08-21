@@ -13,8 +13,10 @@ class SEPA::GroupHeader < SEPA::Base
   # Anzahl der einzelnen Transaktionen innerhalb der gesamten Nachricht
   attribute :number_of_transactions, 'NbOfTxs'
 
-  # Summe der Beträge aller Einzeltransaktionen in der gesam- ten Nachricht
-  attribute :control_sum           , 'CtrlSum'
+  # Summe der Beträge aller Einzeltransaktionen in der gesamten Nachricht
+  attribute :control_sum           , 'CtrlSum' do |instance|
+    # TODO
+  end
 
   # Partei, welche die Zahlung anweist, d. h. der Zahlungsempfänger oder eine Partei, welche im Auftrag des Zahlungsempfängers handelt
   attribute :initiating_party      , 'InitgPty', SEPA::PartyIdentification
