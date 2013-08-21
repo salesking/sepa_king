@@ -1,6 +1,24 @@
 # encoding: utf-8
 class SEPA::Base
+  def self.attribute(name, tag, type=:string, member_type=nil, options={})
+    attribute_defs[name] = { :tag => tag, :type => type, :member_type => member_type, :options => options }
+
+    attr_accessor name
+
+    (options[:attributes] || {}).each_pair do |k,v|
+      attr_accessor v
+    end
+  end
+
   @@attribute_defs = Hash.new { |h,k| h[k] = {} }
+
+  def self.attribute_defs
+    @@attribute_defs[self]
+  end
+
+  def self.attribute_defs=(arg)
+    @@attribute_defs[self] = arg
+  end
 
   def initialize(options={})
     options.each_pair do |k,v|
@@ -36,7 +54,7 @@ class SEPA::Base
     end
   end
 
-  private
+private
 
   def build_xml_attributes(names)
     result = {}
@@ -44,34 +62,5 @@ class SEPA::Base
       result[k] = self.send v
     }
     result
-  end
-
-  def self.attribute_defs
-    @@attribute_defs[self]
-  end
-
-  def self.attribute_defs=(arg)
-    @@attribute_defs[self] = arg
-  end
-
-  def self.attribute(name, tag, type=:string, member_type=nil, options={})
-    if type == :[]
-      array_attribute(name, tag, member_type, options)
-    elsif type.is_a?(Class) && type != Time && type != Date
-      typed_attribute(name, tag, type, options)
-    else
-      attr_accessor name
-      attribute_defs[name] = { :tag => tag, :type => type, :options => options }
-    end
-  end
-
-  def self.typed_attribute(name, tag, type, options)
-    attribute_defs[name] = { :tag => tag, :type => type, :options => options }
-    attr_accessor name
-  end
-
-  def self.array_attribute(name, tag, member_type=nil, options={})
-    attribute_defs[name] = { :tag => tag, :type => :[], :member_type => member_type, :options => options }
-    attr_accessor name
   end
 end

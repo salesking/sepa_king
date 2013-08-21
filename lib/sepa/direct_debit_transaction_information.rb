@@ -14,7 +14,6 @@ class SEPA::DirectDebitTransactionInformation < SEPA::Base
 
   # beauftragter Betrag
   attribute :instructed_amount             , 'InstdAmt'       , :string, nil, :attributes => { :Ccy => :instructed_amount_currency }
-  attr_accessor :instructed_amount_currency
 
   # Entgeltverrechnung; Über Codes identifizierbare festlegte Regeln zur Entgeltverrechnung, die Anwendung finden sollen.
   attribute :charge_bearer                 , 'ChrgBr'
