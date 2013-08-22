@@ -69,8 +69,8 @@ module SEPA
                 end
               end
             end
-            builder.DrctDbtTxInf do
-              transactions.each do |transaction|
+            transactions.each do |transaction|
+              builder.DrctDbtTxInf do
                 builder.PmtId do
                   builder.EndToEndId('NOTPROVIDED')
                 end
