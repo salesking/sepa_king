@@ -1,7 +1,7 @@
 # encoding: utf-8
 module SEPA
   class Account
-    include Helper
+    include TextConverter
 
     attr_reader :name, :iban, :bic, :identifier
 
