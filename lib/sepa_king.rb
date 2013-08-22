@@ -5,6 +5,7 @@ require 'iban-tools'
 
 require 'sepa_king/text_converter'
 require 'sepa_king/account'
+require 'sepa_king/transaction'
 require 'sepa_king/debt_transaction'
 require 'sepa_king/credit_transaction'
 require 'sepa_king/exception'
