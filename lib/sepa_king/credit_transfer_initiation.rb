@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class SEPA::CreditTransferInitiation
-  def generate_xml
+  def to_xml
     builder = Builder::XmlMarkup.new :indent => 2
     builder.instruct!
     builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03',

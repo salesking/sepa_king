@@ -15,6 +15,6 @@ describe SEPA::DirectDebitInitiation do
                         :mandate_id                => 'K-02-2011-12345',
                         :mandate_date_of_signature => Date.new(2011,01,25)
 
-    XML::Document.string(ddi.generate_xml).should validate_against('pain.008.002.02.xsd')
+    XML::Document.string(ddi.to_xml).should validate_against('pain.008.002.02.xsd')
   end
 end

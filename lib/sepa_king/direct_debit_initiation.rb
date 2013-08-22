@@ -13,7 +13,7 @@ module SEPA
       @transactions << DebtTransaction.new(options)
     end
 
-    def generate_xml
+    def to_xml
       builder = Builder::XmlMarkup.new :indent => 2
       builder.instruct!
       builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02',
@@ -103,7 +103,7 @@ module SEPA
 
   private
     def amount_total
-      @transactions.inject(0) { |sum, t| sum + t.amount }
+      transactions.inject(0) { |sum, t| sum + t.amount }
     end
 
     def message_identification

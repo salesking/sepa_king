@@ -47,7 +47,7 @@ ddi.add_transaction :name                      => 'Zahlemann & Söhne GbR',
 ddi.add_transaction ...._
 
 # create XML string and do with it whatever fits your workflow
-xml_string = ddi.generate_xml
+xml_string = ddi.to_xml
 ```
 
 also make sure to read the code and the specs
