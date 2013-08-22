@@ -10,7 +10,7 @@ class SEPA::DirectDebitInitiation
       builder.CstmrDrctDbtInitn do
         builder.GrpHdr do
           builder.MsgId('Message-ID')
-          builder.CreDtTm(Time.now.strftime("%Y-%m-%dT%H:%M:%S"))
+          builder.CreDtTm(Time.now.iso8601)
           builder.NbOfTxs(1)
           builder.CtrlSum(6543.14)
           builder.InitgPty do
@@ -30,7 +30,7 @@ class SEPA::DirectDebitInitiation
             end
             builder.SeqTp('FRST')
           end
-          builder.ReqdColltnDt(Date.today.strftime("%Y-%m-%d"))
+          builder.ReqdColltnDt(Date.today.iso8601)
           builder.Cdtr do
             builder.Nm('Creditor Name')
           end
@@ -65,7 +65,7 @@ class SEPA::DirectDebitInitiation
             builder.DrctDbtTx do
               builder.MndtRltdInf do
                 builder.MndtId('Mandate-Id')
-                builder.DtOfSgntr(Date.new(2010,11,20).strftime("%Y-%m-%d"))
+                builder.DtOfSgntr(Date.new(2010,11,20).iso8601)
               end
             end
             builder.DbtrAgt do
