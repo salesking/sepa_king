@@ -1,89 +1,117 @@
 # encoding: utf-8
 
-class SEPA::DirectDebitInitiation
-  def generate_xml
-    builder = Builder::XmlMarkup.new :indent => 2
-    builder.instruct!
-    builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02',
-                     :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-                     :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02 pain.008.002.02.xsd' do
-      builder.CstmrDrctDbtInitn do
-        builder.GrpHdr do
-          builder.MsgId('Message-ID')
-          builder.CreDtTm(Time.now.iso8601)
-          builder.NbOfTxs(1)
-          builder.CtrlSum(6543.14)
-          builder.InitgPty do
-            builder.Nm('Initiator Name')
-          end
-        end
+module SEPA
+  class DirectDebitInitiation
+    attr_reader :creditor, :transactions
 
-        builder.PmtInf do
-          builder.PmtInfId('Payment-ID')
-          builder.PmtMtd('DD')
-          builder.PmtTpInf do
-            builder.SvcLvl do
-              builder.Cd('SEPA')
+    def initialize(creditor_options)
+      @creditor = Account.new(creditor_options)
+      @transactions = []
+    end
+
+    def add_transaction(options)
+      @transactions << DebtTransaction.new(options)
+    end
+
+    def generate_xml
+      builder = Builder::XmlMarkup.new :indent => 2
+      builder.instruct!
+      builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02',
+                       :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+                       :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02 pain.008.002.02.xsd' do
+        builder.CstmrDrctDbtInitn do
+          builder.GrpHdr do
+            builder.MsgId(message_identification)
+            builder.CreDtTm(Time.now.iso8601)
+            builder.NbOfTxs(transactions.length)
+            builder.CtrlSum(amount_total)
+            builder.InitgPty do
+              builder.Nm(creditor.name)
             end
-            builder.LclInstrm do
-              builder.Cd('CORE')
+          end
+
+          builder.PmtInf do
+            builder.PmtInfId(payment_information_identification)
+            builder.PmtMtd('DD')
+            builder.PmtTpInf do
+              builder.SvcLvl do
+                builder.Cd('SEPA')
+              end
+              builder.LclInstrm do
+                builder.Cd('CORE')
+              end
+              builder.SeqTp('OOFF')
             end
-            builder.SeqTp('FRST')
-          end
-          builder.ReqdColltnDt(Date.today.iso8601)
-          builder.Cdtr do
-            builder.Nm('Creditor Name')
-          end
-          builder.CdtrAcct do
-            builder.Id do
-              builder.IBAN('DE87200500001234567890')
+            builder.ReqdColltnDt(Date.today.iso8601)
+            builder.Cdtr do
+              builder.Nm(creditor.name)
             end
-          end
-          builder.CdtrAgt do
-            builder.FinInstnId do
-              builder.BIC('BANKDEFFXXX')
+            builder.CdtrAcct do
+              builder.Id do
+                builder.IBAN(creditor.iban)
+              end
             end
-          end
-          builder.ChrgBr('SLEV')
-          builder.CdtrSchmeId do
-            builder.Id do
-              builder.PrvtId do
-                builder.Othr do
-                  builder.Id('DE00ZZZ00099999999')
-                  builder.SchmeNm do
-                    builder.Prtry('SEPA')
+            builder.CdtrAgt do
+              builder.FinInstnId do
+                builder.BIC(creditor.bic)
+              end
+            end
+            builder.ChrgBr('SLEV')
+            builder.CdtrSchmeId do
+              builder.Id do
+                builder.PrvtId do
+                  builder.Othr do
+                    builder.Id(creditor.identifier)
+                    builder.SchmeNm do
+                      builder.Prtry('SEPA')
+                    end
+                  end
+                end
+              end
+            end
+            builder.DrctDbtTxInf do
+              transactions.each do |transaction|
+                builder.PmtId do
+                  builder.EndToEndId('NOTPROVIDED')
+                end
+                builder.InstdAmt(transaction.amount, :Ccy => 'EUR')
+                builder.DrctDbtTx do
+                  builder.MndtRltdInf do
+                    builder.MndtId(transaction.mandate_id)
+                    builder.DtOfSgntr(transaction.mandate_date_of_signature.iso8601)
+                  end
+                end
+                builder.DbtrAgt do
+                  builder.FinInstnId do
+                    builder.BIC(transaction.bic)
+                  end
+                end
+                builder.Dbtr do
+                  builder.Nm(transaction.name)
+                end
+                builder.DbtrAcct do
+                  builder.Id do
+                    builder.IBAN(transaction.iban)
                   end
                 end
               end
             end
           end
-          builder.DrctDbtTxInf do
-            builder.PmtId do
-              builder.EndToEndId('OriginatorID1235')
-            end
-            builder.InstdAmt(6543.14, :Ccy => 'EUR')
-            builder.DrctDbtTx do
-              builder.MndtRltdInf do
-                builder.MndtId('Mandate-Id')
-                builder.DtOfSgntr(Date.new(2010,11,20).iso8601)
-              end
-            end
-            builder.DbtrAgt do
-              builder.FinInstnId do
-                builder.BIC('SPUEDE2UXXX')
-              end
-            end
-            builder.Dbtr do
-              builder.Nm('Debtor Name')
-            end
-            builder.DbtrAcct do
-              builder.Id do
-                builder.IBAN('DE21500500009876543210')
-              end
-            end
-          end
         end
       end
+    end
+
+  private
+    def amount_total
+      @transactions.inject(0) { |sum, t| sum + t.amount }
+    end
+
+    def message_identification
+      "SEPA-KING/#{Time.now.iso8601}"
+    end
+
+    def payment_information_identification
+      message_identification
     end
   end
 end
