@@ -40,7 +40,7 @@ module SEPA
                 builder.Cd('SEPA')
               end
             end
-            builder.ReqdExctnDt(Date.today.iso8601)
+            builder.ReqdExctnDt(Date.today.next.iso8601)
             builder.Dbtr do
               builder.Nm(debitor.name)
             end
