@@ -1,74 +1,102 @@
 # encoding: utf-8
 
-class SEPA::CreditTransferInitiation
-  def to_xml
-    builder = Builder::XmlMarkup.new :indent => 2
-    builder.instruct!
-    builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03',
-                     :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-                     :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03 pain.001.002.03.xsd' do
-      builder.CstmrCdtTrfInitn do
-        builder.GrpHdr do
-          builder.MsgId('Message-ID-4711')
-          builder.CreDtTm(Time.now.iso8601)
-          builder.NbOfTxs(1)
-          builder.InitgPty do
-            builder.Nm('Initiator Name')
-          end
-        end
+module SEPA
+  class CreditTransferInitiation
+    attr_reader :debitor, :transactions
 
-        builder.PmtInf do
-          builder.PmtInfId('Payment-Information-ID-4711')
-          builder.PmtMtd('TRF')
-          builder.BtchBookg(true)
-          builder.NbOfTxs(1)
-          builder.CtrlSum(6543.14)
-          builder.PmtTpInf do
-            builder.SvcLvl do
-              builder.Cd('SEPA')
+    def initialize(debitor_options)
+      @debitor = Account.new(debitor_options)
+      @transactions = []
+    end
+
+    def add_transaction(options)
+      @transactions << CreditTransaction.new(options)
+    end
+
+    def to_xml
+      builder = Builder::XmlMarkup.new :indent => 2
+      builder.instruct!
+      builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03',
+                       :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+                       :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03 pain.001.002.03.xsd' do
+        builder.CstmrCdtTrfInitn do
+          builder.GrpHdr do
+            builder.MsgId(message_identification)
+            builder.CreDtTm(Time.now.iso8601)
+            builder.NbOfTxs(transactions.length)
+            builder.InitgPty do
+              builder.Nm(debitor.name)
             end
           end
-          builder.ReqdExctnDt(Date.new(2010,11,25).iso8601)
-          builder.Dbtr do
-            builder.Nm('Debtor Name')
-          end
-          builder.DbtrAcct do
-            builder.Id do
-              builder.IBAN('DE87200500001234567890')
-            end
-          end
-          builder.DbtrAgt do
-            builder.FinInstnId do
-              builder.BIC('BANKDEFFXXX')
-            end
-          end
-          builder.ChrgBr('SLEV')
-          builder.CdtTrfTxInf do
-            builder.PmtId do
-              builder.EndToEndId('OriginatorID1234')
-            end
-            builder.Amt do
-              builder.InstdAmt(6543.14, :Ccy => 'EUR')
-            end
-            builder.CdtrAgt do
-              builder.FinInstnId do
-                builder.BIC('SPUEDE2UXXX')
+
+          builder.PmtInf do
+            builder.PmtInfId(payment_information_identification)
+            builder.PmtMtd('TRF')
+            builder.BtchBookg(true)
+            builder.NbOfTxs(transactions.length)
+            builder.CtrlSum(amount_total)
+            builder.PmtTpInf do
+              builder.SvcLvl do
+                builder.Cd('SEPA')
               end
             end
-            builder.Cdtr do
-              builder.Nm('Creditor Name')
+            builder.ReqdExctnDt(Date.today.iso8601)
+            builder.Dbtr do
+              builder.Nm(debitor.name)
             end
-            builder.CdtrAcct do
+            builder.DbtrAcct do
               builder.Id do
-                builder.IBAN('DE21500500009876543210')
+                builder.IBAN(debitor.iban)
               end
             end
-            builder.RmtInf do
-              builder.Ustrd('Unstructured Remittance Information')
+            builder.DbtrAgt do
+              builder.FinInstnId do
+                builder.BIC(debitor.bic)
+              end
+            end
+            builder.ChrgBr('SLEV')
+            transactions.each do |transaction|
+              builder.CdtTrfTxInf do
+                builder.PmtId do
+                  builder.EndToEndId('NOTPROVIDED')
+                end
+                builder.Amt do
+                  builder.InstdAmt(transaction.amount, :Ccy => 'EUR')
+                end
+                builder.CdtrAgt do
+                  builder.FinInstnId do
+                    builder.BIC(transaction.bic)
+                  end
+                end
+                builder.Cdtr do
+                  builder.Nm(transaction.name)
+                end
+                builder.CdtrAcct do
+                  builder.Id do
+                    builder.IBAN(transaction.iban)
+                  end
+                end
+                builder.RmtInf do
+                  builder.Ustrd(transaction.remittance_information)
+                end
+              end
             end
           end
         end
       end
+    end
+
+  private
+    def amount_total
+      transactions.inject(0) { |sum, t| sum + t.amount }
+    end
+
+    def message_identification
+      "SEPA-KING/#{Time.now.iso8601}"
+    end
+
+    def payment_information_identification
+      message_identification
     end
   end
 end
