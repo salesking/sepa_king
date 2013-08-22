@@ -42,7 +42,7 @@ module SEPA
               end
               builder.SeqTp('OOFF')
             end
-            builder.ReqdColltnDt(Date.today.iso8601)
+            builder.ReqdColltnDt(Date.today.next.iso8601)
             builder.Cdtr do
               builder.Nm(creditor.name)
             end
