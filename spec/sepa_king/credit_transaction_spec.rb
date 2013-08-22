@@ -8,6 +8,7 @@ describe SEPA::CreditTransaction do
                                   :iban                   => 'DE37112589611964645802',
                                   :bic                    => 'PBNKDEFF370',
                                   :amount                 => 102.50,
+                                  :reference              => 'XYZ-1234/123',
                                   :remittance_information => 'Rechnung 123 vom 22.08.2013'
     }.should_not raise_error
   end

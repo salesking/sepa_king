@@ -12,6 +12,7 @@ describe SEPA::DirectDebitInitiation do
                         :iban                      => 'DE21500500009876543210',
                         :bic                       => 'SPUEDE2UXXX',
                         :amount                    => 39.99,
+                        :reference                 => 'XYZ/2013-08-ABO/12345',
                         :mandate_id                => 'K-02-2011-12345',
                         :mandate_date_of_signature => Date.new(2011,01,25)
 
@@ -19,6 +20,7 @@ describe SEPA::DirectDebitInitiation do
                         :iban                      => 'DE68210501700012345678',
                         :bic                       => 'GENODEF1JEV',
                         :amount                    => 750.00,
+                        :reference                 => 'XYZ/2013-08-ABO/6789',
                         :mandate_id                => 'K-08-2010-42123',
                         :mandate_date_of_signature => Date.new(2010,07,25)
 

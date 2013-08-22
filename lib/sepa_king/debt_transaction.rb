@@ -1,6 +1,6 @@
 # encoding: utf-8
 class SEPA::DebtTransaction
-  attr_reader :name, :iban, :bic, :amount, :mandate_id, :mandate_date_of_signature
+  attr_reader :name, :iban, :bic, :amount, :reference, :mandate_id, :mandate_date_of_signature
 
   def initialize(options)
     options.each_pair do |k,v|
@@ -30,6 +30,12 @@ class SEPA::DebtTransaction
     raise ArgumentError.new('Amount cannot be zero') if value.zero?
     raise ArgumentError.new('Amount cannot be negative') if value < 0
     @amount = value
+  end
+
+  def reference=(value)
+    raise ArgumentError.new('Reference is missing') unless value
+    raise ArgumentError.new("Reference has wrong length: #{value.length}, must be 35 maximum") if value.length > 35
+    @reference = value
   end
 
   def mandate_id=(value)
