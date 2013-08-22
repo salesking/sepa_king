@@ -12,13 +12,15 @@ describe SEPA::CreditTransferInitiation do
                         :iban                   => 'DE37112589611964645802',
                         :bic                    => 'PBNKDEFF370',
                         :amount                 => 102.50,
-                        :remittance_information => 'Rechnung 123 vom 22.08.2013'
+                        :reference              => 'XYZ-1234/123',
+                        :remittance_information => 'Rechnung vom 22.08.2013'
 
     cti.add_transaction :name                   => 'Amazonas GmbH',
                         :iban                   => 'DE27793589132923472195',
                         :bic                    => 'TUBDDEDDXXX',
                         :amount                 => 59.00,
-                        :remittance_information => 'Rechnung 456 vom 21.08.2013'
+                        :reference              => 'XYZ-5678/456',
+                        :remittance_information => 'Rechnung om 21.08.2013'
 
     XML::Document.string(cti.to_xml).should validate_against('pain.001.002.03.xsd')
   end

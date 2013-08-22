@@ -58,7 +58,7 @@ module SEPA
             transactions.each do |transaction|
               builder.CdtTrfTxInf do
                 builder.PmtId do
-                  builder.EndToEndId('NOTPROVIDED')
+                  builder.EndToEndId(transaction.reference || 'NOTPROVIDED')
                 end
                 builder.Amt do
                   builder.InstdAmt(transaction.amount, :Ccy => 'EUR')
