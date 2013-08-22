@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe SEPA::CreditTransferInitiation do
-  it 'should create XML file' do
-    sepa = SEPA::CreditTransferInitiation.new
-    expect(sepa.generate_xml).to match /XML/
-    expect(sepa.generate_xml).to match /CstmrCdtTrfInitn/
+  it 'should create valid XML file' do
+    cti = SEPA::CreditTransferInitiation.new
+
+    XML::Document.string(cti.generate_xml).should validate_against('pain.001.002.03.xsd')
   end
 end
