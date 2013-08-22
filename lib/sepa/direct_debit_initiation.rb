@@ -61,7 +61,7 @@ class SEPA::DirectDebitInitiation
             builder.PmtId do
               builder.EndToEndId('OriginatorID1235')
             end
-            builder.InstdAmt('6543.14', :Ccy => 'EUR')
+            builder.InstdAmt(6543.14, :Ccy => 'EUR')
             builder.DrctDbtTx do
               builder.MndtRltdInf do
                 builder.MndtId('Mandate-Id')
