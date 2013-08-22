@@ -17,7 +17,7 @@ module SEPA
 
     def iban=(value)
       raise ArgumentError.new('IBAN is missing') unless value
-      raise ArgumentError.new("IBAN has wrong length: #{value.length}, must be between 15-34") unless value.length.between?(15,34)
+      raise ArgumentError.new('IBAN is invalid') unless IBANTools::IBAN.valid?(value)
       @iban = value
     end
 

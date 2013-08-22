@@ -1,6 +1,7 @@
 require 'i18n'
 require 'bigdecimal'
 require 'builder'
+require 'iban-tools'
 
 require 'sepa_king/text_converter'
 require 'sepa_king/account'
