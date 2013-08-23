@@ -1,6 +1,7 @@
 # Handle SEPA like a king
 
 [![Build Status](https://secure.travis-ci.org/salesking/sepa_king.png)](http://travis-ci.org/salesking/sepa_king)
+[![Code Climate](https://codeclimate.com/github/salesking/sepa_king.png)](https://codeclimate.com/github/salesking/sepa_king)
 
 We love building payment applications! So after developing the best [DTAUS](https://github.com/salesking/king_dtaus) library for Ruby we move on with SEPA!
 
