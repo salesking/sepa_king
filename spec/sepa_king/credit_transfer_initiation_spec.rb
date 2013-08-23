@@ -5,8 +5,7 @@ describe SEPA::CreditTransferInitiation do
   it 'should create valid XML file' do
     cti = SEPA::CreditTransferInitiation.new :name       => 'Schuldner GmbH',
                                              :bic        => 'BANKDEFFXXX',
-                                             :iban       => 'DE87200500001234567890',
-                                             :identifier => 'DE98ZZZ09999999999'
+                                             :iban       => 'DE87200500001234567890'
 
     cti.add_transaction :name                   => 'Telekomiker AG',
                         :iban                   => 'DE37112589611964645802',
