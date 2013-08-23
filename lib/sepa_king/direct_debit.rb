@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 module SEPA
-  class DirectDebitInitiation
+  class DirectDebit
     attr_reader :creditor, :transactions
 
     def initialize(creditor_options)

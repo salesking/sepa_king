@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 module SEPA
-  class CreditTransferInitiation
+  class CreditTransfer
     attr_reader :debitor, :transactions
 
     def initialize(debitor_options)
