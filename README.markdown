@@ -38,6 +38,7 @@ dd.add_transaction :name                      => 'Zahlemann & Söhne GbR',
                    :iban                      => 'DE21500500009876543210',
                    :bic                       => 'SPUEDE2UXXX',
                    :amount                    => 39.99,
+                   :remittance_information    => 'Vielen Dank für Ihren Einkauf!',
                    :mandate_id                => 'K-02-2011-12345',
                    :mandate_date_of_signature => Date.new(2011,1,25)
 dd.add_transaction ...
