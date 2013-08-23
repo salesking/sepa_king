@@ -4,7 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/salesking/sepa_king.png)](https://codeclimate.com/github/salesking/sepa_king)
 [![Coverage Status](https://coveralls.io/repos/salesking/sepa_king/badge.png)](https://coveralls.io/r/salesking/sepa_king)
 
-We love building payment applications! So after developing the best [DTAUS](https://github.com/salesking/king_dtaus) library for Ruby we move on with SEPA!
+We love building payment applications! So after developing the [DTAUS library for Ruby](https://github.com/salesking/king_dtaus) we move on with SEPA!
 
 This is just the beginning. There is still a lot to do. Please stay tuned...
 
@@ -24,16 +24,16 @@ This is just the beginning. There is still a lot to do. Please stay tuned...
 
 ## Examples
 
-How to create a SEPA File:
+How to create a SEPA file for direct debit ("Lastschrift")
 
 ```ruby
-# Build a new SEPA file for Direct Debit (Lastschrift)
+# First: Create the main object
 ddi = SEPA::DirectDebitInitiation.new :name       => 'Gläubiger GmbH',
                                       :bic        => 'BANKDEFFXXX',
                                       :iban       => 'DE87200500001234567890',
                                       :identifier => 'DE98ZZZ09999999999'
 
-# Add transactions
+# Second: Add transactions
 ddi.add_transaction :name                      => 'Zahlemann & Söhne GbR',
                     :iban                      => 'DE21500500009876543210',
                     :bic                       => 'SPUEDE2UXXX',
@@ -42,8 +42,30 @@ ddi.add_transaction :name                      => 'Zahlemann & Söhne GbR',
                     :mandate_date_of_signature => Date.new(2011,01,25)
 ddi.add_transaction ...
 
-# create XML string and do with it whatever fits your workflow
+# Last: create XML string
 xml_string = ddi.to_xml
+```
+
+
+How to create a SEPA file for credit transfer ("Überweisung")
+
+```ruby
+# First: Create the main object
+cti = SEPA::CreditTransferInitiation.new :name       => 'Schuldner GmbH',
+                                         :bic        => 'BANKDEFFXXX',
+                                         :iban       => 'DE87200500001234567890'
+
+# Second: Add transactions
+cti.add_transaction :name                   => 'Telekomiker AG',
+                    :iban                   => 'DE37112589611964645802',
+                    :bic                    => 'PBNKDEFF370',
+                    :amount                 => 102.50,
+                    :reference              => 'XYZ-1234/123',
+                    :remittance_information => 'Rechnung vom 22.08.2013'
+cti.add_transaction ...
+
+# Last: create XML string
+xml_string = cti.to_xml
 ```
 
 Make sure to read the code and the specs!
