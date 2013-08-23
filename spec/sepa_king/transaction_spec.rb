@@ -2,33 +2,93 @@
 require 'spec_helper'
 
 describe SEPA::Transaction do
-  it "should not accept invalid IBAN" do
-    lambda {
-      SEPA::CreditTransaction.new :iban => 'invalid'
-    }.should raise_error(ArgumentError, /IBAN/)
+  context 'Name' do
+    it 'should accept valid value' do
+      [ 'Manfred Mustermann III.', 'Zahlemann & Söhne GbR', 'X' * 70 ].each do |value_value|
+        lambda {
+          SEPA::CreditTransaction.new :name => value_value
+        }.should_not raise_error
+      end
+    end
+
+    it 'should not accept invalid value' do
+      [ nil, '', 'X' * 71 ].each do |invalue_value|
+        lambda {
+          SEPA::CreditTransaction.new :name => invalue_value
+        }.should raise_error(ArgumentError, /Name/)
+      end
+    end
   end
 
-  it "should not accept invalid BIC" do
-    lambda {
-      SEPA::CreditTransaction.new :bic => 'invalid'
-    }.should raise_error(ArgumentError, /BIC/)
+  context 'IBAN' do
+    it 'should accept valid value' do
+      [ 'DE21500500009876543210', 'PL61109010140000071219812874' ].each do |value_value|
+        lambda {
+          SEPA::CreditTransaction.new :iban => value_value
+        }.should_not raise_error
+      end
+    end
+
+    it 'should not accept invalid value' do
+      [ nil, '', 'invalid' ].each do |invalue_value|
+        lambda {
+          SEPA::CreditTransaction.new :iban => invalue_value
+        }.should raise_error(ArgumentError, /IBAN/)
+      end
+    end
   end
 
-  it "should not accept zero amount" do
-    lambda {
-      SEPA::CreditTransaction.new :amount => 0
-    }.should raise_error(ArgumentError, /zero/)
+  context 'BIC' do
+    it 'should accept valid value' do
+      [ 'DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX' ].each do |value_value|
+        lambda {
+          SEPA::CreditTransaction.new :bic => value_value
+        }.should_not raise_error
+      end
+    end
+
+    it 'should not accept invalid value' do
+      [ nil, '', 'invalid' ].each do |invalue_value|
+        lambda {
+          SEPA::CreditTransaction.new :bic => invalue_value
+        }.should raise_error(ArgumentError, /BIC/)
+      end
+    end
   end
 
-  it "should not accept negative amount" do
-    lambda {
-      SEPA::CreditTransaction.new :amount => -3
-    }.should raise_error(ArgumentError, /negative/)
+  context 'Amount' do
+    it 'should accept valid value' do
+      [ 0.01, 1, 100, 100.00, 99.99, 1234567890.12, BigDecimal("10") ].each do |value_value|
+        lambda {
+          SEPA::CreditTransaction.new :amount => value_value
+        }.should_not raise_error
+      end
+    end
+
+    it 'should not accept invalid value' do
+      [ nil, 0, -3, 1.23456 ].each do |invalue_value|
+        lambda {
+          SEPA::CreditTransaction.new :amount => invalue_value
+        }.should raise_error(ArgumentError, /Amount/)
+      end
+    end
   end
 
-  it "should not accept reference which is too long" do
-    lambda {
-      SEPA::CreditTransaction.new :reference => '123456789012345678901234567890123456'
-    }.should raise_error(ArgumentError, /Reference/)
+  context 'Reference' do
+    it 'should accept valid value' do
+      [ 'ABC-1234/78.0', 'X' * 35 ].each do |value_value|
+        lambda {
+          SEPA::CreditTransaction.new :reference => value_value
+        }.should_not raise_error
+      end
+    end
+
+    it 'should not accept invalid value' do
+      [ nil, '', 'X' * 36 ].each do |invalue_value|
+        lambda {
+          SEPA::CreditTransaction.new :reference => invalue_value
+        }.should raise_error(ArgumentError, /Reference/)
+      end
+    end
   end
 end
