@@ -48,6 +48,11 @@ xml_string = ddi.to_xml
 Make sure to read the code and the specs!
 
 
+## Changelog
+
+https://github.com/salesking/sepa_king/releases
+
+
 ## Resources
 
 * http://www.ebics.de/index.php?id=77
