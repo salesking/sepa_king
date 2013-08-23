@@ -35,9 +35,10 @@ dd = SEPA::DirectDebit.new :name       => 'Gläubiger GmbH',
 
 # Second: Add transactions
 dd.add_transaction :name                      => 'Zahlemann & Söhne GbR',
-                   :iban                      => 'DE21500500009876543210',
                    :bic                       => 'SPUEDE2UXXX',
+                   :iban                      => 'DE21500500009876543210',
                    :amount                    => 39.99,
+                   :reference                 => 'XYZ/2013-08-ABO/6789',
                    :remittance_information    => 'Vielen Dank für Ihren Einkauf!',
                    :mandate_id                => 'K-02-2011-12345',
                    :mandate_date_of_signature => Date.new(2011,1,25)
@@ -58,8 +59,8 @@ ct = SEPA::CreditTransfer.new :name       => 'Schuldner GmbH',
 
 # Second: Add transactions
 ct.add_transaction :name                   => 'Telekomiker AG',
-                   :iban                   => 'DE37112589611964645802',
                    :bic                    => 'PBNKDEFF370',
+                   :iban                   => 'DE37112589611964645802',
                    :amount                 => 102.50,
                    :reference              => 'XYZ-1234/123',
                    :remittance_information => 'Rechnung vom 22.08.2013'

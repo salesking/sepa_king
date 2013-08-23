@@ -8,15 +8,15 @@ describe SEPA::CreditTransfer do
                                   :iban       => 'DE87200500001234567890'
 
     ct.add_transaction :name                   => 'Telekomiker AG',
-                       :iban                   => 'DE37112589611964645802',
                        :bic                    => 'PBNKDEFF370',
+                       :iban                   => 'DE37112589611964645802',
                        :amount                 => 102.50,
                        :reference              => 'XYZ-1234/123',
                        :remittance_information => 'Rechnung vom 22.08.2013'
 
     ct.add_transaction :name                   => 'Amazonas GmbH',
-                       :iban                   => 'DE27793589132923472195',
                        :bic                    => 'TUBDDEDDXXX',
+                       :iban                   => 'DE27793589132923472195',
                        :amount                 => 59.00,
                        :reference              => 'XYZ-5678/456',
                        :remittance_information => 'Rechnung vom 21.08.2013'

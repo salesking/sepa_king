@@ -9,8 +9,8 @@ describe SEPA::DirectDebit do
                                :identifier => 'DE98ZZZ09999999999'
 
     dd.add_transaction :name                      => 'Zahlemann & Söhne GbR',
-                       :iban                      => 'DE21500500009876543210',
                        :bic                       => 'SPUEDE2UXXX',
+                       :iban                      => 'DE21500500009876543210',
                        :amount                    => 39.99,
                        :reference                 => 'XYZ/2013-08-ABO/12345',
                        :remittance_information    => 'Unsere Rechnung vom 10.08.2013',
@@ -18,8 +18,8 @@ describe SEPA::DirectDebit do
                        :mandate_date_of_signature => Date.new(2011,1,25)
 
     dd.add_transaction :name                      => 'Meier & Schulze oHG',
-                       :iban                      => 'DE68210501700012345678',
                        :bic                       => 'GENODEF1JEV',
+                       :iban                      => 'DE68210501700012345678',
                        :amount                    => 750.00,
                        :reference                 => 'XYZ/2013-08-ABO/6789',
                        :remittance_information    => 'Vielen Dank für Ihren Einkauf!',
