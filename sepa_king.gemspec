@@ -1,32 +1,30 @@
-# -*- encoding: utf-8 -*-
-$:.push File.expand_path('../lib', __FILE__)
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'sepa_king/version'
 
 Gem::Specification.new do |s|
-  s.name = %q{sepa_king}
-  s.version = SEPA::VERSION
+  s.name          = 'sepa_king'
+  s.version       = SEPA::VERSION
+  s.authors       = ['Georg Leciejewski', 'Georg Ledermann']
+  s.email         = ['gl@salesking.eu', 'mail@georg-ledermann.de']
+  s.description   = 'Implemention of pain.001.002.03 and pain.008.002.02 (ISO 20022)'
+  s.summary       = 'Generate SEPA XML files with Ruby ... the easy way'
+  s.homepage      = 'http://github.com/salesking/sepa_king'
+  s.license       = 'MIT'
 
-  s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
-  s.authors = ['Georg Leciejewski', 'Georg Ledermann']
-  s.date = %q{2013-08-10}
-  s.summary = %q{Generate SEPA XML files with Ruby .. the easy way}
-  s.description = %q{}
-  s.email = %q{gl@salesking.eu}
-  s.extra_rdoc_files = ['README.markdown']
-  s.executables   = nil
-  s.files         = `git ls-files`.split("\n").reject{|i| i[/^docs\//] }
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-
-  s.homepage = %q{http://github.com/salesking/sepa_king}
+  s.files         = `git ls-files`.split($/)
+  s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ['lib']
-  s.rubygems_version = %q{1.6.2}
 
   s.add_runtime_dependency 'i18n'
   s.add_runtime_dependency 'builder'
   s.add_runtime_dependency 'iban-tools'
 
+  s.add_development_dependency 'bundler', '~> 1.3'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'simplecov'
-  s.add_development_dependency 'rake', '>= 0.9.2'
+  s.add_development_dependency 'rake'
   s.add_development_dependency 'libxml-ruby'
 end
