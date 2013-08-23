@@ -39,7 +39,7 @@ dd.add_transaction :name                      => 'Zahlemann & Söhne GbR',
                    :bic                       => 'SPUEDE2UXXX',
                    :amount                    => 39.99,
                    :mandate_id                => 'K-02-2011-12345',
-                   :mandate_date_of_signature => Date.new(2011,01,25)
+                   :mandate_date_of_signature => Date.new(2011,1,25)
 dd.add_transaction ...
 
 # Last: create XML string
