@@ -94,6 +94,11 @@ module SEPA
                     builder.IBAN(transaction.iban)
                   end
                 end
+                if transaction.remittance_information
+                  builder.RmtInf do
+                    builder.Ustrd(transaction.remittance_information)
+                  end
+                end
               end
             end
           end

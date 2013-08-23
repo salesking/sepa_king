@@ -91,4 +91,22 @@ describe SEPA::Transaction do
       end
     end
   end
+
+  context 'Remittance information' do
+    it 'should allow valid value' do
+      [ nil, 'Bonus', 'X' * 140 ].each do |valid_value|
+        lambda {
+          SEPA::CreditTransaction.new :remittance_information => valid_value
+        }.should_not raise_error
+      end
+    end
+
+    it 'should not allow invalid value' do
+      [ '', 'X' * 141, 42 ].each do |invalid_value|
+        lambda {
+          SEPA::CreditTransaction.new :remittance_information => invalid_value
+        }.should raise_error(ArgumentError, /Remittance/)
+      end
+    end
+  end
 end

@@ -2,7 +2,7 @@
 module SEPA
   class Transaction
     include TextConverter
-    attr_reader :name, :iban, :bic, :amount, :reference
+    attr_reader :name, :iban, :bic, :amount, :reference, :remittance_information
 
     def initialize(options)
       options.each_pair do |k,v|
@@ -40,6 +40,15 @@ module SEPA
       raise ArgumentError.new('Reference is missing') if value.nil? || value.empty?
       raise ArgumentError.new("Reference is too long: #{value.length}, must be 35 maximum") if value.length > 35
       @reference = convert_text(value)
+    end
+
+    def remittance_information=(value)
+      if value
+        raise ArgumentError.new('Remittance information has to be a string') unless value.is_a?(String)
+        raise ArgumentError.new('Remittance information cannot be blank') if value.empty?
+        raise ArgumentError.new("Remittance information is too long: #{value.length}, must be 140 maximum") if value.length > 140
+      end
+      @remittance_information = convert_text(value)
     end
   end
 end

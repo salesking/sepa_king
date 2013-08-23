@@ -76,8 +76,10 @@ module SEPA
                     builder.IBAN(transaction.iban)
                   end
                 end
-                builder.RmtInf do
-                  builder.Ustrd(transaction.remittance_information)
+                if transaction.remittance_information
+                  builder.RmtInf do
+                    builder.Ustrd(transaction.remittance_information)
+                  end
                 end
               end
             end

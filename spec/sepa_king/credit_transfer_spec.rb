@@ -19,7 +19,7 @@ describe SEPA::CreditTransfer do
                        :bic                    => 'TUBDDEDDXXX',
                        :amount                 => 59.00,
                        :reference              => 'XYZ-5678/456',
-                       :remittance_information => 'Rechnung om 21.08.2013'
+                       :remittance_information => 'Rechnung vom 21.08.2013'
 
     XML::Document.string(ct.to_xml).should validate_against('pain.001.002.03.xsd')
   end

@@ -13,6 +13,7 @@ describe SEPA::DirectDebit do
                        :bic                       => 'SPUEDE2UXXX',
                        :amount                    => 39.99,
                        :reference                 => 'XYZ/2013-08-ABO/12345',
+                       :remittance_information    => 'Unsere Rechnung vom 10.08.2013',
                        :mandate_id                => 'K-02-2011-12345',
                        :mandate_date_of_signature => Date.new(2011,01,25)
 
@@ -21,6 +22,7 @@ describe SEPA::DirectDebit do
                        :bic                       => 'GENODEF1JEV',
                        :amount                    => 750.00,
                        :reference                 => 'XYZ/2013-08-ABO/6789',
+                       :remittance_information    => 'Vielen Dank für Ihren Einkauf!',
                        :mandate_id                => 'K-08-2010-42123',
                        :mandate_date_of_signature => Date.new(2010,07,25)
 
