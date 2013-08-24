@@ -1,54 +1,33 @@
 # encoding: utf-8
 module SEPA
   class Transaction
+    include ActiveModel::Model
     include TextConverter
-    attr_reader :name, :iban, :bic, :amount, :reference, :remittance_information
+
+    attr_accessor :name, :iban, :bic, :amount, :reference, :remittance_information
+
+    validates_presence_of :name, :iban, :bic, :amount
+    validates_length_of :name, :maximum => 70
+    validates_length_of :bic, :within => 8..11
+    validates_length_of :reference, :maximum => 35, :minimum => 1, :allow_nil => true
+    validates_length_of :remittance_information, :minimum => 1, :maximum => 140, :allow_nil => true
+    validates_numericality_of :amount, :greater_than => 0
+
+    validate do |t|
+      if t.iban
+        errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban)
+      end
+
+      if t.amount
+        errors.add(:amount, 'has more than 2 digits') if t.amount.round(2) != t.amount
+      end
+    end
 
     def initialize(options)
-      options.each_pair do |k,v|
-        send("#{k}=", v)
+      options.each do |name, value|
+        value = convert_text(value) if value.is_a?(String)
+        send("#{name}=", value)
       end
-    end
-
-    def name=(value)
-      raise ArgumentError.new('Name is missing') if value.nil? || value.empty?
-      raise ArgumentError.new("Name is too long: #{value.length}, must be 70 maximum") if value.length > 70
-      @name = convert_text(value)
-    end
-
-    def iban=(value)
-      raise ArgumentError.new('IBAN is missing') if value.nil? || value.empty?
-      raise ArgumentError.new('IBAN is invalid') unless IBANTools::IBAN.valid?(value)
-      @iban = value
-    end
-
-    def bic=(value)
-      raise ArgumentError.new('BIC is missing') if value.nil? || value.empty?
-      raise ArgumentError.new("BIC has wrong length: #{value.length} must be between 8-11") unless value.length.between?(8,11)
-      @bic = value
-    end
-
-    def amount=(value)
-      raise ArgumentError.new('Amount is not a number') unless value.is_a?(Numeric)
-      raise ArgumentError.new('Amount cannot be zero') if value.zero?
-      raise ArgumentError.new('Amount cannot be negative') if value < 0
-      raise ArgumentError.new('Amount has more than 2 digits') if value.round(2) != value
-      @amount = value
-    end
-
-    def reference=(value)
-      raise ArgumentError.new('Reference is missing') if value.nil? || value.empty?
-      raise ArgumentError.new("Reference is too long: #{value.length}, must be 35 maximum") if value.length > 35
-      @reference = convert_text(value)
-    end
-
-    def remittance_information=(value)
-      if value
-        raise ArgumentError.new('Remittance information has to be a string') unless value.is_a?(String)
-        raise ArgumentError.new('Remittance information cannot be blank') if value.empty?
-        raise ArgumentError.new("Remittance information is too long: #{value.length}, must be 140 maximum") if value.length > 140
-      end
-      @remittance_information = convert_text(value)
     end
   end
 end

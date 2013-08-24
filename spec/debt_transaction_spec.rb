@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe SEPA::DebtTransaction do
   it 'should initialize a new transaction' do
-    lambda{
+    expect(
       SEPA::DebtTransaction.new :name                      => 'Zahlemann & Söhne Gbr',
                                 :bic                       => 'SPUEDE2UXXX',
                                 :iban                      => 'DE21500500009876543210',
@@ -12,23 +12,23 @@ describe SEPA::DebtTransaction do
                                 :remittance_information    => 'Vielen Dank für Ihren Einkauf!',
                                 :mandate_id                => 'K-02-2011-12345',
                                 :mandate_date_of_signature => Date.new(2011,1,25)
-    }.should_not raise_error
+    ).to be_valid
   end
 
   context 'Mandate Date of Signature' do
     it 'should allow valid value' do
       [ Date.today, Date.today - 1 ].each do |valid_value|
-        lambda {
+        expect(
           SEPA::DebtTransaction.new :mandate_date_of_signature => valid_value
-        }.should_not raise_error
+        ).to have(:no).errors_on(:mandate_date_of_signature)
       end
     end
 
     it 'should not allow invalid value' do
       [ nil, '2010-12-01', Date.today + 1 ].each do |invalid_value|
-        lambda {
+        expect(
           SEPA::DebtTransaction.new :mandate_date_of_signature => invalid_value
-        }.should raise_error(ArgumentError, /Signature/)
+        ).to have_at_least(1).errors_on(:mandate_date_of_signature)
       end
     end
   end
@@ -36,17 +36,17 @@ describe SEPA::DebtTransaction do
   context 'Mandate ID' do
     it 'should allow valid value' do
       [ 'XYZ-123', 'X' * 35 ].each do |valid_value|
-        lambda {
+        expect(
           SEPA::DebtTransaction.new :mandate_id => valid_value
-        }.should_not raise_error
+        ).to have(:no).errors_on(:mandate_id)
       end
     end
 
     it 'should not allow invalid value' do
       [ nil, '', 'X' * 36 ].each do |invalid_value|
-        lambda {
+        expect(
           SEPA::DebtTransaction.new :mandate_id => invalid_value
-        }.should raise_error(ArgumentError, /Mandate ID/)
+        ).to have_at_least(1).errors_on(:mandate_id)
       end
     end
   end

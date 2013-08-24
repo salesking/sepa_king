@@ -1,4 +1,5 @@
 require 'i18n'
+require 'active_model'
 require 'bigdecimal'
 require 'builder'
 require 'iban-tools'

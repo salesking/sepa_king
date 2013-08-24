@@ -1,18 +1,17 @@
 # encoding: utf-8
 module SEPA
   class DebtTransaction < Transaction
-    attr_reader :mandate_id, :mandate_date_of_signature
+    attr_accessor :mandate_id, :mandate_date_of_signature
 
-    def mandate_id=(value)
-      raise ArgumentError.new('Mandate ID is missing') if value.nil? || value.empty?
-      raise ArgumentError.new("Mandate ID is too long: #{value.length}, must be 35 maximum") if value.length > 35
-      @mandate_id = convert_text(value)
-    end
+    validates_length_of :mandate_id, :within => 1..35
+    validates_presence_of :mandate_date_of_signature
 
-    def mandate_date_of_signature=(value)
-      raise ArgumentError.new('Mandate Date of Signature is missing') unless value.is_a?(Date)
-      raise ArgumentError.new('Mandate Date of Signature is in the future') if value > Date.today
-      @mandate_date_of_signature = value
+    validate do |t|
+      if t.mandate_date_of_signature.is_a?(Date)
+        errors.add(:mandate_date_of_signature, 'is in the future') if t.mandate_date_of_signature > Date.today
+      else
+        errors.add(:mandate_date_of_signature, 'is not a Date')
+      end
     end
   end
 end
