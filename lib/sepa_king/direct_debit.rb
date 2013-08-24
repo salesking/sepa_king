@@ -5,7 +5,7 @@ module SEPA
     attr_reader :creditor, :transactions
 
     def initialize(creditor_options)
-      @creditor = Account.new(creditor_options)
+      @creditor = CreditorAccount.new(creditor_options)
       @transactions = []
     end
 

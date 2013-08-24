@@ -1,37 +1,26 @@
 # encoding: utf-8
 module SEPA
   class Account
+    include ActiveModel::Model
     include TextConverter
 
-    attr_reader :name, :iban, :bic, :identifier
+    attr_accessor :name, :iban, :bic
 
-    def initialize(options)
-      options.each_pair do |k,v|
-        send("#{k}=", convert_text(v))
+    validates_presence_of :name, :iban, :bic
+    validates_length_of :name, :maximum => 70
+    validates_length_of :bic, :within => 8..11
+
+    validate do |t|
+      if t.iban
+        errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban)
       end
     end
 
-    def name=(value)
-      raise ArgumentError.new('Name is missing') unless value
-      @name = value
-    end
-
-    def iban=(value)
-      raise ArgumentError.new('IBAN is missing') unless value
-      raise ArgumentError.new("IBAN has wrong length: #{value.length}, must be between 15-34") unless value.length.between?(15,34)
-      @iban = value
-    end
-
-    def bic=(value)
-      raise ArgumentError.new('BIC is missing') unless value
-      raise ArgumentError.new("BIC has wrong length: #{value.length} must be between 8-11") unless value.length.between?(8,11)
-      @bic = value
-    end
-
-    def identifier=(value)
-      raise ArgumentError.new('Identifier is missing') unless value
-      raise ArgumentError.new("Identifier has wrong length: #{value.length} must be exactly 18") unless value.length == 18
-      @identifier = value
+    def initialize(options)
+      options.each do |name, value|
+        value = convert_text(value) if value.is_a?(String)
+        send("#{name}=", value)
+      end
     end
   end
 end

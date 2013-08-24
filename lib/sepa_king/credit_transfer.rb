@@ -2,10 +2,10 @@
 
 module SEPA
   class CreditTransfer
-    attr_reader :debitor, :transactions
+    attr_reader :debtor, :transactions
 
-    def initialize(debitor_options)
-      @debitor = Account.new(debitor_options)
+    def initialize(debtor_options)
+      @debtor = DebtorAccount.new(debtor_options)
       @transactions = []
     end
 
@@ -35,7 +35,7 @@ module SEPA
         builder.CreDtTm(Time.now.iso8601)
         builder.NbOfTxs(transactions.length)
         builder.InitgPty do
-          builder.Nm(debitor.name)
+          builder.Nm(debtor.name)
         end
       end
     end
@@ -54,16 +54,16 @@ module SEPA
         end
         builder.ReqdExctnDt(Date.today.next.iso8601)
         builder.Dbtr do
-          builder.Nm(debitor.name)
+          builder.Nm(debtor.name)
         end
         builder.DbtrAcct do
           builder.Id do
-            builder.IBAN(debitor.iban)
+            builder.IBAN(debtor.iban)
           end
         end
         builder.DbtrAgt do
           builder.FinInstnId do
-            builder.BIC(debitor.bic)
+            builder.BIC(debtor.bic)
           end
         end
         builder.ChrgBr('SLEV')
