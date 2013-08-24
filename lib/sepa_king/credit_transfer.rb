@@ -10,7 +10,9 @@ module SEPA
     end
 
     def add_transaction(options)
-      @transactions << CreditTransaction.new(options)
+      transaction = CreditTransaction.new(options)
+      raise ArgumentError.new(transaction.errors.full_messages.join("\n")) unless transaction.valid?
+      @transactions << transaction
     end
 
     def to_xml
