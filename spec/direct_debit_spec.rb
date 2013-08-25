@@ -9,6 +9,14 @@ describe SEPA::DirectDebit do
                           :identifier => 'DE98ZZZ09999999999'
   }
 
+  describe :new do
+    it 'should fail for invalid options' do
+      expect {
+        SEPA::DirectDebit.new({})
+      }.to raise_error(ArgumentError)
+    end
+  end
+
   describe :add_transaction do
     it 'should add valid transactions' do
       3.times {

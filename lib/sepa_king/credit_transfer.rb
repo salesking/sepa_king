@@ -7,6 +7,7 @@ module SEPA
     def initialize(debtor_options)
       super
       @debtor = DebtorAccount.new(debtor_options)
+      raise ArgumentError.new(@debtor.errors.full_messages.join("\n")) unless @debtor.valid?
     end
 
     def to_xml
