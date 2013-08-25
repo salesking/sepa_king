@@ -3,6 +3,7 @@
 module SEPA
   class CreditTransfer < Message
     self.account_class = DebtorAccount
+    self.transaction_class = CreditTransferTransaction
 
     def to_xml
       super

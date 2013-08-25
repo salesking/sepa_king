@@ -3,7 +3,7 @@
 module SEPA
   class Message
     attr_reader :account, :transactions
-    class_attribute :account_class
+    class_attribute :account_class, :transaction_class
 
     def initialize(account_options={})
       @transactions = []
@@ -20,11 +20,11 @@ module SEPA
       raise RuntimeError.new(account.errors.full_messages.join("\n")) unless account.valid?
     end
 
-  private
-    def transaction_class
-      "#{self.class.name}Transaction".constantize
+    def amount_total
+      transactions.inject(0) { |sum, t| sum + t.amount }
     end
 
+  private
     def build_group_header(builder)
       builder.GrpHdr do
         builder.MsgId(message_identification)
@@ -35,10 +35,6 @@ module SEPA
           builder.Nm(account.name)
         end
       end
-    end
-
-    def amount_total
-      transactions.inject(0) { |sum, t| sum + t.amount }
     end
 
     def message_identification

@@ -3,6 +3,7 @@
 module SEPA
   class DirectDebit < Message
     self.account_class = CreditorAccount
+    self.transaction_class = DirectDebitTransaction
 
     def to_xml
       super
