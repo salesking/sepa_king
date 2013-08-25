@@ -58,7 +58,7 @@ describe SEPA::Transaction do
 
   context 'Amount' do
     it 'should accept valid value' do
-      [ 0.01, 1, 100, 100.00, 99.99, 1234567890.12, BigDecimal("10") ].each do |value_value|
+      [ 0.01, 1, 100, 100.00, 99.99, 1234567890.12, BigDecimal('10'), '42', '42.51' ].each do |value_value|
         expect(
           SEPA::Transaction.new :amount => value_value
         ).to have(:no).errors_on(:amount)
@@ -66,7 +66,7 @@ describe SEPA::Transaction do
     end
 
     it 'should not accept invalid value' do
-      [ nil, 0, -3, 1.23456 ].each do |invalue_value|
+      [ nil, 0, -3, 1.23456, 'xz', '42.512' ].each do |invalue_value|
         expect(
           SEPA::Transaction.new :amount => invalue_value
         ).to have_at_least(1).errors_on(:amount)

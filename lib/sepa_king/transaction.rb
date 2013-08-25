@@ -14,11 +14,8 @@ module SEPA
     validates_numericality_of :amount, :greater_than => 0
 
     validate do |t|
-
-      if t.amount
-        errors.add(:amount, 'has more than 2 digits') if t.amount.round(2) != t.amount
-      end
       errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban.to_s)
+      errors.add(:amount, 'is not a number with max. two digits') if BigDecimal(t.amount.to_s) != BigDecimal(t.amount.to_s).round(2)
     end
 
     def initialize(options)
@@ -26,6 +23,10 @@ module SEPA
         value = convert_text(value) if value.is_a?(String)
         send("#{name}=", value)
       end
+    end
+
+    def amount=(value)
+      @amount = BigDecimal(value.to_s)
     end
   end
 end

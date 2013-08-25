@@ -30,7 +30,7 @@ module SEPA
         builder.PmtMtd('TRF')
         builder.BtchBookg(true)
         builder.NbOfTxs(transactions.length)
-        builder.CtrlSum(amount_total)
+        builder.CtrlSum('%.2f' % amount_total)
         builder.PmtTpInf do
           builder.SvcLvl do
             builder.Cd('SEPA')
@@ -62,7 +62,7 @@ module SEPA
             builder.EndToEndId(transaction.reference || 'NOTPROVIDED')
           end
           builder.Amt do
-            builder.InstdAmt(transaction.amount, :Ccy => 'EUR')
+            builder.InstdAmt('%.2f' % transaction.amount, :Ccy => 'EUR')
           end
           builder.CdtrAgt do
             builder.FinInstnId do

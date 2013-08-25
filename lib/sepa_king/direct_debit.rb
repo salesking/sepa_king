@@ -28,6 +28,8 @@ module SEPA
       builder.PmtInf do
         builder.PmtInfId(payment_information_identification)
         builder.PmtMtd('DD')
+        builder.NbOfTxs(transactions.length)
+        builder.CtrlSum('%.2f' % amount_total)
         builder.PmtTpInf do
           builder.SvcLvl do
             builder.Cd('SEPA')
@@ -74,7 +76,7 @@ module SEPA
           builder.PmtId do
             builder.EndToEndId(transaction.reference || 'NOTPROVIDED')
           end
-          builder.InstdAmt(transaction.amount, :Ccy => 'EUR')
+          builder.InstdAmt('%.2f' % transaction.amount, :Ccy => 'EUR')
           builder.DrctDbtTx do
             builder.MndtRltdInf do
               builder.MndtId(transaction.mandate_id)
