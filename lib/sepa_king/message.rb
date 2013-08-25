@@ -19,6 +19,18 @@ module SEPA
       "#{self.class.name}Transaction".constantize
     end
 
+    def build_group_header(builder)
+      builder.GrpHdr do
+        builder.MsgId(message_identification)
+        builder.CreDtTm(Time.now.iso8601)
+        builder.NbOfTxs(transactions.length)
+        builder.CtrlSum(amount_total)
+        builder.InitgPty do
+          builder.Nm(account.name)
+        end
+      end
+    end
+
     def amount_total
       transactions.inject(0) { |sum, t| sum + t.amount }
     end

@@ -2,12 +2,12 @@
 
 module SEPA
   class CreditTransfer < Message
-    attr_reader :debtor
+    attr_reader :account
 
-    def initialize(debtor_options)
+    def initialize(account_options)
       super
-      @debtor = DebtorAccount.new(debtor_options)
-      raise ArgumentError.new(@debtor.errors.full_messages.join("\n")) unless @debtor.valid?
+      @account = DebtorAccount.new(account_options)
+      raise ArgumentError.new(@account.errors.full_messages.join("\n")) unless @account.valid?
     end
 
     def to_xml
@@ -24,17 +24,6 @@ module SEPA
     end
 
   private
-    def build_group_header(builder)
-      builder.GrpHdr do
-        builder.MsgId(message_identification)
-        builder.CreDtTm(Time.now.iso8601)
-        builder.NbOfTxs(transactions.length)
-        builder.InitgPty do
-          builder.Nm(debtor.name)
-        end
-      end
-    end
-
     def build_payment_information(builder)
       builder.PmtInf do
         builder.PmtInfId(payment_information_identification)
@@ -49,16 +38,16 @@ module SEPA
         end
         builder.ReqdExctnDt(Date.today.next.iso8601)
         builder.Dbtr do
-          builder.Nm(debtor.name)
+          builder.Nm(account.name)
         end
         builder.DbtrAcct do
           builder.Id do
-            builder.IBAN(debtor.iban)
+            builder.IBAN(account.iban)
           end
         end
         builder.DbtrAgt do
           builder.FinInstnId do
-            builder.BIC(debtor.bic)
+            builder.BIC(account.bic)
           end
         end
         builder.ChrgBr('SLEV')

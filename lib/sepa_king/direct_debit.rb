@@ -2,12 +2,12 @@
 
 module SEPA
   class DirectDebit < Message
-    attr_reader :creditor
+    attr_reader :account
 
-    def initialize(creditor_options)
+    def initialize(account_options)
       super
-      @creditor = CreditorAccount.new(creditor_options)
-      raise ArgumentError.new(@creditor.errors.full_messages.join("\n")) unless @creditor.valid?
+      @account = CreditorAccount.new(account_options)
+      raise ArgumentError.new(@account.errors.full_messages.join("\n")) unless @account.valid?
     end
 
     def to_xml
@@ -24,18 +24,6 @@ module SEPA
     end
 
   private
-    def build_group_header(builder)
-      builder.GrpHdr do
-        builder.MsgId(message_identification)
-        builder.CreDtTm(Time.now.iso8601)
-        builder.NbOfTxs(transactions.length)
-        builder.CtrlSum(amount_total)
-        builder.InitgPty do
-          builder.Nm(creditor.name)
-        end
-      end
-    end
-
     def build_payment_information(builder)
       builder.PmtInf do
         builder.PmtInfId(payment_information_identification)
@@ -51,16 +39,16 @@ module SEPA
         end
         builder.ReqdColltnDt(Date.today.next.iso8601)
         builder.Cdtr do
-          builder.Nm(creditor.name)
+          builder.Nm(account.name)
         end
         builder.CdtrAcct do
           builder.Id do
-            builder.IBAN(creditor.iban)
+            builder.IBAN(account.iban)
           end
         end
         builder.CdtrAgt do
           builder.FinInstnId do
-            builder.BIC(creditor.bic)
+            builder.BIC(account.bic)
           end
         end
         builder.ChrgBr('SLEV')
@@ -68,7 +56,7 @@ module SEPA
           builder.Id do
             builder.PrvtId do
               builder.Othr do
-                builder.Id(creditor.identifier)
+                builder.Id(account.identifier)
                 builder.SchmeNm do
                   builder.Prtry('SEPA')
                 end
