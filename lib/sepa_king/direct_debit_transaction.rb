@@ -1,6 +1,6 @@
 # encoding: utf-8
 module SEPA
-  class DebtTransaction < Transaction
+  class DirectDebitTransaction < Transaction
     attr_accessor :mandate_id, :mandate_date_of_signature
 
     validates_length_of :mandate_id, :within => 1..35

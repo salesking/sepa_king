@@ -1,18 +1,12 @@
 # encoding: utf-8
 
 module SEPA
-  class CreditTransfer
-    attr_reader :debtor, :transactions
+  class CreditTransfer < Message
+    attr_reader :debtor
 
     def initialize(debtor_options)
+      super
       @debtor = DebtorAccount.new(debtor_options)
-      @transactions = []
-    end
-
-    def add_transaction(options)
-      transaction = CreditTransaction.new(options)
-      raise ArgumentError.new(transaction.errors.full_messages.join("\n")) unless transaction.valid?
-      @transactions << transaction
     end
 
     def to_xml
@@ -100,18 +94,6 @@ module SEPA
           end
         end
       end
-    end
-
-    def amount_total
-      transactions.inject(0) { |sum, t| sum + t.amount }
-    end
-
-    def message_identification
-      "SEPA-KING/#{Time.now.iso8601}"
-    end
-
-    def payment_information_identification
-      message_identification
     end
   end
 end
