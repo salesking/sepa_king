@@ -11,9 +11,7 @@ module SEPA
     validates_length_of :bic, :within => 8..11
 
     validate do |t|
-      if t.iban
-        errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban)
-      end
+      errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban.to_s)
     end
 
     def initialize(options)

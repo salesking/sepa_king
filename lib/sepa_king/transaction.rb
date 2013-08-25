@@ -14,13 +14,11 @@ module SEPA
     validates_numericality_of :amount, :greater_than => 0
 
     validate do |t|
-      if t.iban
-        errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban)
-      end
 
       if t.amount
         errors.add(:amount, 'has more than 2 digits') if t.amount.round(2) != t.amount
       end
+      errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban.to_s)
     end
 
     def initialize(options)
