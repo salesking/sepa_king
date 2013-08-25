@@ -4,13 +4,14 @@ module SEPA
   class DirectDebit < Message
     attr_reader :account
 
-    def initialize(account_options)
+    def initialize(account_options={})
       super
       @account = CreditorAccount.new(account_options)
-      raise ArgumentError.new(@account.errors.full_messages.join("\n")) unless @account.valid?
     end
 
     def to_xml
+      raise RuntimeError.new(@account.errors.full_messages.join("\n")) unless @account.valid?
+
       builder = Builder::XmlMarkup.new :indent => 2
       builder.instruct!
       builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02',

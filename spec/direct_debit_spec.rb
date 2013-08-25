@@ -10,10 +10,10 @@ describe SEPA::DirectDebit do
   }
 
   describe :new do
-    it 'should fail for invalid options' do
+    it 'should accept missing options' do
       expect {
-        SEPA::DirectDebit.new({})
-      }.to raise_error(ArgumentError)
+        SEPA::DirectDebit.new
+      }.to_not raise_error
     end
   end
 
@@ -41,6 +41,12 @@ describe SEPA::DirectDebit do
   end
 
   describe :to_xml do
+    it 'should fail for invalid debtor' do
+      expect {
+        SEPA::DirectDebit.new.to_xml
+      }.to raise_error(RuntimeError)
+    end
+
     it 'should create valid XML file' do
       dd = direct_debit
 
