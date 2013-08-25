@@ -2,15 +2,10 @@
 
 module SEPA
   class CreditTransfer < Message
-    attr_reader :account
-
-    def initialize(account_options={})
-      super
-      @account = DebtorAccount.new(account_options)
-    end
+    self.account_class = DebtorAccount
 
     def to_xml
-      raise RuntimeError.new(@account.errors.full_messages.join("\n")) unless @account.valid?
+      super
 
       builder = Builder::XmlMarkup.new :indent => 2
       builder.instruct!

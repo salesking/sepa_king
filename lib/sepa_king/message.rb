@@ -2,16 +2,22 @@
 
 module SEPA
   class Message
-    attr_reader :transactions
+    attr_reader :account, :transactions
+    class_attribute :account_class
 
-    def initialize(options)
+    def initialize(options={})
       @transactions = []
+      @account = self.account_class.new(options)
     end
 
     def add_transaction(options)
       transaction = transaction_class.new(options)
       raise ArgumentError.new(transaction.errors.full_messages.join("\n")) unless transaction.valid?
       @transactions << transaction
+    end
+
+    def to_xml
+      raise RuntimeError.new(@account.errors.full_messages.join("\n")) unless @account.valid?
     end
 
   private
