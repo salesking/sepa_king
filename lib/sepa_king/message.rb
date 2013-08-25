@@ -5,9 +5,9 @@ module SEPA
     attr_reader :account, :transactions
     class_attribute :account_class
 
-    def initialize(options={})
+    def initialize(account_options={})
       @transactions = []
-      @account = self.account_class.new(options)
+      @account = self.account_class.new(account_options)
     end
 
     def add_transaction(options)
@@ -17,7 +17,7 @@ module SEPA
     end
 
     def to_xml
-      raise RuntimeError.new(@account.errors.full_messages.join("\n")) unless @account.valid?
+      raise RuntimeError.new(account.errors.full_messages.join("\n")) unless account.valid?
     end
 
   private
