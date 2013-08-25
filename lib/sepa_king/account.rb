@@ -2,9 +2,10 @@
 module SEPA
   class Account
     include ActiveModel::Model
-    include TextConverter
+    extend Converter
 
     attr_accessor :name, :iban, :bic
+    text_converter :name
 
     validates_presence_of :name, :iban, :bic
     validates_length_of :name, :maximum => 70
@@ -12,13 +13,6 @@ module SEPA
 
     validate do |t|
       errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban.to_s)
-    end
-
-    def initialize(options)
-      options.each do |name, value|
-        value = convert_text(value) if value.is_a?(String)
-        send("#{name}=", value)
-      end
     end
   end
 end

@@ -2,9 +2,11 @@
 module SEPA
   class Transaction
     include ActiveModel::Model
-    include TextConverter
+    extend Converter
 
     attr_accessor :name, :iban, :bic, :amount, :reference, :remittance_information
+    text_converter :name, :reference, :remittance_information
+    decimal_converter :amount
 
     validates_presence_of :name, :iban, :bic, :amount
     validates_length_of :name, :maximum => 70
@@ -15,18 +17,6 @@ module SEPA
 
     validate do |t|
       errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban.to_s)
-      errors.add(:amount, 'is not a number with max. two digits') if BigDecimal(t.amount.to_s) != BigDecimal(t.amount.to_s).round(2)
-    end
-
-    def initialize(options)
-      options.each do |name, value|
-        value = convert_text(value) if value.is_a?(String)
-        send("#{name}=", value)
-      end
-    end
-
-    def amount=(value)
-      @amount = BigDecimal(value.to_s)
     end
   end
 end

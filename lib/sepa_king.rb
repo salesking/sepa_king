@@ -4,7 +4,7 @@ require 'bigdecimal'
 require 'builder'
 require 'iban-tools'
 
-require 'sepa_king/text_converter'
+require 'sepa_king/converter'
 require 'sepa_king/account'
 require 'sepa_king/debtor_account'
 require 'sepa_king/creditor_account'
