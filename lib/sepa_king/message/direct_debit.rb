@@ -6,15 +6,14 @@ module SEPA
     self.transaction_class = DirectDebitTransaction
 
     def to_xml
-      super
-      builder = Builder::XmlMarkup.new :indent => 2
-      builder.instruct!
-      builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02',
-                       :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-                       :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02 pain.008.002.02.xsd' do
-        builder.CstmrDrctDbtInitn do
-          build_group_header(builder)
-          build_payment_information(builder)
+      build_xml do |builder|
+        builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02',
+                         :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+                         :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02 pain.008.002.02.xsd' do
+          builder.CstmrDrctDbtInitn do
+            build_group_header(builder)
+            build_payment_information(builder)
+          end
         end
       end
     end

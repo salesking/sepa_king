@@ -16,8 +16,12 @@ module SEPA
       @transactions << transaction
     end
 
-    def to_xml
+    def build_xml(&block)
       raise RuntimeError.new(account.errors.full_messages.join("\n")) unless account.valid?
+
+      builder = Builder::XmlMarkup.new :indent => 2
+      builder.instruct!
+      yield(builder)
     end
 
     def amount_total
