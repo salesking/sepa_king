@@ -5,8 +5,8 @@ module SEPA
     extend Converter
 
     attr_accessor :name, :iban, :bic, :amount, :reference, :remittance_information
-    text_converter :name, :reference, :remittance_information
-    decimal_converter :amount
+    convert :name, :reference, :remittance_information, :to => :text
+    convert :amount, :to => :decimal
 
     validates_presence_of :name, :iban, :bic, :amount
     validates_length_of :name, :maximum => 70

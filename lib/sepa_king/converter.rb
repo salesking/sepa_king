@@ -1,22 +1,15 @@
 # encoding: utf-8
 module SEPA
   module Converter
-    def text_converter(*attributes)
+    def convert(*attributes, options)
       include InstanceMethods
+
+      method_name = "convert_#{options[:to]}"
+      raise ArgumentError.new("Converter '#{options[:to]}' does not exist!") unless InstanceMethods.method_defined?(method_name)
 
       attributes.each do |attribute|
         define_method "#{attribute}=" do |value|
-          instance_variable_set("@#{attribute}", convert_text(value))
-        end
-      end
-    end
-
-    def decimal_converter(*attributes)
-      include InstanceMethods
-
-      attributes.each do |attribute|
-        define_method "#{attribute}=" do |value|
-          instance_variable_set("@#{attribute}", convert_decimal(value))
+          instance_variable_set("@#{attribute}", send(method_name, value))
         end
       end
     end
