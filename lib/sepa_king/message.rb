@@ -7,7 +7,7 @@ module SEPA
 
     def initialize(account_options={})
       @transactions = []
-      @account = self.account_class.new(account_options)
+      @account = account_class.new(account_options)
     end
 
     def add_transaction(options)
@@ -16,6 +16,11 @@ module SEPA
       @transactions << transaction
     end
 
+    def amount_total
+      transactions.inject(0) { |sum, t| sum + t.amount }
+    end
+
+  private
     def build_xml(&block)
       raise RuntimeError.new(account.errors.full_messages.join("\n")) unless account.valid?
 
@@ -24,11 +29,6 @@ module SEPA
       yield(builder)
     end
 
-    def amount_total
-      transactions.inject(0) { |sum, t| sum + t.amount }
-    end
-
-  private
     def build_group_header(builder)
       builder.GrpHdr do
         builder.MsgId(message_identification)
