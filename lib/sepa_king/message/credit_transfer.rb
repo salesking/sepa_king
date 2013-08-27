@@ -63,7 +63,7 @@ module SEPA
             builder.EndToEndId(transaction.reference || 'NOTPROVIDED')
           end
           builder.Amt do
-            builder.InstdAmt('%.2f' % transaction.amount, :Ccy => 'EUR')
+            builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
           end
           builder.CdtrAgt do
             builder.FinInstnId do
