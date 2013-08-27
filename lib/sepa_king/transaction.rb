@@ -4,7 +4,7 @@ module SEPA
     include ActiveModel::Validations
     extend Converter
 
-    attr_accessor :name, :iban, :bic, :amount, :reference, :remittance_information
+    attr_accessor :name, :iban, :bic, :amount, :reference, :remittance_information, :requested_date
     convert :name, :reference, :remittance_information, to: :text
     convert :amount, to: :decimal
 
@@ -16,6 +16,10 @@ module SEPA
 
     validate do |t|
       errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban.to_s)
+
+      if t.requested_date.is_a?(Date)
+        errors.add(:requested_date, 'is not in the future') if t.requested_date <= Date.today
+      end
     end
 
     def initialize(attributes = {})

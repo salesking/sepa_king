@@ -109,4 +109,22 @@ describe SEPA::Transaction do
       end
     end
   end
+
+  context 'Requested date' do
+    it 'should allow valid value' do
+      [ nil, Date.today.next, Date.today + 2 ].each do |valid_value|
+        expect(
+          SEPA::Transaction.new requested_date: valid_value
+        ).to have(:no).errors_on(:requested_date)
+      end
+    end
+
+    it 'should not allow invalid value' do
+      [ Date.new(1995,12,21), Date.today - 1, Date.today ].each do |invalid_value|
+        expect(
+          SEPA::Transaction.new requested_date: invalid_value
+        ).to have_at_least(1).errors_on(:requested_date)
+      end
+    end
+  end
 end
