@@ -3,17 +3,15 @@ require 'nokogiri'
 
 RSpec::Matchers.define :validate_against do |xsd|
   match do |actual|
-    schema = Nokogiri::XML::Schema(File.read("lib/schema/#{xsd}"))
-    doc = Nokogiri::XML(actual) do |config|
-      config.strict
-    end
+    @schema = Nokogiri::XML::Schema(File.read("lib/schema/#{xsd}"))
+    @doc = Nokogiri::XML(actual)
 
-    errors = schema.validate(doc)
-    if errors.empty?
-      true
-    else
-      raise Exception.new(errors)
-    end
+    @schema.should be_valid(@doc)
+  end
+
+  failure_message_for_should do |actual|
+    # Return the validation errors as string
+    @schema.validate(@doc).join("\n")
   end
 end
 
