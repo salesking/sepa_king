@@ -4,127 +4,71 @@ require 'spec_helper'
 describe SEPA::Transaction do
   context 'Name' do
     it 'should accept valid value' do
-      [ 'Manfred Mustermann III.', 'Zahlemann & Söhne GbR', 'X' * 70 ].each do |valid_value|
-        expect(
-          SEPA::Transaction.new name: valid_value
-        ).to have(:no).errors_on(:name)
-      end
+      SEPA::Transaction.should accept('Manfred Mustermann III.', 'Zahlemann & Söhne GbR', 'X' * 70, for: :name)
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'X' * 71 ].each do |invalid_value|
-        expect(
-          SEPA::Transaction.new name: invalid_value
-        ).to have_at_least(1).errors_on(:name)
-      end
+      SEPA::Transaction.should_not accept(nil, '', 'X' * 71, for: :name)
     end
   end
 
   context 'IBAN' do
     it 'should accept valid value' do
-      [ 'DE21500500009876543210', 'PL61109010140000071219812874' ].each do |valid_value|
-        expect(
-          SEPA::Transaction.new iban: valid_value
-        ).to have(:no).errors_on(:iban)
-      end
+      SEPA::Transaction.should accept('DE21500500009876543210', 'PL61109010140000071219812874', for: :iban)
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'invalid' ].each do |invalid_value|
-        expect(
-          SEPA::Transaction.new iban: invalid_value
-        ).to have_at_least(1).errors_on(:iban)
-      end
+      SEPA::Transaction.should_not accept(nil, '', 'invalid', for: :iban)
     end
   end
 
   context 'BIC' do
     it 'should accept valid value' do
-      [ 'DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX' ].each do |valid_value|
-        expect(
-          SEPA::Transaction.new bic: valid_value
-        ).to have(:no).errors_on(:bic)
-      end
+      SEPA::Transaction.should accept('DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX', for: :bic)
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'invalid' ].each do |invalid_value|
-        expect(
-          SEPA::Transaction.new bic: invalid_value
-        ).to have_at_least(1).errors_on(:bic)
-      end
+      SEPA::Transaction.should_not accept(nil, '', 'invalid', for: :bic)
     end
   end
 
   context 'Amount' do
     it 'should accept valid value' do
-      [ 0.01, 1, 100, 100.00, 99.99, 1234567890.12, BigDecimal('10'), '42', '42.51', '42.512', 1.23456 ].each do |valid_value|
-        expect(
-          SEPA::Transaction.new amount: valid_value
-        ).to have(:no).errors_on(:amount)
-      end
+      SEPA::Transaction.should accept(0.01, 1, 100, 100.00, 99.99, 1234567890.12, BigDecimal('10'), '42', '42.51', '42.512', 1.23456, for: :amount)
     end
 
     it 'should not accept invalid value' do
-      [ nil, 0, -3, 'xz' ].each do |invalid_value|
-        expect(
-          SEPA::Transaction.new amount: invalid_value
-        ).to have_at_least(1).errors_on(:amount)
-      end
+      SEPA::Transaction.should_not accept(nil, 0, -3, 'xz', for: :amount)
     end
   end
 
   context 'Reference' do
     it 'should accept valid value' do
-      [ nil, 'ABC-1234/78.0', 'X' * 35 ].each do |valid_value|
-        expect(
-          SEPA::Transaction.new reference: valid_value
-        ).to have(:no).errors_on(:reference)
-      end
+      SEPA::Transaction.should accept(nil, 'ABC-1234/78.0', 'X' * 35, for: :reference)
     end
 
     it 'should not accept invalid value' do
-      [ '', 'X' * 36 ].each do |invalid_value|
-        expect(
-          SEPA::Transaction.new reference: invalid_value
-        ).to have_at_least(1).errors_on(:reference)
-      end
+      SEPA::Transaction.should_not accept('', 'X' * 36, for: :amount)
     end
   end
 
   context 'Remittance information' do
     it 'should allow valid value' do
-      [ nil, 'Bonus', 'X' * 140 ].each do |valid_value|
-        expect(
-          SEPA::Transaction.new remittance_information: valid_value
-        ).to have(:no).errors_on(:remittance_information)
-      end
+      SEPA::Transaction.should accept(nil, 'Bonus', 'X' * 140, for: :remittance_information)
     end
 
     it 'should not allow invalid value' do
-      [ '', 'X' * 141 ].each do |invalid_value|
-        expect(
-          SEPA::Transaction.new remittance_information: invalid_value
-        ).to have_at_least(1).errors_on(:remittance_information)
-      end
+      SEPA::Transaction.should_not accept('', 'X' * 141, for: :remittance_information)
     end
   end
 
   context 'Requested date' do
     it 'should allow valid value' do
-      [ nil, Date.today.next, Date.today + 2 ].each do |valid_value|
-        expect(
-          SEPA::Transaction.new requested_date: valid_value
-        ).to have(:no).errors_on(:requested_date)
-      end
+      SEPA::Transaction.should accept(nil, Date.today.next, Date.today + 2, for: :requested_date)
     end
 
     it 'should not allow invalid value' do
-      [ Date.new(1995,12,21), Date.today - 1, Date.today ].each do |invalid_value|
-        expect(
-          SEPA::Transaction.new requested_date: invalid_value
-        ).to have_at_least(1).errors_on(:requested_date)
-      end
+      SEPA::Transaction.should_not accept(Date.new(1995,12,21), Date.today - 1, Date.today, for: :requested_date)
     end
   end
 end

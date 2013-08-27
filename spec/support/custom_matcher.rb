@@ -30,3 +30,15 @@ RSpec::Matchers.define :have_xml do |xpath, text|
     true
   end
 end
+
+RSpec::Matchers.define :accept do |*values, options|
+  match do |actual|
+    attribute = options[:for]
+
+    values.each do |valid_value|
+      expect(
+        actual.new attribute => valid_value
+      ).to have(:no).errors_on(attribute)
+    end
+  end
+end
