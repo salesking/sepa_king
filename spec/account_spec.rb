@@ -12,17 +12,17 @@ describe SEPA::Account do
 
   describe :name do
     it 'should accept valid value' do
-      [ 'Gläubiger GmbH', 'Zahlemann & Söhne GbR', 'X' * 70 ].each do |value_value|
+      [ 'Gläubiger GmbH', 'Zahlemann & Söhne GbR', 'X' * 70 ].each do |valid_value|
         expect(
-          SEPA::Account.new name: value_value
+          SEPA::Account.new name: valid_value
         ).to have(:no).errors_on(:name)
       end
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'X' * 71 ].each do |invalue_value|
+      [ nil, '', 'X' * 71 ].each do |invalid_value|
         expect(
-          SEPA::Account.new name: invalue_value
+          SEPA::Account.new name: invalid_value
         ).to have_at_least(1).errors_on(:name)
       end
     end
@@ -30,17 +30,17 @@ describe SEPA::Account do
 
   describe :iban do
     it 'should accept valid value' do
-      [ 'DE21500500009876543210', 'PL61109010140000071219812874' ].each do |value_value|
+      [ 'DE21500500009876543210', 'PL61109010140000071219812874' ].each do |valid_value|
         expect(
-          SEPA::Account.new iban: value_value
+          SEPA::Account.new iban: valid_value
         ).to have(:no).errors_on(:iban)
       end
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'invalid' ].each do |invalue_value|
+      [ nil, '', 'invalid' ].each do |invalid_value|
         expect(
-          SEPA::Account.new iban: invalue_value
+          SEPA::Account.new iban: invalid_value
         ).to have_at_least(1).errors_on(:iban)
       end
     end
@@ -48,17 +48,17 @@ describe SEPA::Account do
 
   describe :bic do
     it 'should accept valid value' do
-      [ 'DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX' ].each do |value_value|
+      [ 'DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX' ].each do |valid_value|
         expect(
-          SEPA::Account.new bic: value_value
+          SEPA::Account.new bic: valid_value
         ).to have(:no).errors_on(:bic)
       end
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'invalid' ].each do |invalue_value|
+      [ nil, '', 'invalid' ].each do |invalid_value|
         expect(
-          SEPA::Account.new bic: invalue_value
+          SEPA::Account.new bic: invalid_value
         ).to have_at_least(1).errors_on(:bic)
       end
     end

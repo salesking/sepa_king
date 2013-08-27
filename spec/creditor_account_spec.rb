@@ -13,17 +13,17 @@ describe SEPA::CreditorAccount do
 
   describe :identifier do
     it 'should accept valid value' do
-      [ 'DE98ZZZ09999999999' ].each do |value_value|
+      [ 'DE98ZZZ09999999999' ].each do |valid_value|
         expect(
-          SEPA::CreditorAccount.new identifier: value_value
+          SEPA::CreditorAccount.new identifier: valid_value
         ).to have(:no).errors_on(:identifier)
       end
     end
 
     it 'should not accept invalid value' do
-      [ '', 'invalid' ].each do |invalue_value|
+      [ '', 'invalid' ].each do |invalid_value|
         expect(
-          SEPA::CreditorAccount.new identifier: invalue_value
+          SEPA::CreditorAccount.new identifier: invalid_value
         ).to have_at_least(1).errors_on(:identifier)
       end
     end

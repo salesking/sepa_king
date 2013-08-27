@@ -4,17 +4,17 @@ require 'spec_helper'
 describe SEPA::Transaction do
   context 'Name' do
     it 'should accept valid value' do
-      [ 'Manfred Mustermann III.', 'Zahlemann & Söhne GbR', 'X' * 70 ].each do |value_value|
+      [ 'Manfred Mustermann III.', 'Zahlemann & Söhne GbR', 'X' * 70 ].each do |valid_value|
         expect(
-          SEPA::Transaction.new name: value_value
+          SEPA::Transaction.new name: valid_value
         ).to have(:no).errors_on(:name)
       end
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'X' * 71 ].each do |invalue_value|
+      [ nil, '', 'X' * 71 ].each do |invalid_value|
         expect(
-          SEPA::Transaction.new name: invalue_value
+          SEPA::Transaction.new name: invalid_value
         ).to have_at_least(1).errors_on(:name)
       end
     end
@@ -22,17 +22,17 @@ describe SEPA::Transaction do
 
   context 'IBAN' do
     it 'should accept valid value' do
-      [ 'DE21500500009876543210', 'PL61109010140000071219812874' ].each do |value_value|
+      [ 'DE21500500009876543210', 'PL61109010140000071219812874' ].each do |valid_value|
         expect(
-          SEPA::Transaction.new iban: value_value
+          SEPA::Transaction.new iban: valid_value
         ).to have(:no).errors_on(:iban)
       end
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'invalid' ].each do |invalue_value|
+      [ nil, '', 'invalid' ].each do |invalid_value|
         expect(
-          SEPA::Transaction.new iban: invalue_value
+          SEPA::Transaction.new iban: invalid_value
         ).to have_at_least(1).errors_on(:iban)
       end
     end
@@ -40,17 +40,17 @@ describe SEPA::Transaction do
 
   context 'BIC' do
     it 'should accept valid value' do
-      [ 'DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX' ].each do |value_value|
+      [ 'DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX' ].each do |valid_value|
         expect(
-          SEPA::Transaction.new bic: value_value
+          SEPA::Transaction.new bic: valid_value
         ).to have(:no).errors_on(:bic)
       end
     end
 
     it 'should not accept invalid value' do
-      [ nil, '', 'invalid' ].each do |invalue_value|
+      [ nil, '', 'invalid' ].each do |invalid_value|
         expect(
-          SEPA::Transaction.new bic: invalue_value
+          SEPA::Transaction.new bic: invalid_value
         ).to have_at_least(1).errors_on(:bic)
       end
     end
@@ -58,17 +58,17 @@ describe SEPA::Transaction do
 
   context 'Amount' do
     it 'should accept valid value' do
-      [ 0.01, 1, 100, 100.00, 99.99, 1234567890.12, BigDecimal('10'), '42', '42.51', '42.512', 1.23456 ].each do |value_value|
+      [ 0.01, 1, 100, 100.00, 99.99, 1234567890.12, BigDecimal('10'), '42', '42.51', '42.512', 1.23456 ].each do |valid_value|
         expect(
-          SEPA::Transaction.new amount: value_value
+          SEPA::Transaction.new amount: valid_value
         ).to have(:no).errors_on(:amount)
       end
     end
 
     it 'should not accept invalid value' do
-      [ nil, 0, -3, 'xz' ].each do |invalue_value|
+      [ nil, 0, -3, 'xz' ].each do |invalid_value|
         expect(
-          SEPA::Transaction.new amount: invalue_value
+          SEPA::Transaction.new amount: invalid_value
         ).to have_at_least(1).errors_on(:amount)
       end
     end
@@ -76,9 +76,9 @@ describe SEPA::Transaction do
 
   context 'Reference' do
     it 'should accept valid value' do
-      [ nil, 'ABC-1234/78.0', 'X' * 35 ].each do |value_value|
+      [ nil, 'ABC-1234/78.0', 'X' * 35 ].each do |valid_value|
         expect(
-          SEPA::Transaction.new reference: value_value
+          SEPA::Transaction.new reference: valid_value
         ).to have(:no).errors_on(:reference)
       end
     end
