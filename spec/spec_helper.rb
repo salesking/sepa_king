@@ -8,7 +8,6 @@ require 'coveralls'
 SimpleCov.formatter = Coveralls::SimpleCov::Formatter
 SimpleCov.start
 
-require 'xml'
 require 'sepa_king'
 
 # Requires supporting ruby files with custom matchers and macros, etc,

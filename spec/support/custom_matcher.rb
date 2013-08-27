@@ -1,9 +1,34 @@
 require 'rspec/expectations'
+require 'nokogiri'
 
 RSpec::Matchers.define :validate_against do |xsd|
   match do |actual|
-    schema_doc = XML::Document.file("lib/schema/#{xsd}")
-    schema = XML::Schema.document(schema_doc)
-    actual.validate_schema(schema)
+    schema = Nokogiri::XML::Schema(File.read("lib/schema/#{xsd}"))
+    doc = Nokogiri::XML(actual) do |config|
+      config.strict
+    end
+
+    errors = schema.validate(doc)
+    if errors.empty?
+      true
+    else
+      raise Exception.new(errors)
+    end
+  end
+end
+
+RSpec::Matchers.define :have_xml do |xpath, text|
+  match do |actual|
+    doc = Nokogiri::XML(actual)
+    doc.remove_namespaces! # so we can use shorter xpath's without any namespace
+
+    nodes = doc.xpath(xpath)
+    nodes.should_not be_empty
+    if text
+      nodes.each do |node|
+        node.content.should == text
+      end
+    end
+    true
   end
 end

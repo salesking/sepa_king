@@ -61,9 +61,7 @@ describe SEPA::CreditTransfer do
                          :reference              => 'XYZ-5678/456',
                          :remittance_information => 'Rechnung vom 21.08.2013'
 
-      expect(
-        XML::Document.string(ct.to_xml)
-      ).to validate_against('pain.001.002.03.xsd')
+      expect(ct.to_xml).to validate_against('pain.001.002.03.xsd')
     end
   end
 end

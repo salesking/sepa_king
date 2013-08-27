@@ -41,36 +41,108 @@ describe SEPA::DirectDebit do
   end
 
   describe :to_xml do
-    it 'should fail for invalid debtor' do
-      expect {
-        SEPA::DirectDebit.new.to_xml
-      }.to raise_error(RuntimeError)
+    context 'for invalid debtor' do
+      it 'should fail' do
+        expect {
+          SEPA::DirectDebit.new.to_xml
+        }.to raise_error(RuntimeError)
+      end
     end
 
-    it 'should create valid XML file' do
-      dd = direct_debit
+    context 'for valid debtor' do
+      before :each do
+        @dd = direct_debit
 
-      dd.add_transaction :name                      => 'Zahlemann & Söhne GbR',
-                         :bic                       => 'SPUEDE2UXXX',
-                         :iban                      => 'DE21500500009876543210',
-                         :amount                    => 39.99,
-                         :reference                 => 'XYZ/2013-08-ABO/12345',
-                         :remittance_information    => 'Unsere Rechnung vom 10.08.2013',
-                         :mandate_id                => 'K-02-2011-12345',
-                         :mandate_date_of_signature => Date.new(2011,1,25)
+        @dd.add_transaction :name                      => 'Zahlemann & Söhne GbR',
+                            :bic                       => 'SPUEDE2UXXX',
+                            :iban                      => 'DE21500500009876543210',
+                            :amount                    => 39.99,
+                            :reference                 => 'XYZ/2013-08-ABO/12345',
+                            :remittance_information    => 'Unsere Rechnung vom 10.08.2013',
+                            :mandate_id                => 'K-02-2011-12345',
+                            :mandate_date_of_signature => Date.new(2011,1,25)
 
-      dd.add_transaction :name                      => 'Meier & Schulze oHG',
-                         :bic                       => 'GENODEF1JEV',
-                         :iban                      => 'DE68210501700012345678',
-                         :amount                    => 750.00,
-                         :reference                 => 'XYZ/2013-08-ABO/6789',
-                         :remittance_information    => 'Vielen Dank für Ihren Einkauf!',
-                         :mandate_id                => 'K-08-2010-42123',
-                         :mandate_date_of_signature => Date.new(2010,7,25)
+        @dd.add_transaction :name                      => 'Meier & Schulze oHG',
+                            :bic                       => 'GENODEF1JEV',
+                            :iban                      => 'DE68210501700012345678',
+                            :amount                    => 750.00,
+                            :reference                 => 'XYZ/2013-08-ABO/6789',
+                            :remittance_information    => 'Vielen Dank für Ihren Einkauf!',
+                            :mandate_id                => 'K-08-2010-42123',
+                            :mandate_date_of_signature => Date.new(2010,7,25)
+      end
 
-      expect(
-        XML::Document.string(dd.to_xml)
-      ).to validate_against('pain.008.002.02.xsd')
+      it 'should create valid XML file' do
+        expect(@dd.to_xml).to validate_against('pain.008.002.02.xsd')
+      end
+
+      it 'should contain <PmtMtd>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtMtd', 'DD')
+      end
+
+      it 'should contain <NbOfTxs>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/NbOfTxs', '2')
+      end
+
+      it 'should contain <CtrlSum>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CtrlSum', '789.99')
+      end
+
+      it 'should contain <Cdtr>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/Cdtr/Nm', 'Glaeubiger GmbH')
+      end
+
+      it 'should contain <CdtrAcct>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAcct/Id/IBAN', 'DE87200500001234567890')
+      end
+
+      it 'should contain <CdtrAgt>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAgt/FinInstnId/BIC', 'BANKDEFFXXX')
+      end
+
+      it 'should contain <CdtrAgt>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrSchmeId/Id/PrvtId/Othr/Id', 'DE98ZZZ09999999999')
+      end
+
+      it 'should contain <EndToEndId>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/PmtId/EndToEndId', 'XYZ/2013-08-ABO/12345')
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/PmtId/EndToEndId', 'XYZ/2013-08-ABO/6789')
+      end
+
+      it 'should contain <InstdAmt>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/InstdAmt', '39.99')
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/InstdAmt', '750.00')
+      end
+
+      it 'should contain <MndtId>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/MndtId', 'K-02-2011-12345')
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/MndtId', 'K-08-2010-42123')
+      end
+
+      it 'should contain <DtOfSgntr>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/DtOfSgntr', '2011-01-25')
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/DtOfSgntr', '2010-07-25')
+      end
+
+      it 'should contain <DbtrAgt>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAgt/FinInstnId/BIC', 'SPUEDE2UXXX')
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DbtrAgt/FinInstnId/BIC', 'GENODEF1JEV')
+      end
+
+      it 'should contain <Dbtr>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/Dbtr/Nm', 'Zahlemann  Soehne GbR')
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/Dbtr/Nm', 'Meier  Schulze oHG')
+      end
+
+      it 'should contain <DbtrAcct>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAcct/Id/IBAN', 'DE21500500009876543210')
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DbtrAcct/Id/IBAN', 'DE68210501700012345678')
+      end
+
+      it 'should contain <RmtInf>' do
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/RmtInf/Ustrd', 'Unsere Rechnung vom 10.08.2013')
+        @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/RmtInf/Ustrd', 'Vielen Dank fuer Ihren Einkauf')
+      end
     end
   end
 end
