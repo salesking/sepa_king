@@ -41,7 +41,7 @@ describe SEPA::DirectDebit do
   end
 
   describe :to_xml do
-    context 'for invalid debtor' do
+    context 'for invalid creditor' do
       it 'should fail' do
         expect {
           SEPA::DirectDebit.new.to_xml
@@ -49,7 +49,7 @@ describe SEPA::DirectDebit do
       end
     end
 
-    context 'for valid debtor' do
+    context 'for valid creditor' do
       before :each do
         @dd = direct_debit
 
