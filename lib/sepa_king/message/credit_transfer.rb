@@ -5,17 +5,23 @@ module SEPA
     self.account_class = DebtorAccount
     self.transaction_class = CreditTransferTransaction
 
+    # @return [String] xml
     def to_xml
       build_xml do |builder|
-        builder.Document :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03',
-                         :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-                         :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03 pain.001.002.03.xsd' do
+        builder.Document xml_schema do
           builder.CstmrCdtTrfInitn do
             build_group_header(builder)
             build_payment_information(builder)
           end
         end
       end
+    end
+
+    # @return {Hash<Symbol=>String>} xml schema information used in output xml
+    def xml_schema
+      { :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03',
+        :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+        :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03 pain.001.002.03.xsd' }
     end
 
   private
@@ -80,5 +86,6 @@ module SEPA
         end
       end
     end
+
   end
 end
