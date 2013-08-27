@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 def credit_transfer_transaction
   { name:                   'Telekomiker AG',
     bic:                    'PBNKDEFF370',
