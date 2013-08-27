@@ -8,7 +8,7 @@ module SEPA
     # @return [String] xml
     def to_xml
       build_xml do |builder|
-        builder.Document xml_schema do
+        builder.Document(xml_schema) do
           builder.CstmrDrctDbtInitn do
             build_group_header(builder)
             build_payment_information(builder)
@@ -17,13 +17,14 @@ module SEPA
       end
     end
 
+  private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema
       { :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02',
         :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
         :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02 pain.008.002.02.xsd' }
     end
-  private
+
     def build_payment_information(builder)
       builder.PmtInf do
         builder.PmtInfId(payment_information_identification)
@@ -104,6 +105,5 @@ module SEPA
         end
       end
     end
-
   end
 end
