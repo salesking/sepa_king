@@ -9,7 +9,7 @@ describe SEPA::CreditTransfer do
   }
 
   describe :new do
-    it 'should accept mission options' do
+    it 'should accept missing options' do
       expect {
         SEPA::CreditTransfer.new
       }.to_not raise_error
