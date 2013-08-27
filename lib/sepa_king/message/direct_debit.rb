@@ -4,18 +4,7 @@ module SEPA
   class DirectDebit < Message
     self.account_class = CreditorAccount
     self.transaction_class = DirectDebitTransaction
-
-    # @return [String] xml
-    def to_xml
-      build_xml do |builder|
-        builder.Document(xml_schema) do
-          builder.CstmrDrctDbtInitn do
-            build_group_header(builder)
-            build_payment_informations(builder)
-          end
-        end
-      end
-    end
+    self.xml_main_tag = 'CstmrDrctDbtInitn'
 
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml

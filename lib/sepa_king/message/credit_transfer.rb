@@ -4,18 +4,7 @@ module SEPA
   class CreditTransfer < Message
     self.account_class = DebtorAccount
     self.transaction_class = CreditTransferTransaction
-
-    # @return [String] xml
-    def to_xml
-      build_xml do |builder|
-        builder.Document(xml_schema) do
-          builder.CstmrCdtTrfInitn do
-            build_group_header(builder)
-            build_payment_informations(builder)
-          end
-        end
-      end
-    end
+    self.xml_main_tag = 'CstmrCdtTrfInitn'
 
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
