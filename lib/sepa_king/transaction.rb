@@ -8,11 +8,10 @@ module SEPA
     convert :name, :reference, :remittance_information, to: :text
     convert :amount, to: :decimal
 
-    validates_presence_of :name, :iban, :bic, :amount
-    validates_length_of :name, maximum: 70
+    validates_length_of :name, within: 1..70
     validates_length_of :bic, within: 8..11
-    validates_length_of :reference, maximum: 35, minimum: 1, allow_nil: true
-    validates_length_of :remittance_information, minimum: 1, maximum: 140, allow_nil: true
+    validates_length_of :reference, within: 1..35, allow_nil: true
+    validates_length_of :remittance_information, within: 1..140, allow_nil: true
     validates_numericality_of :amount, greater_than: 0
 
     validate do |t|
