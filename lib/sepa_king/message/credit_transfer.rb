@@ -29,7 +29,6 @@ module SEPA
       builder.PmtInf do
         builder.PmtInfId(payment_information_identification)
         builder.PmtMtd('TRF')
-        builder.BtchBookg(true)
         builder.NbOfTxs(transactions.length)
         builder.CtrlSum('%.2f' % amount_total)
         builder.PmtTpInf do
