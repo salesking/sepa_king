@@ -1,11 +1,12 @@
 # encoding: utf-8
 module SEPA
   class DirectDebitTransaction < Transaction
-    attr_accessor :mandate_id, :mandate_date_of_signature, :local_instrument
+    attr_accessor :mandate_id, :mandate_date_of_signature, :local_instrument, :sequence_type
 
     validates_length_of :mandate_id, within: 1..35
     validates_presence_of :mandate_date_of_signature
     validates_inclusion_of :local_instrument, :in => %w(CORE B2B)
+    validates_inclusion_of :sequence_type, :in => %w(FRST OOFF RCUR FNAL)
 
     validate do |t|
       if t.mandate_date_of_signature.is_a?(Date)
@@ -18,6 +19,7 @@ module SEPA
     def initialize(attributes = {})
       super
       self.local_instrument ||= 'CORE'
+      self.sequence_type ||= 'OOFF'
     end
   end
 end

@@ -176,6 +176,48 @@ describe SEPA::DirectDebit do
           @dd.to_xml.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
         end
       end
+
+      context 'with different sequence_type given' do
+        before :each do
+          @dd = direct_debit
+
+          @dd.add_transaction(direct_debt_transaction.merge sequence_type: 'OOFF')
+          @dd.add_transaction(direct_debt_transaction.merge sequence_type: 'FRST')
+          @dd.add_transaction(direct_debt_transaction.merge sequence_type: 'FRST')
+        end
+
+        it 'should contain two payment_informations with <LclInstrm>' do
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'FRST')
+
+          @dd.to_xml.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+        end
+      end
+
+      context 'with three transactions containing different group criteria' do
+        before :each do
+          @dd = direct_debit
+
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'CORE', sequence_type: 'OOFF')
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'B2B',  sequence_type: 'OOFF')
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'CORE', sequence_type: 'FNAL')
+        end
+
+        it 'should contain three payment_informations' do
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/LclInstrm/Cd', 'CORE')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
+
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 2).iso8601)
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/LclInstrm/Cd', 'B2B')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'OOFF')
+
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/ReqdColltnDt', (Date.today + 2).iso8601)
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/LclInstrm/Cd', 'CORE')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/SeqTp', 'FNAL')
+        end
+      end
+
     end
   end
 end

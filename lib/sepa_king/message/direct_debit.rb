@@ -18,7 +18,8 @@ module SEPA
     def grouped_transactions
       transactions.group_by do |transaction|
         { requested_date:   transaction.requested_date,
-          local_instrument: transaction.local_instrument
+          local_instrument: transaction.local_instrument,
+          sequence_type:    transaction.sequence_type
         }
       end
     end
@@ -38,7 +39,7 @@ module SEPA
             builder.LclInstrm do
               builder.Cd(group[:local_instrument])
             end
-            builder.SeqTp('OOFF')
+            builder.SeqTp(group[:sequence_type])
           end
           builder.ReqdColltnDt(group[:requested_date].iso8601)
           builder.Cdtr do
