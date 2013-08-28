@@ -31,7 +31,7 @@ module SEPA
             end
             builder.SeqTp('OOFF')
           end
-          builder.ReqdColltnDt((requested_date || Date.today.next).iso8601)
+          builder.ReqdColltnDt(requested_date.iso8601)
           builder.Cdtr do
             builder.Nm(account.name)
           end
@@ -69,7 +69,7 @@ module SEPA
     def build_transaction(builder, transaction)
       builder.DrctDbtTxInf do
         builder.PmtId do
-          builder.EndToEndId(transaction.reference || 'NOTPROVIDED')
+          builder.EndToEndId(transaction.reference)
         end
         builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
         builder.DrctDbtTx do

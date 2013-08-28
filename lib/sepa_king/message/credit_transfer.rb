@@ -27,7 +27,7 @@ module SEPA
               builder.Cd('SEPA')
             end
           end
-          builder.ReqdExctnDt((requested_date || Date.today.next).iso8601)
+          builder.ReqdExctnDt(requested_date.iso8601)
           builder.Dbtr do
             builder.Nm(account.name)
           end
@@ -53,7 +53,7 @@ module SEPA
     def build_transaction(builder, transaction)
       builder.CdtTrfTxInf do
         builder.PmtId do
-          builder.EndToEndId(transaction.reference || 'NOTPROVIDED')
+          builder.EndToEndId(transaction.reference)
         end
         builder.Amt do
           builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
