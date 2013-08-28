@@ -159,6 +159,23 @@ describe SEPA::DirectDebit do
           @dd.to_xml.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
         end
       end
+
+      context 'with different local_instrument given' do
+        before :each do
+          @dd = direct_debit
+
+          @dd.add_transaction(direct_debt_transaction.merge local_instrument: 'CORE')
+          @dd.add_transaction(direct_debt_transaction.merge local_instrument: 'B2B')
+          @dd.add_transaction(direct_debt_transaction.merge local_instrument: 'B2B')
+        end
+
+        it 'should contain two payment_informations with <LclInstrm>' do
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/LclInstrm/Cd', 'CORE')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/LclInstrm/Cd', 'B2B')
+
+          @dd.to_xml.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+        end
+      end
     end
   end
 end

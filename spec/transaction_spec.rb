@@ -2,6 +2,16 @@
 require 'spec_helper'
 
 describe SEPA::Transaction do
+  describe :new do
+    it 'should have default for reference' do
+      SEPA::Transaction.new.reference.should == 'NOTPROVIDED'
+    end
+
+    it 'should have default for requested_date' do
+      SEPA::Transaction.new.requested_date.should == Date.today.next
+    end
+  end
+
   context 'Name' do
     it 'should accept valid value' do
       SEPA::Transaction.should accept('Manfred Mustermann III.', 'Zahlemann & Söhne GbR', 'X' * 70, for: :name)
