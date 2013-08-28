@@ -5,6 +5,7 @@ require 'builder'
 require 'iban-tools'
 
 require 'sepa_king/converter'
+require 'sepa_king/validator'
 require 'sepa_king/account'
 require 'sepa_king/account/debtor_account'
 require 'sepa_king/account/creditor_account'

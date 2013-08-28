@@ -8,11 +8,7 @@ module SEPA
     convert :name, to: :text
 
     validates_length_of :name, within: 1..70
-    validates_length_of :bic, within: 8..11
-
-    validate do |t|
-      errors.add(:iban, 'is invalid') unless IBANTools::IBAN.valid?(t.iban.to_s)
-    end
+    validates_with BICValidator, IBANValidator
 
     def initialize(attributes = {})
       attributes.each do |name, value|
