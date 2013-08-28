@@ -10,6 +10,10 @@ describe SEPA::Transaction do
     it 'should have default for requested_date' do
       SEPA::Transaction.new.requested_date.should == Date.today.next
     end
+
+    it 'should have default for batch_booking' do
+      SEPA::Transaction.new.batch_booking.should == true
+    end
   end
 
   context 'Name' do

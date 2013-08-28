@@ -17,7 +17,8 @@ module SEPA
     # Find groups of transactions which share the same values of some attributes
     def grouped_transactions
       transactions.group_by do |transaction|
-        { requested_date: transaction.requested_date
+        { requested_date: transaction.requested_date,
+          batch_booking:  transaction.batch_booking
         }
       end
     end
@@ -29,6 +30,7 @@ module SEPA
         builder.PmtInf do
           builder.PmtInfId(payment_information_identification)
           builder.PmtMtd('TRF')
+          builder.BtchBookg(group[:batch_booking])
           builder.NbOfTxs(transactions.length)
           builder.CtrlSum('%.2f' % amount_total)
           builder.PmtTpInf do

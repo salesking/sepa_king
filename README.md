@@ -43,7 +43,8 @@ dd.add_transaction name:                      'Zahlemann & Söhne GbR',
                    mandate_id:                'K-02-2011-12345',
                    mandate_date_of_signature: Date.new(2011,1,25),
                    requested_date:            Date.new(2013,08,31), # optional
-                   local_instrument:          'CORE' # optional
+                   local_instrument:          'CORE', # optional
+                   batch_booking:             true # optional
 dd.add_transaction ...
 
 # Last: create XML string
@@ -66,7 +67,8 @@ ct.add_transaction name:                   'Telekomiker AG',
                    amount:                 102.50,
                    reference:              'XYZ-1234/123',
                    remittance_information: 'Rechnung vom 22.08.2013',
-                   requested_date:         Date.new(2013,08,31) # optional
+                   requested_date:         Date.new(2013,08,31), # optional
+                   batch_booking:          true # optional
 ct.add_transaction ...
 
 # Last: create XML string

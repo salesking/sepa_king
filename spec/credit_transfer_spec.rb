@@ -69,6 +69,10 @@ describe SEPA::CreditTransfer do
           @ct.to_xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/PmtMtd', 'TRF')
         end
 
+        it 'should contain <BtchBookg>' do
+          @ct.to_xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/BtchBookg', 'true')
+        end
+
         it 'should contain <NbOfTxs>' do
           @ct.to_xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/NbOfTxs', '2')
         end
@@ -132,6 +136,23 @@ describe SEPA::CreditTransfer do
         it 'should contain two payment_informations with <ReqdExctnDt>' do
           @ct.to_xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/ReqdExctnDt', (Date.today + 1).iso8601)
           @ct.to_xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/ReqdExctnDt', (Date.today + 2).iso8601)
+
+          @ct.to_xml.should_not have_xml('//Document/CstmrCdtTrfInitn/PmtInf[3]')
+        end
+      end
+
+      context 'with different batch_booking given' do
+        before :each do
+          @ct = credit_transfer
+
+          @ct.add_transaction(credit_transfer_transaction.merge batch_booking: false)
+          @ct.add_transaction(credit_transfer_transaction.merge batch_booking: true)
+          @ct.add_transaction(credit_transfer_transaction.merge batch_booking: true)
+        end
+
+        it 'should contain two payment_informations with <BtchBookg>' do
+          @ct.to_xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/BtchBookg', 'false')
+          @ct.to_xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/BtchBookg', 'true')
 
           @ct.to_xml.should_not have_xml('//Document/CstmrCdtTrfInitn/PmtInf[3]')
         end

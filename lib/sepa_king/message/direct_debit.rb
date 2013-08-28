@@ -19,7 +19,8 @@ module SEPA
       transactions.group_by do |transaction|
         { requested_date:   transaction.requested_date,
           local_instrument: transaction.local_instrument,
-          sequence_type:    transaction.sequence_type
+          sequence_type:    transaction.sequence_type,
+          batch_booking:    transaction.batch_booking
         }
       end
     end
@@ -30,6 +31,7 @@ module SEPA
         builder.PmtInf do
           builder.PmtInfId(payment_information_identification)
           builder.PmtMtd('DD')
+          builder.BtchBookg(group[:batch_booking])
           builder.NbOfTxs(transactions.length)
           builder.CtrlSum('%.2f' % amount_total)
           builder.PmtTpInf do

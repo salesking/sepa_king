@@ -78,6 +78,10 @@ describe SEPA::DirectDebit do
           @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtMtd', 'DD')
         end
 
+        it 'should contain <BtchBookg>' do
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/BtchBookg', 'true')
+        end
+
         it 'should contain <NbOfTxs>' do
           @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/NbOfTxs', '2')
         end
@@ -194,6 +198,23 @@ describe SEPA::DirectDebit do
         end
       end
 
+      context 'with different batch_booking given' do
+        before :each do
+          @dd = direct_debit
+
+          @dd.add_transaction(direct_debt_transaction.merge batch_booking: false)
+          @dd.add_transaction(direct_debt_transaction.merge batch_booking: true)
+          @dd.add_transaction(direct_debt_transaction.merge batch_booking: true)
+        end
+
+        it 'should contain two payment_informations with <BtchBookg>' do
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/BtchBookg', 'false')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/BtchBookg', 'true')
+
+          @dd.to_xml.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+        end
+      end
+
       context 'with three transactions containing different group criteria' do
         before :each do
           @dd = direct_debit
@@ -217,7 +238,6 @@ describe SEPA::DirectDebit do
           @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/SeqTp', 'FNAL')
         end
       end
-
     end
   end
 end
