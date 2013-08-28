@@ -6,15 +6,12 @@
 
 We love building payment applications! So after developing the [DTAUS library for Ruby](https://github.com/salesking/king_dtaus) we move on with SEPA!
 
-This is just the beginning. There is still a lot to do. Please stay tuned...
-
 
 ## Features
 
-* Credit transfer (pain.001.002.03)
-* Debit transfer (pain.008.002.02)
-* 100% test coverage to ensure software quality
-* Tested with Ruby 1.9.3 and 2.0.0
+* Credit transfer initiation (pain.001.002.03)
+* Debit transfer initiation (pain.008.002.02)
+* Tested with Ruby 1.9.3 or 2.0.0
 
 
 ## Installation
@@ -24,7 +21,7 @@ This is just the beginning. There is still a lot to do. Please stay tuned...
 
 ## Examples
 
-How to create a SEPA file for direct debit ("Lastschrift")
+How to create the XML for **Direct Debit Initiation** (in german: "Lastschrift")
 
 ```ruby
 # First: Create the main object
@@ -52,7 +49,7 @@ xml_string = dd.to_xml
 ```
 
 
-How to create a SEPA file for credit transfer ("Überweisung")
+How to create the XML for **Credit Transfer Initiation** (in german: "Überweisung")
 
 ```ruby
 # First: Create the main object
