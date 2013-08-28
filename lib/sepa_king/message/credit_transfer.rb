@@ -14,8 +14,17 @@ module SEPA
         :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03 pain.001.002.03.xsd' }
     end
 
+    # Find groups of transactions which share the same values of some attributes
+    def grouped_transactions
+      transactions.group_by do |transaction|
+        { requested_date: transaction.requested_date
+        }
+      end
+    end
+
     def build_payment_informations(builder)
-      transactions.group_by(&:requested_date).each do |requested_date, transactions|
+      # Build a PmtInf block for every group of transactions
+      grouped_transactions.each do |group, transactions|
         # All transactions with the same requested_date are placed into the same PmtInf block
         builder.PmtInf do
           builder.PmtInfId(payment_information_identification)
@@ -27,7 +36,7 @@ module SEPA
               builder.Cd('SEPA')
             end
           end
-          builder.ReqdExctnDt(requested_date.iso8601)
+          builder.ReqdExctnDt(group[:requested_date].iso8601)
           builder.Dbtr do
             builder.Nm(account.name)
           end

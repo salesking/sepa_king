@@ -42,7 +42,8 @@ dd.add_transaction name:                      'Zahlemann & Söhne GbR',
                    remittance_information:    'Vielen Dank für Ihren Einkauf!',
                    mandate_id:                'K-02-2011-12345',
                    mandate_date_of_signature: Date.new(2011,1,25),
-                   requested_date:            Date.new(2013,08,31) # optional
+                   requested_date:            Date.new(2013,08,31), # optional
+                   local_instrument:          'CORE' # optional
 dd.add_transaction ...
 
 # Last: create XML string
