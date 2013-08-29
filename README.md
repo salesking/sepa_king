@@ -4,6 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/salesking/sepa_king.png)](https://codeclimate.com/github/salesking/sepa_king)
 [![Coverage Status](https://coveralls.io/repos/salesking/sepa_king/badge.png)](https://coveralls.io/r/salesking/sepa_king)
 [![Gem Version](https://badge.fury.io/rb/sepa_king.png)](http://badge.fury.io/rb/sepa_king)
+[![Dependency Status](https://gemnasium.com/salesking/sepa_king.png)](https://gemnasium.com/salesking/sepa_king)
 
 We love building payment applications! So after developing the [DTAUS library for Ruby](https://github.com/salesking/king_dtaus) we move on with SEPA.
 
