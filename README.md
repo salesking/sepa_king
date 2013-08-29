@@ -11,9 +11,17 @@ We love building payment applications! So after developing the [DTAUS library fo
 
 ## Features
 
+This gem implements the following two messages out of the ISO 20022 standard:
+
 * Credit transfer initiation (pain.001.002.03)
 * Debit transfer initiation (pain.008.002.02)
-* Tested with Ruby 1.9.3 and 2.0.0
+
+BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
+
+
+## Requirements
+
+* Ruby 1.9.3 or 2.0.0
 
 
 ## Installation
