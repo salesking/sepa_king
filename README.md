@@ -47,15 +47,15 @@ sdd = SEPA::DirectDebit.new(
 
 # Second: Add transactions
 sdd.add_transaction(
-  # Name of the debitor, in German: "Zahlungspflichtiger"
+  # Name of the debtor, in German: "Zahlungspflichtiger"
   # String, max. 70 char
   name:                      'Zahlemann & Söhne GbR',
 
-  # Business Identifier Code (SWIFT-Code) of the debitor's account
+  # Business Identifier Code (SWIFT-Code) of the debtor's account
   # String, 8 or 11 char
   bic:                       'SPUEDE2UXXX',
 
-  # International Bank Account Number of the debitor's account
+  # International Bank Account Number of the debtor's account
   # String, max. 34 chars
   iban:                      'DE21500500009876543210',
 
@@ -63,11 +63,11 @@ sdd.add_transaction(
   # Number with two decimal digit
   amount:                    39.99,
 
-  # OPTIONAL: End-To-End-Identification, will be submitted to the debitor
+  # OPTIONAL: End-To-End-Identification, will be submitted to the debtor
   # String, max. 35 char
   reference:                 'XYZ/2013-08-ABO/6789',
 
-  # OPTIONAL: Unstructured remittance Information, in German "Verwendungszweck"
+  # OPTIONAL: Unstructured remittance information, in German "Verwendungszweck"
   # String, max. 140 char
   remittance_information:    'Vielen Dank für Ihren Einkauf!',
 
@@ -80,13 +80,13 @@ sdd.add_transaction(
   mandate_date_of_signature: Date.new(2011,1,25),
 
   # Local instrument, in German "Lastschriftart"
-  # One of this strings:
+  # One of these strings:
   #   'CORE' ("Basis-Lastschrift")
   #   'B2B' ("Firmen-Lastschrift")
   local_instrument: 'CORE',
 
   # Sequence type
-  # One of this strings:
+  # One of these strings:
   #   'FRST' ("Erst-Lastschrift")
   #   'RCUR' ("Folge-Lastschrift")
   #   'OOFF' ("Einmalige Lastschrift")
@@ -98,6 +98,7 @@ sdd.add_transaction(
   requested_date: Date.new(2013,9,5),
 
   # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
+  # True or False
   batch_booking: true
 )
 sdd.add_transaction ...
@@ -112,15 +113,15 @@ How to create the XML for **Credit Transfer Initiation** (in german: "Überweisu
 ```ruby
 # First: Create the main object
 sct = SEPA::CreditTransfer.new(
-  # Name of the initiating party and debitor, in German: "Auftraggeber"
+  # Name of the initiating party and debtor, in German: "Auftraggeber"
   # String, max. 70 char
   name: 'Schuldner GmbH',
 
-  # Business Identifier Code (SWIFT-Code) of the debitor
+  # Business Identifier Code (SWIFT-Code) of the debtor
   # String, 8 or 11 char
   bic:  'BANKDEFFXXX',
 
-  # International Bank Account Number of the debitor
+  # International Bank Account Number of the debtor
   # String, max. 34 chars
   iban: 'DE87200500001234567890'
 )
@@ -147,9 +148,17 @@ sct.add_transaction(
   # String, max. 35 char
   reference:              'XYZ-1234/123',
 
-  # OPTIONAL: Unstructured remittance Information, in German "Verwendungszweck"
+  # OPTIONAL: Unstructured remittance information, in German "Verwendungszweck"
   # String, max. 140 char
   remittance_information: 'Rechnung vom 22.08.2013'
+
+  # OPTIONAL: Requested execution date, in German "Ausführungstermin"
+  # Date
+  requested_date: Date.new(2013,9,5),
+
+  # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
+  # True or False
+  batch_booking: true
 )
 sct.add_transaction ...
 
