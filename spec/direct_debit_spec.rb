@@ -3,10 +3,10 @@ require 'spec_helper'
 
 describe SEPA::DirectDebit do
   let(:direct_debit) {
-    SEPA::DirectDebit.new name:       'Gläubiger GmbH',
-                          bic:        'BANKDEFFXXX',
-                          iban:       'DE87200500001234567890',
-                          identifier: 'DE98ZZZ09999999999'
+    SEPA::DirectDebit.new name:                'Gläubiger GmbH',
+                          bic:                 'BANKDEFFXXX',
+                          iban:                'DE87200500001234567890',
+                          creditor_identifier: 'DE98ZZZ09999999999'
   }
 
   describe :new do

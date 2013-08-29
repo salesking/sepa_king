@@ -62,7 +62,7 @@ module SEPA
             builder.Id do
               builder.PrvtId do
                 builder.Othr do
-                  builder.Id(account.identifier)
+                  builder.Id(account.creditor_identifier)
                   builder.SchmeNm do
                     builder.Prtry('SEPA')
                   end

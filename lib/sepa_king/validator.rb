@@ -18,16 +18,16 @@ module SEPA
 
   class CreditorIdentifierValidator < ActiveModel::Validator
     def validate(record)
-      unless valid?(record.identifier)
-        record.errors.add(:identifier, 'is invalid')
+      unless valid?(record.creditor_identifier)
+        record.errors.add(:creditor_identifier, 'is invalid')
       end
     end
 
-    def valid?(identifier)
-      if ok = identifier.to_s.match(/[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}/)
+    def valid?(creditor_identifier)
+      if ok = creditor_identifier.to_s.match(/[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}/)
         # In Germany, the identifier has to be exactly 18 chars long
-        if identifier[0..1].match(/DE/i)
-          ok = identifier.length == 18
+        if creditor_identifier[0..1].match(/DE/i)
+          ok = creditor_identifier.length == 18
         end
       end
       ok
