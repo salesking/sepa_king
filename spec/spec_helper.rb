@@ -11,7 +11,7 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   Coveralls::SimpleCov::Formatter
 ]
 SimpleCov.start do
-  add_filter '/spec/support/custom_matcher'
+  add_filter '/spec/'
 end
 
 require 'sepa_king'
