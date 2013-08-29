@@ -1,17 +1,17 @@
-# Handle SEPA like a king
+# Ruby gem for creating SEPA XML files
 
 [![Build Status](https://secure.travis-ci.org/salesking/sepa_king.png)](http://travis-ci.org/salesking/sepa_king)
 [![Code Climate](https://codeclimate.com/github/salesking/sepa_king.png)](https://codeclimate.com/github/salesking/sepa_king)
 [![Coverage Status](https://coveralls.io/repos/salesking/sepa_king/badge.png)](https://coveralls.io/r/salesking/sepa_king)
 
-We love building payment applications! So after developing the [DTAUS library for Ruby](https://github.com/salesking/king_dtaus) we move on with SEPA!
+We love building payment applications! So after developing the [DTAUS library for Ruby](https://github.com/salesking/king_dtaus) we move on with SEPA.
 
 
 ## Features
 
 * Credit transfer initiation (pain.001.002.03)
 * Debit transfer initiation (pain.008.002.02)
-* Tested with Ruby 1.9.3 or 2.0.0
+* Tested with Ruby 1.9.3 and 2.0.0
 
 
 ## Installation
@@ -19,60 +19,120 @@ We love building payment applications! So after developing the [DTAUS library fo
     gem install sepa_king
 
 
-## Examples
+## Usage
 
-How to create the XML for **Direct Debit Initiation** (in german: "Lastschrift")
-
-```ruby
-# First: Create the main object
-dd = SEPA::DirectDebit.new name:       'Gläubiger GmbH',
-                           bic:        'BANKDEFFXXX',
-                           iban:       'DE87200500001234567890',
-                           identifier: 'DE98ZZZ09999999999'
-
-# Second: Add transactions
-dd.add_transaction name:                      'Zahlemann & Söhne GbR',
-                   bic:                       'SPUEDE2UXXX',
-                   iban:                      'DE21500500009876543210',
-                   amount:                    39.99,
-                   reference:                 'XYZ/2013-08-ABO/6789',
-                   remittance_information:    'Vielen Dank für Ihren Einkauf!',
-                   mandate_id:                'K-02-2011-12345',
-                   mandate_date_of_signature: Date.new(2011,1,25),
-                   requested_date:            Date.new(2013,08,31), # optional
-                   local_instrument:          'CORE', # optional
-                   batch_booking:             true # optional
-dd.add_transaction ...
-
-# Last: create XML string
-xml_string = dd.to_xml
-```
-
-
-How to create the XML for **Credit Transfer Initiation** (in german: "Überweisung")
+How to create the XML for **Direct Debit Initiation** (in German: "Lastschriften")
 
 ```ruby
 # First: Create the main object
-ct = SEPA::CreditTransfer.new name: 'Schuldner GmbH',
-                              bic:  'BANKDEFFXXX',
-                              iban: 'DE87200500001234567890'
+sdd = SEPA::DirectDebit.new(
+  name:       'Gläubiger GmbH',
+  # Name of the initiating party and creditor, in German: "Auftraggeber"
+  # String, max. 70 char
+
+  bic:        'BANKDEFFXXX',
+  # Business Identifier Code (SWIFT-Code) of the creditor
+  # String, 8 or 11 char
+
+  iban:       'DE87200500001234567890',
+  # International Bank Account Number of the creditor
+  # String, max. 34 chars
+
+  creditor_identifier: 'DE98ZZZ09999999999'
+  # Creditor Identifier, in German: Gläubiger-Identifikationsnummer
+  # String, max. 35 chars
+)
 
 # Second: Add transactions
-ct.add_transaction name:                   'Telekomiker AG',
-                   bic:                    'PBNKDEFF370',
-                   iban:                   'DE37112589611964645802',
-                   amount:                 102.50,
-                   reference:              'XYZ-1234/123',
-                   remittance_information: 'Rechnung vom 22.08.2013',
-                   requested_date:         Date.new(2013,08,31), # optional
-                   batch_booking:          true # optional
-ct.add_transaction ...
+sdd.add_transaction(
+  name:                      'Zahlemann & Söhne GbR',
+  # Name of the debitor, in German: "Zahlungspflichtiger"
+  # String, max. 70 char
+
+  bic:                       'SPUEDE2UXXX',
+  # Business Identifier Code (SWIFT-Code) of the debitor's account
+  # String, 8 or 11 char
+
+  iban:                      'DE21500500009876543210',
+  # International Bank Account Number of the debitor's account
+  # String, max. 34 chars
+
+  amount:                    39.99,
+  # Amount in EUR
+  # Number with two decimal digit
+
+  reference:                 'XYZ/2013-08-ABO/6789',
+  # OPTIONAL: End-To-End-Identification, will be submitted to the debitor
+  # String, max. 35 char
+
+  remittance_information:    'Vielen Dank für Ihren Einkauf!',
+  # OPTIONAL: Unstructured remittance Information, in German "Verwendungszweck"
+  # String, max. 140 char
+
+  mandate_id:                'K-02-2011-12345',
+  # Mandate identifikation, in German "Mandatsreferenz"
+  # String, max. 35 char
+
+  mandate_date_of_signature: Date.new(2011,1,25)
+  # Mandate Date of signature, in German "Datum, zu dem das Mandat unterschrieben wurde"
+  # Date
+)
+sdd.add_transaction ...
 
 # Last: create XML string
-xml_string = ct.to_xml
+xml_string = sdd.to_xml
 ```
 
-Make sure to read the code and the specs!
+
+How to create the XML for **Credit Transfer Initiation** (in german: "Überweisungen")
+
+```ruby
+# First: Create the main object
+sct = SEPA::CreditTransfer.new(
+  name: 'Schuldner GmbH',
+  # Name of the initiating party and debitor, in German: "Auftraggeber"
+  # String, max. 70 char
+
+  bic:  'BANKDEFFXXX',
+  # Business Identifier Code (SWIFT-Code) of the debitor
+  # String, 8 or 11 char
+
+  iban: 'DE87200500001234567890'
+  # International Bank Account Number of the debitor
+  # String, max. 34 chars
+)
+
+# Second: Add transactions
+sct.add_transaction(
+  name:                   'Telekomiker AG',
+  # Name of the creditor, in German: "Zahlungsempfänger"
+  # String, max. 70 char
+
+  bic:                    'PBNKDEFF370',
+  # Business Identifier Code (SWIFT-Code) of the creditor's account
+  # String, 8 or 11 char
+
+  iban:                   'DE37112589611964645802',
+  # International Bank Account Number of the creditor's account
+  # String, max. 34 chars
+
+  amount:                 102.50,
+  # Amount in EUR
+  # Number with two decimal digit
+
+  reference:              'XYZ-1234/123',
+  # OPTIONAL: End-To-End-Identification, will be submitted to the creditor
+  # String, max. 35 char
+
+  remittance_information: 'Rechnung vom 22.08.2013'
+  # OPTIONAL: Unstructured remittance Information, in German "Verwendungszweck"
+  # String, max. 140 char
+)
+sct.add_transaction ...
+
+# Last: create XML string
+xml_string = sct.to_xml
+```
 
 
 ## Changelog
