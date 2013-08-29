@@ -76,6 +76,27 @@ sdd.add_transaction(
   mandate_date_of_signature: Date.new(2011,1,25)
   # Mandate Date of signature, in German "Datum, zu dem das Mandat unterschrieben wurde"
   # Date
+
+  local_instrument: 'CORE'
+  # Local instrument, in German "Lastschriftart"
+  # One of this strings:
+  #   'CORE' ("Basis-Lastschrift")
+  #   'B2B' ("Firmen-Lastschrift")
+
+  sequence_type: 'OOFF'
+  # Sequence type
+  # One of this strings:
+  #   'FRST' ("Erst-Lastschrift")
+  #   'RCUR' ("Folge-Lastschrift")
+  #   'OOFF' ("Einmalige Lastschrift")
+  #   'FNAL' ("Letztmalige Lastschrift")
+
+  requested_date: Date.new(2013,9,5)
+  # OPTIONAL: Requested collection date, in German "Fälligkeitsdatum der Lastschrift"
+  # Date
+
+  batch_booking: true
+  # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
 )
 sdd.add_transaction ...
 
