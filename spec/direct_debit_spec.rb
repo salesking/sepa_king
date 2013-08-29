@@ -215,27 +215,65 @@ describe SEPA::DirectDebit do
         end
       end
 
-      context 'with three transactions containing different group criteria' do
+      context 'with transactions containing different group criteria' do
         before :each do
           @dd = direct_debit
 
-          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'CORE', sequence_type: 'OOFF')
-          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'B2B',  sequence_type: 'OOFF')
-          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'CORE', sequence_type: 'FNAL')
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'CORE', sequence_type: 'OOFF', amount: 1)
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'CORE', sequence_type: 'FNAL', amount: 2)
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'B2B',  sequence_type: 'OOFF', amount: 4)
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'B2B',  sequence_type: 'FNAL', amount: 8)
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'CORE', sequence_type: 'OOFF', amount: 16)
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'CORE', sequence_type: 'FNAL', amount: 32)
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'B2B',  sequence_type: 'OOFF', amount: 64)
+          @dd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'B2B',  sequence_type: 'FNAL', amount: 128)
+
+          @xml = @dd.to_xml
         end
 
-        it 'should contain three payment_informations' do
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/LclInstrm/Cd', 'CORE')
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
+        it 'should contain multiple payment_informations' do
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/LclInstrm/Cd', 'CORE')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
 
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 2).iso8601)
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/LclInstrm/Cd', 'B2B')
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'OOFF')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 1).iso8601)
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/LclInstrm/Cd', 'CORE')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'FNAL')
 
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/ReqdColltnDt', (Date.today + 2).iso8601)
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/LclInstrm/Cd', 'CORE')
-          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/SeqTp', 'FNAL')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/ReqdColltnDt', (Date.today + 1).iso8601)
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/LclInstrm/Cd', 'B2B')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/SeqTp', 'OOFF')
+
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/ReqdColltnDt', (Date.today + 1).iso8601)
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/PmtTpInf/LclInstrm/Cd', 'B2B')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/PmtTpInf/SeqTp', 'FNAL')
+
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[5]/ReqdColltnDt', (Date.today + 2).iso8601)
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[5]/PmtTpInf/LclInstrm/Cd', 'CORE')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[5]/PmtTpInf/SeqTp', 'OOFF')
+
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[6]/ReqdColltnDt', (Date.today + 2).iso8601)
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[6]/PmtTpInf/LclInstrm/Cd', 'CORE')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[6]/PmtTpInf/SeqTp', 'FNAL')
+
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[7]/ReqdColltnDt', (Date.today + 2).iso8601)
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[7]/PmtTpInf/LclInstrm/Cd', 'B2B')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[7]/PmtTpInf/SeqTp', 'OOFF')
+
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[8]/ReqdColltnDt', (Date.today + 2).iso8601)
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[8]/PmtTpInf/LclInstrm/Cd', 'B2B')
+          @xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[8]/PmtTpInf/SeqTp', 'FNAL')
+        end
+
+        it 'should have multiple control sums' do
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/CtrlSum', '1.00')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/CtrlSum', '2.00')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/CtrlSum', '4.00')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/CtrlSum', '8.00')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[5]/CtrlSum', '16.00')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[6]/CtrlSum', '32.00')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[7]/CtrlSum', '64.00')
+          @dd.to_xml.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[8]/CtrlSum', '128.00')
         end
       end
     end

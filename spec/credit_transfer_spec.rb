@@ -157,6 +157,40 @@ describe SEPA::CreditTransfer do
           @ct.to_xml.should_not have_xml('//Document/CstmrCdtTrfInitn/PmtInf[3]')
         end
       end
+
+      context 'with transactions containing different group criteria' do
+        before :each do
+          @ct = credit_transfer
+
+          @ct.add_transaction(credit_transfer_transaction.merge requested_date: Date.today + 1, batch_booking: false, amount: 1)
+          @ct.add_transaction(credit_transfer_transaction.merge requested_date: Date.today + 1, batch_booking: true,  amount: 2)
+          @ct.add_transaction(credit_transfer_transaction.merge requested_date: Date.today + 2, batch_booking: false, amount: 4)
+          @ct.add_transaction(credit_transfer_transaction.merge requested_date: Date.today + 2, batch_booking: true,  amount: 8)
+
+          @xml = @ct.to_xml
+        end
+
+        it 'should contain multiple payment_informations' do
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/ReqdExctnDt', (Date.today + 1).iso8601)
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/BtchBookg', 'false')
+
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/ReqdExctnDt', (Date.today + 1).iso8601)
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/BtchBookg', 'true')
+
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[3]/ReqdExctnDt', (Date.today + 2).iso8601)
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[3]/BtchBookg', 'false')
+
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[4]/ReqdExctnDt', (Date.today + 2).iso8601)
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[4]/BtchBookg', 'true')
+        end
+
+        it 'should have multiple control sums' do
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/CtrlSum', '1.00')
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/CtrlSum', '2.00')
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[3]/CtrlSum', '4.00')
+          @xml.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[4]/CtrlSum', '8.00')
+        end
+      end
     end
   end
 end

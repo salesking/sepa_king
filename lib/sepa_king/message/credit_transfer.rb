@@ -32,7 +32,7 @@ module SEPA
           builder.PmtMtd('TRF')
           builder.BtchBookg(group[:batch_booking])
           builder.NbOfTxs(transactions.length)
-          builder.CtrlSum('%.2f' % amount_total)
+          builder.CtrlSum('%.2f' % amount_total(transactions))
           builder.PmtTpInf do
             builder.SvcLvl do
               builder.Cd('SEPA')

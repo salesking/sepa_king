@@ -30,8 +30,8 @@ module SEPA
       end
     end
 
-    def amount_total
-      transactions.inject(0) { |sum, t| sum + t.amount }
+    def amount_total(selected_transactions=transactions)
+      selected_transactions.inject(0) { |sum, t| sum + t.amount }
     end
 
   private
