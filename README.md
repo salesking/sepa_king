@@ -13,8 +13,8 @@ We love building payment applications! So after developing the [DTAUS library fo
 
 This gem implements the following two messages out of the ISO 20022 standard:
 
-* Credit transfer initiation (pain.001.002.03)
-* Debit transfer initiation (pain.008.002.02)
+* Credit Transfer Initiation (pain.001.002.03)
+* Direct Debit Initiation (pain.008.002.02)
 
 BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
