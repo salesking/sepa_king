@@ -24,7 +24,11 @@ RSpec::Matchers.define :have_xml do |xpath, text|
     nodes.should_not be_empty
     if text
       nodes.each do |node|
-        node.content.should == text
+        if text.is_a?(Regexp)
+          node.content.should =~ text
+        else
+          node.content.should == text
+        end
       end
     end
     true
