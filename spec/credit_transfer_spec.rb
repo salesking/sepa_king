@@ -67,6 +67,14 @@ describe SEPA::CreditTransfer do
           expect(subject).to validate_against('pain.001.002.03.xsd')
         end
 
+        it 'should have message_identification' do
+          subject.should have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/MsgId', /SEPA-KING\/[0-9]+/)
+        end
+
+        it 'should contain <PmtInfId>' do
+          subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
+        end
+
         it 'should contain <ReqdExctnDt>' do
           subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/ReqdExctnDt', Date.today.next.iso8601)
         end
@@ -146,6 +154,11 @@ describe SEPA::CreditTransfer do
           subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/ReqdExctnDt', (Date.today + 2).iso8601)
 
           subject.should_not have_xml('//Document/CstmrCdtTrfInitn/PmtInf[3]')
+        end
+
+        it 'should contain two payment_informations with different <PmtInfId>' do
+          subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
+          subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/PmtInfId', /SEPA-KING\/[0-9]+\/2/)
         end
       end
 

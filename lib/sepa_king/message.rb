@@ -47,12 +47,16 @@ module SEPA
       end
     end
 
+    # Unique identifer for the whole message
     def message_identification
-      "SEPA-KING/#{Time.now.iso8601}"
+      @message_identification ||= "SEPA-KING/#{Time.now.to_i}"
     end
 
+    # Unique and consecutive identifier (used for the <PmntInf> blocks)
     def payment_information_identification
-      message_identification
+      @payment_information_counter ||= 0
+      @payment_information_counter += 1
+      "#{message_identification}/#{@payment_information_counter}"
     end
   end
 end

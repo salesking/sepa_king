@@ -72,6 +72,14 @@ describe SEPA::DirectDebit do
           expect(subject).to validate_against('pain.008.002.02.xsd')
         end
 
+        it 'should have message_identification' do
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/MsgId', /SEPA-KING\/[0-9]+/)
+        end
+
+        it 'should contain <PmtInfId>' do
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
+        end
+
         it 'should contain <ReqdColltnDt>' do
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/ReqdColltnDt', Date.today.next.iso8601)
         end
@@ -165,6 +173,11 @@ describe SEPA::DirectDebit do
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 2).iso8601)
 
           subject.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+        end
+
+        it 'should contain two payment_informations with different <PmtInfId>' do
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtInfId', /SEPA-KING\/[0-9]+\/2/)
         end
       end
 
