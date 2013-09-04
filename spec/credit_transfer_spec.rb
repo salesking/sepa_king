@@ -67,6 +67,10 @@ describe SEPA::CreditTransfer do
           expect(subject).to validate_against('pain.001.002.03.xsd')
         end
 
+        it 'should contain <ReqdExctnDt>' do
+          subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/ReqdExctnDt', Date.today.next.iso8601)
+        end
+
         it 'should contain <PmtMtd>' do
           subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/PmtMtd', 'TRF')
         end
