@@ -187,16 +187,18 @@ describe SEPA::DirectDebit do
 
           sdd.add_transaction(direct_debt_transaction.merge local_instrument: 'CORE')
           sdd.add_transaction(direct_debt_transaction.merge local_instrument: 'B2B')
-          sdd.add_transaction(direct_debt_transaction.merge local_instrument: 'B2B')
 
-          sdd.to_xml
+          sdd
         end
 
-        it 'should contain two payment_informations with <LclInstrm>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/LclInstrm/Cd', 'CORE')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/LclInstrm/Cd', 'B2B')
+        it 'should have errors' do
+          subject.should have(1).error_on(:base)
+        end
 
-          subject.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+        it 'should raise error on XML generation' do
+          expect {
+            subject.to_xml
+          }.to raise_error(RuntimeError)
         end
       end
 
@@ -242,50 +244,26 @@ describe SEPA::DirectDebit do
         subject do
           sdd = direct_debit
 
-          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'CORE', sequence_type: 'OOFF', amount: 1)
-          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'CORE', sequence_type: 'FNAL', amount: 2)
-          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'B2B',  sequence_type: 'OOFF', amount: 4)
-          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, local_instrument: 'B2B',  sequence_type: 'FNAL', amount: 8)
-          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'CORE', sequence_type: 'OOFF', amount: 16)
-          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'CORE', sequence_type: 'FNAL', amount: 32)
-          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'B2B',  sequence_type: 'OOFF', amount: 64)
-          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, local_instrument: 'B2B',  sequence_type: 'FNAL', amount: 128)
+          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, sequence_type: 'OOFF', amount: 1)
+          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1, sequence_type: 'FNAL', amount: 2)
+          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, sequence_type: 'OOFF', amount: 4)
+          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2, sequence_type: 'FNAL', amount: 8)
 
           sdd.to_xml
         end
 
         it 'should contain multiple payment_informations' do
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/LclInstrm/Cd', 'CORE')
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
 
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 1).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/LclInstrm/Cd', 'CORE')
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'FNAL')
 
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/ReqdColltnDt', (Date.today + 1).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/LclInstrm/Cd', 'B2B')
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/ReqdColltnDt', (Date.today + 2).iso8601)
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/SeqTp', 'OOFF')
 
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/ReqdColltnDt', (Date.today + 1).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/PmtTpInf/LclInstrm/Cd', 'B2B')
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/ReqdColltnDt', (Date.today + 2).iso8601)
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/PmtTpInf/SeqTp', 'FNAL')
-
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[5]/ReqdColltnDt', (Date.today + 2).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[5]/PmtTpInf/LclInstrm/Cd', 'CORE')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[5]/PmtTpInf/SeqTp', 'OOFF')
-
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[6]/ReqdColltnDt', (Date.today + 2).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[6]/PmtTpInf/LclInstrm/Cd', 'CORE')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[6]/PmtTpInf/SeqTp', 'FNAL')
-
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[7]/ReqdColltnDt', (Date.today + 2).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[7]/PmtTpInf/LclInstrm/Cd', 'B2B')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[7]/PmtTpInf/SeqTp', 'OOFF')
-
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[8]/ReqdColltnDt', (Date.today + 2).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[8]/PmtTpInf/LclInstrm/Cd', 'B2B')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[8]/PmtTpInf/SeqTp', 'FNAL')
         end
 
         it 'should have multiple control sums' do
@@ -293,10 +271,6 @@ describe SEPA::DirectDebit do
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/CtrlSum', '2.00')
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/CtrlSum', '4.00')
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/CtrlSum', '8.00')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[5]/CtrlSum', '16.00')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[6]/CtrlSum', '32.00')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[7]/CtrlSum', '64.00')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[8]/CtrlSum', '128.00')
         end
       end
     end

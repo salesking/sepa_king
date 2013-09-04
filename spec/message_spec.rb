@@ -26,4 +26,12 @@ describe SEPA::Message do
       message.amount_total([message.transactions[0]]).should == 1.1
     end
   end
+
+  describe 'validation' do
+    it 'should fail without transactions' do
+      message = DummyMessage.new
+      message.should_not be_valid
+      message.should have(1).error_on(:transactions)
+    end
+  end
 end

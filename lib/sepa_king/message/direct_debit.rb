@@ -6,6 +6,12 @@ module SEPA
     self.transaction_class = DirectDebitTransaction
     self.xml_main_tag = 'CstmrDrctDbtInitn'
 
+    validate do |record|
+      if record.transactions.map(&:local_instrument).uniq.size > 1
+        errors.add(:base, 'CORE and B2B must not be mixed in one message!')
+      end
+    end
+
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema

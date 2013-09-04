@@ -2,7 +2,11 @@
 
 module SEPA
   class Message
+    include ActiveModel::Validations
+
     attr_reader :account, :transactions
+    validates_presence_of :transactions
+
     class_attribute :account_class, :transaction_class, :xml_main_tag
 
     def initialize(account_options={})
@@ -19,6 +23,7 @@ module SEPA
     # @return [String] xml
     def to_xml
       raise RuntimeError.new(account.errors.full_messages.join("\n")) unless account.valid?
+      raise RuntimeError.new(errors.full_messages.join("\n")) unless valid?
 
       builder = Builder::XmlMarkup.new indent: 2
       builder.instruct!
