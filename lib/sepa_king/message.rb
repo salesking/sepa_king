@@ -5,7 +5,11 @@ module SEPA
     include ActiveModel::Validations
 
     attr_reader :account, :transactions
+
     validates_presence_of :transactions
+    validate do |record|
+      record.errors.add(:account, 'is invalid') unless record.account.valid?
+    end
 
     class_attribute :account_class, :transaction_class, :xml_main_tag
 
@@ -22,7 +26,6 @@ module SEPA
 
     # @return [String] xml
     def to_xml
-      raise RuntimeError.new(account.errors.full_messages.join("\n")) unless account.valid?
       raise RuntimeError.new(errors.full_messages.join("\n")) unless valid?
 
       builder = Builder::XmlMarkup.new indent: 2
