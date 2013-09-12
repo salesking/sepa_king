@@ -23,12 +23,20 @@ module SEPA
     # Find groups of transactions which share the same values of some attributes
     def grouped_transactions
       transactions.group_by do |transaction|
-        { requested_date:   transaction.requested_date,
+        { requested_date: transaction.requested_date,
           local_instrument: transaction.local_instrument,
-          sequence_type:    transaction.sequence_type,
-          batch_booking:    transaction.batch_booking
+          sequence_type: transaction.sequence_type,
+          batch_booking: transaction.batch_booking,
+          account_name: transaction_account(transaction).name,
+          account_iban: transaction_account(transaction).iban,
+          account_bic: transaction_account(transaction).bic,
+          account_creditor_identifier:transaction_account(transaction).creditor_identifier
         }
       end
+    end
+
+    def transaction_account(transaction)
+      transaction.account.present? ? transaction.account : account
     end
 
     def build_payment_informations(builder)
@@ -51,16 +59,16 @@ module SEPA
           end
           builder.ReqdColltnDt(group[:requested_date].iso8601)
           builder.Cdtr do
-            builder.Nm(account.name)
+            builder.Nm(group[:account_name])
           end
           builder.CdtrAcct do
             builder.Id do
-              builder.IBAN(account.iban)
+              builder.IBAN(group[:account_iban])
             end
           end
           builder.CdtrAgt do
             builder.FinInstnId do
-              builder.BIC(account.bic)
+              builder.BIC(group[:account_bic])
             end
           end
           builder.ChrgBr('SLEV')
@@ -68,7 +76,7 @@ module SEPA
             builder.Id do
               builder.PrvtId do
                 builder.Othr do
-                  builder.Id(account.creditor_identifier)
+                  builder.Id(group[:account_creditor_identifier])
                   builder.SchmeNm do
                     builder.Prtry('SEPA')
                   end
