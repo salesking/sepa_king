@@ -9,8 +9,8 @@ module SEPA
     validates_inclusion_of :sequence_type, :in => %w(FRST OOFF RCUR FNAL)
 
     validate do |t|
-      if account.present?
-        errors.add(:creditor_account, 'is not correct') if !account.valid?
+      if creditor_account
+        errors.add(:creditor_account, 'is not correct') unless creditor_account.valid?
       end
 
       if t.mandate_date_of_signature.is_a?(Date)
@@ -24,16 +24,6 @@ module SEPA
       super
       self.local_instrument ||= 'CORE'
       self.sequence_type ||= 'OOFF'
-    end
-
-    def account
-      return nil if creditor_account.nil?
-      @account ||= SEPA::CreditorAccount.new(
-        name: creditor_account[:name],
-        bic: creditor_account[:bic],
-        iban: creditor_account[:iban],
-        creditor_identifier: creditor_account[:creditor_identifier]
-      )
     end
   end
 end

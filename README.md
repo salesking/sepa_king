@@ -108,6 +108,15 @@ sdd.add_transaction(
   # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
   # True or False
   batch_booking: true
+
+  # Optional: Use a different creditor account
+  # CreditorAccount
+  creditor_account: SEPA::CreditorAccount.new(
+    name:                'Creditor Inc.',
+    bic:                 'RABONL2U',
+    iban:                'NL08RABO0135742099',
+    creditor_identifier: 'NL53ZZZ091734220000'
+  )
 )
 sdd.add_transaction ...
 
@@ -178,6 +187,11 @@ xml_string = sct.to_xml
 ## Changelog
 
 https://github.com/salesking/sepa_king/releases
+
+
+## Contributors
+
+https://github.com/salesking/sepa_king/graphs/contributors
 
 
 ## Resources

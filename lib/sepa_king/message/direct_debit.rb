@@ -23,20 +23,13 @@ module SEPA
     # Find groups of transactions which share the same values of some attributes
     def grouped_transactions
       transactions.group_by do |transaction|
-        { requested_date: transaction.requested_date,
+        { requested_date:   transaction.requested_date,
           local_instrument: transaction.local_instrument,
-          sequence_type: transaction.sequence_type,
-          batch_booking: transaction.batch_booking,
-          account_name: transaction_account(transaction).name,
-          account_iban: transaction_account(transaction).iban,
-          account_bic: transaction_account(transaction).bic,
-          account_creditor_identifier:transaction_account(transaction).creditor_identifier
+          sequence_type:    transaction.sequence_type,
+          batch_booking:    transaction.batch_booking,
+          account:          transaction.creditor_account || account
         }
       end
-    end
-
-    def transaction_account(transaction)
-      transaction.account.present? ? transaction.account : account
     end
 
     def build_payment_informations(builder)
@@ -59,16 +52,16 @@ module SEPA
           end
           builder.ReqdColltnDt(group[:requested_date].iso8601)
           builder.Cdtr do
-            builder.Nm(group[:account_name])
+            builder.Nm(group[:account].name)
           end
           builder.CdtrAcct do
             builder.Id do
-              builder.IBAN(group[:account_iban])
+              builder.IBAN(group[:account].iban)
             end
           end
           builder.CdtrAgt do
             builder.FinInstnId do
-              builder.BIC(group[:account_bic])
+              builder.BIC(group[:account].bic)
             end
           end
           builder.ChrgBr('SLEV')
@@ -76,7 +69,7 @@ module SEPA
             builder.Id do
               builder.PrvtId do
                 builder.Othr do
-                  builder.Id(group[:account_creditor_identifier])
+                  builder.Id(group[:account].creditor_identifier)
                   builder.SchmeNm do
                     builder.Prtry('SEPA')
                   end
