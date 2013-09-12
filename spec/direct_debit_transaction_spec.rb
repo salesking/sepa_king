@@ -34,4 +34,15 @@ describe SEPA::DirectDebitTransaction do
       SEPA::DirectDebitTransaction.should_not accept(nil, '', 'X' * 36, for: :mandate_id)
     end
   end
+
+  context 'creditor_account' do
+    it 'should accept valid value' do
+      SEPA::DirectDebitTransaction.should accept({ name: 'a', iban: 'DE21500500009876543210', bic: 'SPUEDE2UXXX', creditor_identifier: 'DE98ZZZ09999999999'}, for: :creditor_account)
+    end
+
+    it 'should not accept valid value' do
+      SEPA::DirectDebitTransaction.should_not accept({ name: 'a', iban: 'x', bic: 'y', creditor_identifier: 'b'}, for: :creditor_account)
+    end
+  end
+
 end

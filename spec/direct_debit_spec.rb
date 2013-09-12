@@ -9,6 +9,14 @@ describe SEPA::DirectDebit do
                           creditor_identifier: 'DE98ZZZ09999999999'
   }
 
+  let(:creditor_account) {
+    {
+      name:                'Custom Gläubiger GmbH',
+      bic:                 'RABONL2U',
+      iban:                'NL08RABO0135742099',
+      creditor_identifier: 'NL53ZZZ091734220000' }
+  }
+
   describe :new do
     it 'should accept missing options' do
       expect {
@@ -271,6 +279,22 @@ describe SEPA::DirectDebit do
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/CtrlSum', '2.00')
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/CtrlSum', '4.00')
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/CtrlSum', '8.00')
+        end
+      end
+
+      context 'with different different creditor_account given' do
+        subject do
+          sdd = direct_debit
+
+          sdd.add_transaction(direct_debt_transaction)
+          sdd.add_transaction(direct_debt_transaction.merge creditor_account: creditor_account)
+
+          sdd.to_xml
+        end
+
+        it 'should contain two payment_informations with <ReqdColltnDt>' do
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/Cdtr/Nm', 'Glaeubiger GmbH')
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/Cdtr/Nm', 'Custom Glaeubiger GmbH')
         end
       end
     end
