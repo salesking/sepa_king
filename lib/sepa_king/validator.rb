@@ -3,7 +3,7 @@ module SEPA
   class IBANValidator < ActiveModel::Validator
     def validate(record)
       unless IBANTools::IBAN.valid?(record.iban.to_s)
-        record.errors.add(:iban, 'is invalid')
+        record.errors.add(:iban, :invalid)
       end
     end
   end
@@ -11,7 +11,7 @@ module SEPA
   class BICValidator < ActiveModel::Validator
     def validate(record)
       unless record.bic.to_s.match /[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}/
-        record.errors.add(:bic, 'is invalid')
+        record.errors.add(:bic, :invalid)
       end
     end
   end
@@ -19,7 +19,7 @@ module SEPA
   class CreditorIdentifierValidator < ActiveModel::Validator
     def validate(record)
       unless valid?(record.creditor_identifier)
-        record.errors.add(:creditor_identifier, 'is invalid')
+        record.errors.add(:creditor_identifier, :invalid)
       end
     end
 
