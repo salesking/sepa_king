@@ -36,7 +36,7 @@ describe SEPA::Account do
     end
 
     it 'should not accept invalid value' do
-      SEPA::Account.should_not accept(nil, '', 'invalid', for: :bic)
+      SEPA::Account.should_not accept('', 'invalid', for: :bic)
     end
   end
 end

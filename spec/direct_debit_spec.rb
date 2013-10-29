@@ -43,6 +43,29 @@ describe SEPA::DirectDebit do
     end
 
     context 'for valid creditor' do
+      context 'without BIC (IBAN-only)' do
+        subject do
+          sdd = SEPA::DirectDebit.new name:                'Gläubiger GmbH',
+                                      iban:                'DE87200500001234567890',
+                                      creditor_identifier: 'DE98ZZZ09999999999'
+
+          sdd.add_transaction name:                      'Zahlemann & Söhne GbR',
+                              bic:                       'SPUEDE2UXXX',
+                              iban:                      'DE21500500009876543210',
+                              amount:                    39.99,
+                              reference:                 'XYZ/2013-08-ABO/12345',
+                              remittance_information:    'Unsere Rechnung vom 10.08.2013',
+                              mandate_id:                'K-02-2011-12345',
+                              mandate_date_of_signature: Date.new(2011,1,25)
+
+          sdd.to_xml
+        end
+
+        it 'should create valid XML file' do
+          expect(subject).to validate_against('pain.008.003.02.xsd')
+        end
+      end
+
       context 'without requested_date given' do
         subject do
           sdd = direct_debit
@@ -57,7 +80,6 @@ describe SEPA::DirectDebit do
                               mandate_date_of_signature: Date.new(2011,1,25)
 
           sdd.add_transaction name:                      'Meier & Schulze oHG',
-                              bic:                       'GENODEF1JEV',
                               iban:                      'DE68210501700012345678',
                               amount:                    750.00,
                               reference:                 'XYZ/2013-08-ABO/6789',
@@ -69,7 +91,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should create valid XML file' do
-          expect(subject).to validate_against('pain.008.002.02.xsd')
+          expect(subject).to validate_against('pain.008.003.02.xsd')
         end
 
         it 'should have message_identification' do
@@ -138,7 +160,7 @@ describe SEPA::DirectDebit do
 
         it 'should contain <DbtrAgt>' do
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAgt/FinInstnId/BIC', 'SPUEDE2UXXX')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DbtrAgt/FinInstnId/BIC', 'GENODEF1JEV')
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DbtrAgt/FinInstnId/Othr/Id', 'NOTPROVIDED')
         end
 
         it 'should contain <Dbtr>' do

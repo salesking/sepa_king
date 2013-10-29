@@ -13,8 +13,8 @@ We love building payment applications! So after developing the [DTAUS library fo
 
 This gem implements the following two messages out of the ISO 20022 standard:
 
-* Credit Transfer Initiation (pain.001.002.03)
-* Direct Debit Initiation (pain.008.002.02)
+* Credit Transfer Initiation (pain.001.003.03)
+* Direct Debit Initiation (pain.008.003.02)
 
 BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
@@ -60,7 +60,7 @@ sdd.add_transaction(
   name:                      'Zahlemann & Söhne GbR',
 
   # Business Identifier Code (SWIFT-Code) of the debtor's account
-  # String, 8 or 11 char
+  # String, 8 or 11 char (optional)
   bic:                       'SPUEDE2UXXX',
 
   # International Bank Account Number of the debtor's account
@@ -90,6 +90,7 @@ sdd.add_transaction(
   # Local instrument, in German "Lastschriftart"
   # One of these strings:
   #   'CORE' ("Basis-Lastschrift")
+  #   'COR1' ("Basis-Lastschrift mit verkürzter Vorlagefrist")
   #   'B2B' ("Firmen-Lastschrift")
   local_instrument: 'CORE',
 
@@ -150,7 +151,7 @@ sct.add_transaction(
   name:                   'Telekomiker AG',
 
   # Business Identifier Code (SWIFT-Code) of the creditor's account
-  # String, 8 or 11 char
+  # String, 8 or 11 char (optional)
   bic:                    'PBNKDEFF370',
 
   # International Bank Account Number of the creditor's account
@@ -175,7 +176,13 @@ sct.add_transaction(
 
   # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
   # True or False
-  batch_booking: true
+  batch_booking: true,
+
+  # OPTIONAL: Urgent Payment
+  # One of these strings:
+  #   'SEPA' ("SEPA-Zahlung")
+  #   'URGP' ("Taggleiche Eilüberweisung")
+  service_level: 'URGP'
 )
 sct.add_transaction ...
 

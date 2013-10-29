@@ -42,6 +42,26 @@ describe SEPA::CreditTransfer do
     end
 
     context 'for valid debtor' do
+      context 'without BIC (IBAN-only)' do
+        subject do
+          sct = SEPA::CreditTransfer.new name:       'Schuldner GmbH',
+                                         iban:       'DE87200500001234567890'
+
+          sct.add_transaction name:                   'Telekomiker AG',
+                              bic:                    'PBNKDEFF370',
+                              iban:                   'DE37112589611964645802',
+                              amount:                 102.50,
+                              reference:              'XYZ-1234/123',
+                              remittance_information: 'Rechnung vom 22.08.2013'
+
+          sct.to_xml
+        end
+
+        it 'should create valid XML file' do
+          expect(subject).to validate_against('pain.001.003.03.xsd')
+        end
+      end
+
       context 'without requested_date given' do
         subject do
           sct = credit_transfer
@@ -54,7 +74,6 @@ describe SEPA::CreditTransfer do
                               remittance_information: 'Rechnung vom 22.08.2013'
 
           sct.add_transaction name:                   'Amazonas GmbH',
-                              bic:                    'TUBDDEDDXXX',
                               iban:                   'DE27793589132923472195',
                               amount:                 59.00,
                               reference:              'XYZ-5678/456',
@@ -64,7 +83,7 @@ describe SEPA::CreditTransfer do
         end
 
         it 'should create valid XML file' do
-          expect(subject).to validate_against('pain.001.002.03.xsd')
+          expect(subject).to validate_against('pain.001.003.03.xsd')
         end
 
         it 'should have message_identification' do
@@ -117,9 +136,9 @@ describe SEPA::CreditTransfer do
           subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[2]/Amt/InstdAmt', '59.00')
         end
 
-        it 'should contain <CdtrAgt>' do
+        it 'should contain <CdtrAgt> for every BIC given' do
           subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAgt/FinInstnId/BIC', 'PBNKDEFF370')
-          subject.should have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[2]/CdtrAgt/FinInstnId/BIC', 'TUBDDEDDXXX')
+          subject.should_not have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[2]/CdtrAgt')
         end
 
         it 'should contain <Cdtr>' do

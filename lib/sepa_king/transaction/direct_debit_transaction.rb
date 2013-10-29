@@ -5,7 +5,7 @@ module SEPA
 
     validates_length_of :mandate_id, within: 1..35
     validates_presence_of :mandate_date_of_signature
-    validates_inclusion_of :local_instrument, :in => %w(CORE B2B)
+    validates_inclusion_of :local_instrument, :in => %w(CORE COR1 B2B)
     validates_inclusion_of :sequence_type, :in => %w(FRST OOFF RCUR FNAL)
 
     validate do |t|

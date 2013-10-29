@@ -8,16 +8,16 @@ module SEPA
 
     validate do |record|
       if record.transactions.map(&:local_instrument).uniq.size > 1
-        errors.add(:base, 'CORE and B2B must not be mixed in one message!')
+        errors.add(:base, 'CORE, COR1 AND B2B must not be mixed in one message!')
       end
     end
 
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema
-      { :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02',
+      { :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.003.02',
         :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-        :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.008.002.02 pain.008.002.02.xsd' }
+        :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.008.003.02 pain.008.003.02.xsd' }
     end
 
     # Find groups of transactions which share the same values of some attributes
@@ -61,7 +61,13 @@ module SEPA
           end
           builder.CdtrAgt do
             builder.FinInstnId do
-              builder.BIC(group[:account].bic)
+              if group[:account].bic
+                builder.BIC(group[:account].bic)
+              else
+                builder.Othr do
+                  builder.Id('NOTPROVIDED')
+                end
+              end
             end
           end
           builder.ChrgBr('SLEV')
@@ -99,7 +105,13 @@ module SEPA
         end
         builder.DbtrAgt do
           builder.FinInstnId do
-            builder.BIC(transaction.bic)
+            if transaction.bic
+              builder.BIC(transaction.bic)
+            else
+              builder.Othr do
+                builder.Id('NOTPROVIDED')
+              end
+            end
           end
         end
         builder.Dbtr do

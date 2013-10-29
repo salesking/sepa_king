@@ -9,16 +9,17 @@ module SEPA
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema
-      { :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03',
+      { :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.001.003.03',
         :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-        :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.001.002.03 pain.001.002.03.xsd' }
+        :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.001.003.03 pain.001.003.03.xsd' }
     end
 
     # Find groups of transactions which share the same values of some attributes
     def grouped_transactions
       transactions.group_by do |transaction|
         { requested_date: transaction.requested_date,
-          batch_booking:  transaction.batch_booking
+          batch_booking:  transaction.batch_booking,
+          service_level:  transaction.service_level
         }
       end
     end
@@ -35,7 +36,7 @@ module SEPA
           builder.CtrlSum('%.2f' % amount_total(transactions))
           builder.PmtTpInf do
             builder.SvcLvl do
-              builder.Cd('SEPA')
+              builder.Cd(group[:service_level])
             end
           end
           builder.ReqdExctnDt(group[:requested_date].iso8601)
@@ -49,7 +50,13 @@ module SEPA
           end
           builder.DbtrAgt do
             builder.FinInstnId do
-              builder.BIC(account.bic)
+              if account.bic
+                builder.BIC(account.bic)
+              else
+                builder.Othr do
+                  builder.Id('NOTPROVIDED')
+                end
+              end
             end
           end
           builder.ChrgBr('SLEV')
@@ -69,9 +76,11 @@ module SEPA
         builder.Amt do
           builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
         end
-        builder.CdtrAgt do
-          builder.FinInstnId do
-            builder.BIC(transaction.bic)
+        if transaction.bic
+          builder.CdtrAgt do
+            builder.FinInstnId do
+              builder.BIC(transaction.bic)
+            end
           end
         end
         builder.Cdtr do

@@ -42,7 +42,7 @@ describe SEPA::Transaction do
     end
 
     it 'should not accept invalid value' do
-      SEPA::Transaction.should_not accept(nil, '', 'invalid', for: :bic)
+      SEPA::Transaction.should_not accept('', 'invalid', for: :bic)
     end
   end
 
