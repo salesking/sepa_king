@@ -59,8 +59,8 @@ sdd.add_transaction(
   # String, max. 70 char
   name:                      'Zahlemann & Söhne GbR',
 
-  # Business Identifier Code (SWIFT-Code) of the debtor's account
-  # String, 8 or 11 char (optional)
+  # OPTIONAL: Business Identifier Code (SWIFT-Code) of the debtor's account
+  # String, 8 or 11 char
   bic:                       'SPUEDE2UXXX',
 
   # International Bank Account Number of the debtor's account
@@ -110,7 +110,7 @@ sdd.add_transaction(
   # True or False
   batch_booking: true
 
-  # Optional: Use a different creditor account
+  # OPTIONAL: Use a different creditor account
   # CreditorAccount
   creditor_account: SEPA::CreditorAccount.new(
     name:                'Creditor Inc.',
@@ -126,7 +126,7 @@ xml_string = sdd.to_xml
 ```
 
 
-How to create the XML for **Credit Transfer Initiation** (in german: "Überweisungen")
+How to create the XML for **Credit Transfer Initiation** (in German: "Überweisungen")
 
 ```ruby
 # First: Create the main object
@@ -150,8 +150,8 @@ sct.add_transaction(
   # String, max. 70 char
   name:                   'Telekomiker AG',
 
-  # Business Identifier Code (SWIFT-Code) of the creditor's account
-  # String, 8 or 11 char (optional)
+  # OPTIONAL: Business Identifier Code (SWIFT-Code) of the creditor's account
+  # String, 8 or 11 char
   bic:                    'PBNKDEFF370',
 
   # International Bank Account Number of the creditor's account
