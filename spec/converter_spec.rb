@@ -17,6 +17,13 @@ describe SEPA::Converter do
       convert_text('üöäÜÖÄß').should == 'ueoeaeUEOEAEss'
     end
 
+    it 'should convert line breaks' do
+      convert_text("one\ntwo")    .should == 'one two'
+      convert_text("one\ntwo\n")  .should == 'one two'
+      convert_text("\none\ntwo\n").should == 'one two'
+      convert_text("one\n\ntwo")  .should == 'one two'
+    end
+
     it 'should convert number' do
       convert_text(1234).should == '1234'
     end

@@ -29,6 +29,8 @@ module SEPA
           gsub('ß', 'ss')
 
         I18n.transliterate(text).
+          # Change linebreaks to whitespaces
+          gsub(/\n+/,' ').
           # Remove all invalid characters
           gsub(/[^a-zA-Z0-9\ \'\:\?\,\-\(\+\.\)\/]/, '').
           # Remove leading and trailing spaces
