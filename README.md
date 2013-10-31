@@ -13,8 +13,10 @@ We love building payment applications! So after developing the [DTAUS library fo
 
 This gem implements the following two messages out of the ISO 20022 standard:
 
-* Credit Transfer Initiation (pain.001.003.03)
-* Direct Debit Initiation (pain.008.003.02)
+* Credit Transfer Initiation (pain.001.003.03 and pain.001.002.03)
+* Direct Debit Initiation (pain.008.003.02 and pain.008.002.02)
+
+This means it handles the "Specification of Data Formats" in version 2.6 (2012-11-17) and version 2.7 (2013-11-04)
 
 BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
@@ -40,7 +42,7 @@ sdd = SEPA::DirectDebit.new(
   # String, max. 70 char
   name:       'Gläubiger GmbH',
 
-  # Business Identifier Code (SWIFT-Code) of the creditor
+  # OPTIONAL: Business Identifier Code (SWIFT-Code) of the creditor
   # String, 8 or 11 char
   bic:        'BANKDEFFXXX',
 
@@ -122,7 +124,8 @@ sdd.add_transaction(
 sdd.add_transaction ...
 
 # Last: create XML string
-xml_string = sdd.to_xml
+xml_string = sdd.to_xml # Use latest schema pain.008.003.02
+xml_string = sdd.to_xml('pain.008.002.02') # Use former schema pain.008.002.02
 ```
 
 
@@ -135,7 +138,7 @@ sct = SEPA::CreditTransfer.new(
   # String, max. 70 char
   name: 'Schuldner GmbH',
 
-  # Business Identifier Code (SWIFT-Code) of the debtor
+  # OPTIONAL: Business Identifier Code (SWIFT-Code) of the debtor
   # String, 8 or 11 char
   bic:  'BANKDEFFXXX',
 
@@ -187,7 +190,8 @@ sct.add_transaction(
 sct.add_transaction ...
 
 # Last: create XML string
-xml_string = sct.to_xml
+xml_string = sct.to_xml # Use latest schema pain.001.003.03
+xml_string = sct.to_xml('pain.001.002.03') # Use former schema pain.001.002.03
 ```
 
 

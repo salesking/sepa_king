@@ -58,11 +58,42 @@ describe SEPA::DirectDebit do
                               mandate_id:                'K-02-2011-12345',
                               mandate_date_of_signature: Date.new(2011,1,25)
 
-          sdd.to_xml
+          sdd
         end
 
         it 'should create valid XML file' do
-          expect(subject).to validate_against('pain.008.003.02.xsd')
+          expect(subject.to_xml).to validate_against('pain.008.003.02.xsd')
+        end
+
+        it 'should fail for pain.008.002.02' do
+          expect {
+            subject.to_xml(SEPA::PAIN_008_002_02)
+          }.to raise_error(RuntimeError)
+        end
+      end
+
+      context 'with BIC' do
+        subject do
+          sdd = direct_debit
+
+          sdd.add_transaction name:                      'Zahlemann & Söhne GbR',
+                              bic:                       'SPUEDE2UXXX',
+                              iban:                      'DE21500500009876543210',
+                              amount:                    39.99,
+                              reference:                 'XYZ/2013-08-ABO/12345',
+                              remittance_information:    'Unsere Rechnung vom 10.08.2013',
+                              mandate_id:                'K-02-2011-12345',
+                              mandate_date_of_signature: Date.new(2011,1,25)
+
+          sdd
+        end
+
+        it 'should validate against pain.008.002.02' do
+          expect(subject.to_xml('pain.008.002.02')).to validate_against('pain.008.002.02.xsd')
+        end
+
+        it 'should validate against pain.008.003.02' do
+          expect(subject.to_xml('pain.008.003.02')).to validate_against('pain.008.003.02.xsd')
         end
       end
 

@@ -54,11 +54,40 @@ describe SEPA::CreditTransfer do
                               reference:              'XYZ-1234/123',
                               remittance_information: 'Rechnung vom 22.08.2013'
 
-          sct.to_xml
+          sct
         end
 
         it 'should create valid XML file' do
-          expect(subject).to validate_against('pain.001.003.03.xsd')
+          expect(subject.to_xml).to validate_against('pain.001.003.03.xsd')
+        end
+
+        it 'should fail for pain.001.002.03' do
+          expect {
+            subject.to_xml(SEPA::PAIN_001_002_03)
+          }.to raise_error(RuntimeError)
+        end
+      end
+
+      context 'with BIC' do
+        subject do
+          sct = credit_transfer
+
+          sct.add_transaction name:                   'Telekomiker AG',
+                              bic:                    'PBNKDEFF370',
+                              iban:                   'DE37112589611964645802',
+                              amount:                 102.50,
+                              reference:              'XYZ-1234/123',
+                              remittance_information: 'Rechnung vom 22.08.2013'
+
+          sct
+        end
+
+        it 'should validate against pain.001.002.03' do
+          expect(subject.to_xml('pain.001.002.03')).to validate_against('pain.001.002.03.xsd')
+        end
+
+        it 'should validate against pain.001.003.03' do
+          expect(subject.to_xml('pain.001.003.03')).to validate_against('pain.001.003.03.xsd')
         end
       end
 

@@ -5,6 +5,7 @@ module SEPA
     self.account_class = CreditorAccount
     self.transaction_class = DirectDebitTransaction
     self.xml_main_tag = 'CstmrDrctDbtInitn'
+    self.known_schemas = [ PAIN_008_003_02, PAIN_008_002_02 ]
 
     validate do |record|
       if record.transactions.map(&:local_instrument).uniq.size > 1
@@ -13,13 +14,6 @@ module SEPA
     end
 
   private
-    # @return {Hash<Symbol=>String>} xml schema information used in output xml
-    def xml_schema
-      { :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.008.003.02',
-        :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-        :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.008.003.02 pain.008.003.02.xsd' }
-    end
-
     # Find groups of transactions which share the same values of some attributes
     def grouped_transactions
       transactions.group_by do |transaction|

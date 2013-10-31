@@ -5,15 +5,9 @@ module SEPA
     self.account_class = DebtorAccount
     self.transaction_class = CreditTransferTransaction
     self.xml_main_tag = 'CstmrCdtTrfInitn'
+    self.known_schemas = [ PAIN_001_003_03, PAIN_001_002_03 ]
 
   private
-    # @return {Hash<Symbol=>String>} xml schema information used in output xml
-    def xml_schema
-      { :xmlns                => 'urn:iso:std:iso:20022:tech:xsd:pain.001.003.03',
-        :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-        :'xsi:schemaLocation' => 'urn:iso:std:iso:20022:tech:xsd:pain.001.003.03 pain.001.003.03.xsd' }
-    end
-
     # Find groups of transactions which share the same values of some attributes
     def grouped_transactions
       transactions.group_by do |transaction|
