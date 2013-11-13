@@ -41,4 +41,17 @@ describe SEPA::Message do
       subject.should have(1).error_on(:transactions)
     end
   end
+
+  describe :message_identification do
+    subject { DummyMessage.new }
+
+    it 'should have a reader method' do
+      subject.message_identification.should match(/SEPA-KING\/[0-9]+/)
+    end
+
+    it 'should have a writer method' do
+      subject.message_identification = "MY_MESSAGE_ID/#{Time.now.to_i}"
+      subject.message_identification.should match(/MY_MESSAGE_ID/)
+    end
+  end
 end
