@@ -59,6 +59,13 @@ module SEPA
       end
     end
 
+    attr_writer :message_identification # Set unique identifer for the message
+
+    # Unique identifer for the whole message
+    def message_identification
+      @message_identification ||= "SEPA-KING/#{Time.now.to_i}"
+    end
+
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
@@ -77,11 +84,6 @@ module SEPA
           builder.Nm(account.name)
         end
       end
-    end
-
-    # Unique identifer for the whole message
-    def message_identification
-      @message_identification ||= "SEPA-KING/#{Time.now.to_i}"
     end
 
     # Unique and consecutive identifier (used for the <PmntInf> blocks)
