@@ -23,7 +23,7 @@ BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
 ## Requirements
 
-* Ruby 1.9.3 or 2.0.0
+* Ruby 1.9.2 or newer (including 2.0.0)
 
 
 ## Installation
