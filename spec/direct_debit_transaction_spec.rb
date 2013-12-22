@@ -48,11 +48,11 @@ describe SEPA::DirectDebitTransaction do
 
   context 'Mandate ID' do
     it 'should allow valid value' do
-      SEPA::DirectDebitTransaction.should accept('XYZ-123', 'X' * 35, for: :mandate_id)
+      SEPA::DirectDebitTransaction.should accept('XYZ-123', "+?/-:().,'", 'X' * 35, for: :mandate_id)
     end
 
     it 'should not allow invalid value' do
-      SEPA::DirectDebitTransaction.should_not accept(nil, '', 'X' * 36, for: :mandate_id)
+      SEPA::DirectDebitTransaction.should_not accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: :mandate_id)
     end
   end
 end

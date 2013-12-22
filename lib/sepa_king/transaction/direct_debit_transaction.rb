@@ -3,7 +3,7 @@ module SEPA
   class DirectDebitTransaction < Transaction
     attr_accessor :mandate_id, :mandate_date_of_signature, :local_instrument, :sequence_type, :creditor_account
 
-    validates_length_of :mandate_id, within: 1..35
+    validates_format_of :mandate_id, :with => /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\']){1,35}\z/
     validates_presence_of :mandate_date_of_signature
     validates_inclusion_of :local_instrument, :in => %w(CORE COR1 B2B)
     validates_inclusion_of :sequence_type, :in => %w(FRST OOFF RCUR FNAL)
