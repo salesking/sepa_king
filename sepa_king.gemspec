@@ -31,4 +31,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'nokogiri'
+  s.add_development_dependency 'pry'
 end

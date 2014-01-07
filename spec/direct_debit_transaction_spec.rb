@@ -34,6 +34,12 @@ describe SEPA::DirectDebitTransaction do
         SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :local_instrument => 'COR1').should_not be_schema_compatible('pain.008.002.02')
       end
     end
+
+    context 'for pain.008.001.02' do
+      it 'should success' do
+        SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX').should be_schema_compatible('pain.008.001.02')
+      end
+    end
   end
 
   context 'Mandate Date of Signature' do
