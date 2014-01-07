@@ -5,7 +5,7 @@ module SEPA
     self.account_class = CreditorAccount
     self.transaction_class = DirectDebitTransaction
     self.xml_main_tag = 'CstmrDrctDbtInitn'
-    self.known_schemas = [ PAIN_008_003_02, PAIN_008_002_02 ]
+    self.known_schemas = [ PAIN_008_003_02, PAIN_008_002_02, PAIN_008_001_02 ]
 
     validate do |record|
       if record.transactions.map(&:local_instrument).uniq.size > 1

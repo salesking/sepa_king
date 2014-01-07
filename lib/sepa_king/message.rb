@@ -1,8 +1,10 @@
 # encoding: utf-8
 
 module SEPA
+  PAIN_008_001_02 = 'pain.008.001.02'
   PAIN_008_002_02 = 'pain.008.002.02'
   PAIN_008_003_02 = 'pain.008.003.02'
+  PAIN_001_001_03 = 'pain.001.001.03'
   PAIN_001_002_03 = 'pain.001.002.03'
   PAIN_001_003_03 = 'pain.001.003.03'
 
@@ -34,7 +36,7 @@ module SEPA
       raise RuntimeError.new(errors.full_messages.join("\n")) unless valid?
       raise RuntimeError.new("Incompatible with schema #{schema_name}!") unless schema_compatible?(schema_name)
 
-      builder = Builder::XmlMarkup.new indent: 2
+     builder = Builder::XmlMarkup.new indent: 2
       builder.instruct!
       builder.Document(xml_schema(schema_name)) do
         builder.__send__(xml_main_tag) do
@@ -50,9 +52,8 @@ module SEPA
 
     def schema_compatible?(schema_name)
       raise ArgumentError.new("Schema #{schema_name} is unknown!") unless self.known_schemas.include?(schema_name)
-
       case schema_name
-        when PAIN_001_002_03, PAIN_008_002_02
+        when PAIN_001_002_03, PAIN_008_002_02, PAIN_008_001_02, PAIN_001_001_03
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
         when PAIN_001_003_03, PAIN_008_003_02
           transactions.all? { |t| t.schema_compatible?(schema_name) }
