@@ -11,7 +11,7 @@ module SEPA
   class BICValidator < ActiveModel::Validator
     def validate(record)
       if record.bic
-        unless record.bic.to_s.match /[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}/
+        unless record.bic.to_s.match /^[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}$/
           record.errors.add(:bic, :invalid)
         end
       end

@@ -55,4 +55,14 @@ describe SEPA::DirectDebitTransaction do
       SEPA::DirectDebitTransaction.should_not accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: :mandate_id)
     end
   end
+
+  context 'BIC' do
+    it 'should accept valid BICs' do
+      SEPA::DirectDebitTransaction.should accept('DEUTDEDBDUE', 'DUSSDEDDXXX', for: :bic)
+    end
+
+    it 'should not accept an invalid BIC' do
+      SEPA::DirectDebitTransaction.should_not accept('','GENODE61HR', 'DEUTDEDBDUEDEUTDEDBDUE', for: :bic)
+    end
+  end
 end
