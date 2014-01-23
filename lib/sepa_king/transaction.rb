@@ -16,12 +16,6 @@ module SEPA
     validates_inclusion_of :batch_booking, :in => [true, false]
     validates_with BICValidator, IBANValidator
 
-    validate do |t|
-      if t.requested_date.is_a?(Date)
-        errors.add(:requested_date, 'is not in the future') if t.requested_date <= Date.today
-      end
-    end
-
     def initialize(attributes = {})
       attributes.each do |name, value|
         send("#{name}=", value)

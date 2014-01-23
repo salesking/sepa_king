@@ -33,4 +33,14 @@ describe SEPA::CreditTransferTransaction do
       end
     end
   end
+
+  context 'Requested date' do
+    it 'should allow valid value' do
+      SEPA::CreditTransferTransaction.should accept(nil, Date.today, Date.today.next, Date.today + 2, for: :requested_date)
+    end
+
+    it 'should not allow invalid value' do
+      SEPA::CreditTransferTransaction.should_not accept(Date.new(1995,12,21), Date.today - 1, for: :requested_date)
+    end
+  end
 end

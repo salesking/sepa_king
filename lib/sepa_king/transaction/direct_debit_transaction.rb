@@ -18,6 +18,10 @@ module SEPA
       else
         errors.add(:mandate_date_of_signature, 'is not a Date')
       end
+
+      if t.requested_date.is_a?(Date)
+        errors.add(:requested_date, 'is not in the future') if t.requested_date <= Date.today
+      end
     end
 
     def initialize(attributes = {})

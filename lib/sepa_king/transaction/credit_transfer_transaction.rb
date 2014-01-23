@@ -5,6 +5,12 @@ module SEPA
 
     validates_inclusion_of :service_level, :in => %w(SEPA URGP)
 
+    validate do |t|
+      if t.requested_date.is_a?(Date)
+        errors.add(:requested_date, 'is in the past') if t.requested_date < Date.today
+      end
+    end
+
     def initialize(attributes = {})
       super
       self.service_level ||= 'SEPA'

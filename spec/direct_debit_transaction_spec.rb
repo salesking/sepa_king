@@ -55,4 +55,14 @@ describe SEPA::DirectDebitTransaction do
       SEPA::DirectDebitTransaction.should_not accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: :mandate_id)
     end
   end
+
+  context 'Requested date' do
+    it 'should allow valid value' do
+      SEPA::DirectDebitTransaction.should accept(nil, Date.today.next, Date.today + 2, for: :requested_date)
+    end
+
+    it 'should not allow invalid value' do
+      SEPA::DirectDebitTransaction.should_not accept(Date.new(1995,12,21), Date.today - 1, Date.today, for: :requested_date)
+    end
+  end
 end
