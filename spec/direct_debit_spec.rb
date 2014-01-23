@@ -214,6 +214,7 @@ describe SEPA::DirectDebit do
         subject do
           sdd = direct_debit
 
+          sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today)
           sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 1)
           sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2)
           sdd.add_transaction(direct_debt_transaction.merge requested_date: Date.today + 2)
@@ -222,10 +223,11 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain two payment_informations with <ReqdColltnDt>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 2).iso8601)
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today).iso8601)
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 1).iso8601)
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/ReqdColltnDt', (Date.today + 2).iso8601)
 
-          subject.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+          subject.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]')
         end
 
         it 'should contain two payment_informations with different <PmtInfId>' do
