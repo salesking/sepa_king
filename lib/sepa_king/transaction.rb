@@ -18,7 +18,7 @@ module SEPA
 
     validate do |t|
       if t.requested_date.is_a?(Date)
-        errors.add(:requested_date, 'is not in the future') if t.requested_date <= Date.today
+        errors.add(:requested_date, 'is not in the future') if t.requested_date < Date.today
       end
     end
 

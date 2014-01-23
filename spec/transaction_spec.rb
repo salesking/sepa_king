@@ -78,11 +78,11 @@ describe SEPA::Transaction do
 
   context 'Requested date' do
     it 'should allow valid value' do
-      SEPA::Transaction.should accept(nil, Date.today.next, Date.today + 2, for: :requested_date)
+      SEPA::Transaction.should accept(nil, Date.today, Date.today + 1, Date.today + 2, for: :requested_date)
     end
 
     it 'should not allow invalid value' do
-      SEPA::Transaction.should_not accept(Date.new(1995,12,21), Date.today - 1, Date.today, for: :requested_date)
+      SEPA::Transaction.should_not accept(Date.new(1995,12,21), Date.today - 1, for: :requested_date)
     end
   end
 end
