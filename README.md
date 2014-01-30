@@ -194,6 +194,36 @@ xml_string = sct.to_xml # Use latest schema pain.001.003.03
 xml_string = sct.to_xml('pain.001.002.03') # Use former schema pain.001.002.03
 ```
 
+## Validations
+
+You can rely on our internal validations, raising errors when needed, during
+message creation.
+To validate your models holding SEPA related information (e.g. BIC, IBAN,
+mandate_id) you can use our validator classes or rely on some constants.
+
+Examples:
+
+```ruby
+class BankAccount < ActiveRecord::Base
+  # IBAN validation, by default it validates the attribute named "iban"
+  validates_with SEPA::IBANValidator, field_name: :iban_the_terrible
+
+  # BIC validation, by default it validates the attribute named "bic"
+  validates_with SEPA::BICValidator, field_name: :bank_bic
+end
+
+class Payment < ActiveRecord::Base
+  validates_inclusion_of :sepa_sequence_type, in: SEPA::DirectDebitTransaction::SEQUENCE_TYPES
+
+  # Mandate ID validation, by default it validates the attribute named "mandate_id"
+  validates_with SEPA::MandateIdentifierValidator, field_name: :mandate_id
+end
+```
+
+Also see:
+* [lib/sepa_king/validator.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/validator.rb)
+* [lib/sepa_king/transaction/direct_debit_transaction.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/transaction/direct_debit_transaction.rb)
+
 
 ## Changelog
 
