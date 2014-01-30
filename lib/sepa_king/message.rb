@@ -13,7 +13,7 @@ module SEPA
 
     validates_presence_of :transactions
     validate do |record|
-      record.errors.add(:account, 'is invalid') unless record.account.valid?
+      record.errors.add(:account, record.account.errors.full_messages) unless record.account.valid?
     end
 
     class_attribute :account_class, :transaction_class, :xml_main_tag, :known_schemas

@@ -33,7 +33,7 @@ describe SEPA::Message do
 
     it 'should fail with invalid account' do
       subject.should_not be_valid
-      subject.should have(1).error_on(:account)
+      subject.should have(2).error_on(:account)
     end
 
     it 'should fail without transactions' do
