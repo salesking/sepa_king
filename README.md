@@ -194,6 +194,33 @@ xml_string = sct.to_xml # Use latest schema pain.001.003.03
 xml_string = sct.to_xml('pain.001.002.03') # Use former schema pain.001.002.03
 ```
 
+## Validations
+
+You can rely on our internal validations, raising errors when needed, during
+message creation.
+To validate models holding SEPA related information e.g.: users bank
+information, invoice mandate id; you can use our validator classes or rely on
+our validation regex and constants (in case your fields are named different).
+
+```ruby
+class User
+  # implies user.iban   (btw. we are using IbanTools to do the heavy lifting, no regex available)
+  validates_with SEPA::IBANValidator
+
+  # implies user.bic
+  validates_with SEPA::BICValidator
+  # custom named  user.bank_bic
+  validates_format_of :bank_bic, with: SEPA::BICValidator::REGEX
+
+  # direct debit transaction validation constants
+  validates_inclusion_of :sepa_sequence_type, in: SEPA::DirectDebitTransaction::SEQUENCE_TYPES
+  validates_format_of :mandate_id, with: SEPA::DirectDebitTransaction::MANDATE_ID_REGEX
+
+end
+```
+Also see:
+* lib/sepa_king/validator.rb
+* lib/sepa_king/transaction/direct_debit_transaction.rb
 
 ## Changelog
 

@@ -20,12 +20,14 @@ end
 describe SEPA::BICValidator do
   class Validatable
     include ActiveModel::Model
-    attr_accessor :bic
+    attr_accessor :bic, :custom_bic
     validates_with SEPA::BICValidator
+    validates_format_of :custom_bic, with: SEPA::BICValidator::REGEX
   end
 
   it 'should accept valid BICs' do
     Validatable.should accept('DEUTDEDBDUE', 'DUSSDEDDXXX', for: :bic)
+    Validatable.should accept('DEUTDEDBDUE', 'DUSSDEDDXXX', for: :custom_bic)
   end
 
   it 'should not accept an invalid BIC' do

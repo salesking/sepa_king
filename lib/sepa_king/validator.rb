@@ -9,9 +9,10 @@ module SEPA
   end
 
   class BICValidator < ActiveModel::Validator
+    REGEX = /\A[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}\z/
     def validate(record)
       if record.bic
-        unless record.bic.to_s.match /^[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}$/
+        unless record.bic.to_s.match(REGEX)
           record.errors.add(:bic, :invalid)
         end
       end
@@ -19,6 +20,7 @@ module SEPA
   end
 
   class CreditorIdentifierValidator < ActiveModel::Validator
+    REGEX = /\A[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}\z/
     def validate(record)
       unless valid?(record.creditor_identifier)
         record.errors.add(:creditor_identifier, :invalid)
@@ -26,7 +28,7 @@ module SEPA
     end
 
     def valid?(creditor_identifier)
-      if ok = creditor_identifier.to_s.match(/[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}/)
+      if ok = creditor_identifier.to_s.match(REGEX)
         # In Germany, the identifier has to be exactly 18 chars long
         if creditor_identifier[0..1].match(/DE/i)
           ok = creditor_identifier.length == 18
