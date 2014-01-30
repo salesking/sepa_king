@@ -3,11 +3,10 @@ module SEPA
   class DirectDebitTransaction < Transaction
     SEQUENCE_TYPES = %w(FRST OOFF RCUR FNAL)
     LOCAL_INSTRUMENTS = %w(CORE COR1 B2B)
-    MANDATE_ID_REGEX =  /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\']){1,35}\z/
 
     attr_accessor :mandate_id, :mandate_date_of_signature, :local_instrument, :sequence_type, :creditor_account
 
-    validates_format_of :mandate_id, with: MANDATE_ID_REGEX
+    validates_with MandateIdentifierValidator, field_name: :mandate_id
     validates_presence_of :mandate_date_of_signature
     validates_inclusion_of :local_instrument, in: LOCAL_INSTRUMENTS
     validates_inclusion_of :sequence_type, in: SEQUENCE_TYPES

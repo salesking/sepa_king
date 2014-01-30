@@ -2,18 +2,25 @@
 module SEPA
   class IBANValidator < ActiveModel::Validator
     def validate(record)
-      unless IBANTools::IBAN.valid?(record.iban.to_s)
-        record.errors.add(:iban, :invalid)
+      field_name = options[:field_name] || :iban
+      value = record.send(field_name)
+
+      unless IBANTools::IBAN.valid?(value.to_s)
+        record.errors.add(field_name, :invalid)
       end
     end
   end
 
   class BICValidator < ActiveModel::Validator
     REGEX = /\A[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}\z/
+
     def validate(record)
-      if record.bic
-        unless record.bic.to_s.match(REGEX)
-          record.errors.add(:bic, :invalid)
+      field_name = options[:field_name] || :bic
+      value = record.send(field_name)
+
+      if value
+        unless value.to_s.match(REGEX)
+          record.errors.add(field_name, :invalid)
         end
       end
     end
@@ -21,9 +28,13 @@ module SEPA
 
   class CreditorIdentifierValidator < ActiveModel::Validator
     REGEX = /\A[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}\z/
+
     def validate(record)
-      unless valid?(record.creditor_identifier)
-        record.errors.add(:creditor_identifier, :invalid)
+      field_name = options[:field_name] || :creditor_identifier
+      value = record.send(field_name)
+
+      unless valid?(value)
+        record.errors.add(field_name, :invalid)
       end
     end
 
@@ -35,6 +46,19 @@ module SEPA
         end
       end
       ok
+    end
+  end
+
+  class MandateIdentifierValidator < ActiveModel::Validator
+    REGEX = /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\']){1,35}\z/
+
+    def validate(record)
+      field_name = options[:field_name] || :mandate_id
+      value = record.send(field_name)
+
+      unless value.to_s.match(REGEX)
+        record.errors.add(field_name, :invalid)
+      end
     end
   end
 end

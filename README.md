@@ -198,29 +198,32 @@ xml_string = sct.to_xml('pain.001.002.03') # Use former schema pain.001.002.03
 
 You can rely on our internal validations, raising errors when needed, during
 message creation.
-To validate models holding SEPA related information e.g.: users bank
-information, invoice mandate id; you can use our validator classes or rely on
-our validation regex and constants (in case your fields are named different).
+To validate your models holding SEPA related information (e.g. BIC, IBAN,
+mandate_id) you can use our validator classes or rely on some constants.
+
+Examples:
 
 ```ruby
-class User < ActiveRecord::Base
-  # implies user.iban   (btw. we are using IbanTools to do the heavy lifting, no regex available)
-  validates_with SEPA::IBANValidator
+class BankAccount < ActiveRecord::Base
+  # IBAN validation, by default it validates the attribute named "iban"
+  validates_with SEPA::IBANValidator, field_name: :iban_the_terrible
 
-  # implies user.bic
-  validates_with SEPA::BICValidator
-  # custom named  user.bank_bic
-  validates_format_of :bank_bic, with: SEPA::BICValidator::REGEX
+  # BIC validation, by default it validates the attribute named "bic"
+  validates_with SEPA::BICValidator, field_name: :bank_bic
+end
 
-  # direct debit transaction validation constants
+class Payment < ActiveRecord::Base
   validates_inclusion_of :sepa_sequence_type, in: SEPA::DirectDebitTransaction::SEQUENCE_TYPES
-  validates_format_of :mandate_id, with: SEPA::DirectDebitTransaction::MANDATE_ID_REGEX
 
+  # Mandate ID validation, by default it validates the attribute named "mandate_id"
+  validates_with SEPA::MandateIdentifierValidator, field_name: :mandate_id
 end
 ```
+
 Also see:
 * [lib/sepa_king/validator.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/validator.rb)
 * [lib/sepa_king/transaction/direct_debit_transaction.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/transaction/direct_debit_transaction.rb)
+
 
 ## Changelog
 
