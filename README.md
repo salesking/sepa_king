@@ -203,7 +203,7 @@ information, invoice mandate id; you can use our validator classes or rely on
 our validation regex and constants (in case your fields are named different).
 
 ```ruby
-class User
+class User < ActiveRecord::Base
   # implies user.iban   (btw. we are using IbanTools to do the heavy lifting, no regex available)
   validates_with SEPA::IBANValidator
 
@@ -219,8 +219,8 @@ class User
 end
 ```
 Also see:
-* lib/sepa_king/validator.rb
-* lib/sepa_king/transaction/direct_debit_transaction.rb
+* [lib/sepa_king/validator.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/validator.rb)
+* [lib/sepa_king/transaction/direct_debit_transaction.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/transaction/direct_debit_transaction.rb)
 
 ## Changelog
 
