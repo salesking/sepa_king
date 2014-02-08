@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 module SEPA
+  PAIN_008_001_02 = 'pain.008.001.02'
   PAIN_008_002_02 = 'pain.008.002.02'
   PAIN_008_003_02 = 'pain.008.003.02'
   PAIN_001_002_03 = 'pain.001.002.03'
@@ -54,7 +55,7 @@ module SEPA
       case schema_name
         when PAIN_001_002_03, PAIN_008_002_02
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
-        when PAIN_001_003_03, PAIN_008_003_02
+        when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02
           transactions.all? { |t| t.schema_compatible?(schema_name) }
       end
     end

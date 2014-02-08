@@ -88,6 +88,10 @@ describe SEPA::DirectDebit do
           sdd
         end
 
+        it 'should validate against pain.008.001.02' do
+          expect(subject.to_xml('pain.008.001.02')).to validate_against('pain.008.001.02.xsd')
+        end
+
         it 'should validate against pain.008.002.02' do
           expect(subject.to_xml('pain.008.002.02')).to validate_against('pain.008.002.02.xsd')
         end
