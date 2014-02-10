@@ -61,14 +61,18 @@ describe SEPA::DirectDebit do
           sdd
         end
 
-        it 'should create valid XML file' do
-          expect(subject.to_xml).to validate_against('pain.008.003.02.xsd')
+        it 'should validate against pain.008.003.02' do
+          expect(subject.to_xml(SEPA::PAIN_008_003_02)).to validate_against('pain.008.003.02.xsd')
         end
 
         it 'should fail for pain.008.002.02' do
           expect {
             subject.to_xml(SEPA::PAIN_008_002_02)
           }.to raise_error(RuntimeError)
+        end
+
+        it 'should validate against pain.008.001.02' do
+          expect(subject.to_xml(SEPA::PAIN_008_001_02)).to validate_against('pain.008.001.02.xsd')
         end
       end
 
@@ -89,15 +93,15 @@ describe SEPA::DirectDebit do
         end
 
         it 'should validate against pain.008.001.02' do
-          expect(subject.to_xml('pain.008.001.02')).to validate_against('pain.008.001.02.xsd')
+          expect(subject.to_xml(SEPA::PAIN_008_001_02)).to validate_against('pain.008.001.02.xsd')
         end
 
         it 'should validate against pain.008.002.02' do
-          expect(subject.to_xml('pain.008.002.02')).to validate_against('pain.008.002.02.xsd')
+          expect(subject.to_xml(SEPA::PAIN_008_002_02)).to validate_against('pain.008.002.02.xsd')
         end
 
         it 'should validate against pain.008.003.02' do
-          expect(subject.to_xml('pain.008.003.02')).to validate_against('pain.008.003.02.xsd')
+          expect(subject.to_xml(SEPA::PAIN_008_003_02)).to validate_against('pain.008.003.02.xsd')
         end
       end
 
