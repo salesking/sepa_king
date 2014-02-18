@@ -74,7 +74,7 @@ sdd.add_transaction(
   amount:                    39.99,
 
   # OPTIONAL: Currency e.g. 'CHF'
-  currency:                 'EUR'
+  currency:                 'EUR',
 
   # OPTIONAL: End-To-End-Identification, will be submitted to the debtor
   # String, max. 35 char
@@ -169,7 +169,7 @@ sct.add_transaction(
   amount:                 102.50,
 
   # OPTIONAL: Currency e.g. 'CHF'
-  currency:                 'EUR'
+  currency:                 'EUR',
 
   # OPTIONAL: End-To-End-Identification, will be submitted to the creditor
   # String, max. 35 char
