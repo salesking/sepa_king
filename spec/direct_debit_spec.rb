@@ -33,6 +33,24 @@ describe SEPA::DirectDebit do
     end
   end
 
+  describe :batch_id do
+    it 'returns the id of the batch where the given transactions belongs to (1 batch)' do
+      direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE"))
+
+      expect(direct_debit.batch_id("EXAMPLE REFERENCE")).to match(/SEPA-KING\/[0-9]+\/1/)
+    end
+
+    it 'returns the id of the batch where the given transactions belongs to (2 batches)' do
+      direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE 1"))
+      direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE 2", requested_date: Date.today.next.next))
+      direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE 3"))
+
+      expect(direct_debit.batch_id("EXAMPLE REFERENCE 1")).to match(/SEPA-KING\/[0-9]+\/1/)
+      expect(direct_debit.batch_id("EXAMPLE REFERENCE 2")).to match(/SEPA-KING\/[0-9]+\/2/)
+      expect(direct_debit.batch_id("EXAMPLE REFERENCE 3")).to match(/SEPA-KING\/[0-9]+\/1/)
+    end
+  end
+
   describe :to_xml do
     context 'for invalid creditor' do
       it 'should fail' do

@@ -9,13 +9,11 @@ module SEPA
 
   private
     # Find groups of transactions which share the same values of some attributes
-    def grouped_transactions
-      transactions.group_by do |transaction|
-        { requested_date: transaction.requested_date,
-          batch_booking:  transaction.batch_booking,
-          service_level:  transaction.service_level
-        }
-      end
+    def transaction_group(transaction)
+      { requested_date: transaction.requested_date,
+        batch_booking:  transaction.batch_booking,
+        service_level:  transaction.service_level
+      }
     end
 
     def build_payment_informations(builder)
@@ -23,7 +21,7 @@ module SEPA
       grouped_transactions.each do |group, transactions|
         # All transactions with the same requested_date are placed into the same PmtInf block
         builder.PmtInf do
-          builder.PmtInfId(payment_information_identification)
+          builder.PmtInfId(payment_information_identification(group))
           builder.PmtMtd('TRF')
           builder.BtchBookg(group[:batch_booking])
           builder.NbOfTxs(transactions.length)

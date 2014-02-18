@@ -15,22 +15,20 @@ module SEPA
 
   private
     # Find groups of transactions which share the same values of some attributes
-    def grouped_transactions
-      transactions.group_by do |transaction|
-        { requested_date:   transaction.requested_date,
-          local_instrument: transaction.local_instrument,
-          sequence_type:    transaction.sequence_type,
-          batch_booking:    transaction.batch_booking,
-          account:          transaction.creditor_account || account
-        }
-      end
+    def transaction_group(transaction)
+      { requested_date:   transaction.requested_date,
+        local_instrument: transaction.local_instrument,
+        sequence_type:    transaction.sequence_type,
+        batch_booking:    transaction.batch_booking,
+        account:          transaction.creditor_account || account
+      }
     end
 
     def build_payment_informations(builder)
       # Build a PmtInf block for every group of transactions
       grouped_transactions.each do |group, transactions|
         builder.PmtInf do
-          builder.PmtInfId(payment_information_identification)
+          builder.PmtInfId(payment_information_identification(group))
           builder.PmtMtd('DD')
           builder.BtchBookg(group[:batch_booking])
           builder.NbOfTxs(transactions.length)
