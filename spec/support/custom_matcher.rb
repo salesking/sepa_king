@@ -9,7 +9,7 @@ RSpec::Matchers.define :validate_against do |xsd|
     @schema.should be_valid(@doc)
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     # Return the validation errors as string
     @schema.validate(@doc).join("\n")
   end
@@ -39,7 +39,7 @@ RSpec::Matchers.define :accept do |*values, options|
   attributes = Array(options[:for])
 
   attributes.each do |attribute|
-    match_for_should do |actual|
+    match do |actual|
       values.all? { |value|
         expect(
           actual.new(attribute => value)
@@ -49,7 +49,7 @@ RSpec::Matchers.define :accept do |*values, options|
   end
 
   attributes.each do |attribute|
-    match_for_should_not do |actual|
+    match_when_negated do |actual|
       values.all? { |value|
         expect(
           actual.new(attribute => value)
