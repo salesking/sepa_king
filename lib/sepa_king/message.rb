@@ -83,6 +83,10 @@ module SEPA
       end
     end
 
+    def batches
+      grouped_transactions.keys.collect { |group| payment_information_identification(group) }
+    end
+
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
