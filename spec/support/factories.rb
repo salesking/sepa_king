@@ -10,14 +10,15 @@ def credit_transfer_transaction
   }
 end
 
-def direct_debt_transaction
+def direct_debt_transaction(attributes={})
   { name:                      'Müller & Schmidt oHG',
     bic:                       'GENODEF1JEV',
     iban:                      'DE68210501700012345678',
     amount:                    750.00,
-    reference:                 'XYZ/2013-08-ABO/6789',
+    reference:                 attributes[:reference] || 'XYZ/2013-08-ABO/6789',
     remittance_information:    'Vielen Dank für Ihren Einkauf!',
     mandate_id:                'K-08-2010-42123',
-    mandate_date_of_signature: Date.new(2010,7,25)
+    mandate_date_of_signature: Date.new(2010,7,25),
+    requested_date:            attributes[:requested_date]
   }
 end

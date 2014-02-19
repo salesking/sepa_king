@@ -11,7 +11,7 @@ module SEPA
   class Message
     include ActiveModel::Validations
 
-    attr_reader :account, :transactions
+    attr_reader :account, :grouped_transactions
 
     validates_presence_of :transactions
     validate do |record|
@@ -21,14 +21,19 @@ module SEPA
     class_attribute :account_class, :transaction_class, :xml_main_tag, :known_schemas
 
     def initialize(account_options={})
-      @transactions = []
+      @grouped_transactions = {}
       @account = account_class.new(account_options)
     end
 
     def add_transaction(options)
       transaction = transaction_class.new(options)
       raise ArgumentError.new(transaction.errors.full_messages.join("\n")) unless transaction.valid?
-      @transactions << transaction
+      @grouped_transactions[transaction_group(transaction)] ||= []
+      @grouped_transactions[transaction_group(transaction)] << transaction
+    end
+
+    def transactions
+      grouped_transactions.values.flatten
     end
 
     # @return [String] xml
@@ -68,6 +73,20 @@ module SEPA
       @message_identification ||= "SEPA-KING/#{Time.now.to_i}"
     end
 
+    # Returns the id of the batch to which the given transaction belongs
+    # Identified based upon the reference of the transaction
+    def batch_id(transaction_reference)
+      grouped_transactions.each do |group, transactions|
+        if transactions.select { |transaction| transaction.reference == transaction_reference }.any?
+          return payment_information_identification(group)
+        end
+      end
+    end
+
+    def batches
+      grouped_transactions.keys.collect { |group| payment_information_identification(group) }
+    end
+
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
@@ -89,10 +108,13 @@ module SEPA
     end
 
     # Unique and consecutive identifier (used for the <PmntInf> blocks)
-    def payment_information_identification
-      @payment_information_counter ||= 0
-      @payment_information_counter += 1
-      "#{message_identification}/#{@payment_information_counter}"
+    def payment_information_identification(group)
+      "#{message_identification}/#{grouped_transactions.keys.index(group)+1}"
+    end
+
+    # Returns a key to determine the group to which the transaction belongs
+    def transaction_group(transaction)
+      transaction
     end
   end
 end
