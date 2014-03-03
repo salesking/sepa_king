@@ -62,7 +62,7 @@ describe SEPA::Transaction do
     end
 
     it 'should not accept invalid value' do
-      SEPA::Transaction.should_not accept('', 'X' * 36, for: :amount)
+      SEPA::Transaction.should_not accept('', 'X' * 36, for: :reference)
     end
   end
 
