@@ -50,7 +50,7 @@ module SEPA
   end
 
   class MandateIdentifierValidator < ActiveModel::Validator
-    REGEX = /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\']){1,35}\z/
+    REGEX = /\A([A-Za-z0-9]|[ \+|\?|\/|\-|\:|\(|\)|\.|\,|\']){1,35}\z/
 
     def validate(record)
       field_name = options[:field_name] || :mandate_id
