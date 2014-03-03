@@ -61,10 +61,10 @@ describe SEPA::MandateIdentifierValidator do
   end
 
   it 'should accept valid mandate_identifier' do
-    Validatable.should accept('XYZ-123', "+?/-:().,'", 'X' * 35, for: [:mandate_id, :mid])
+    Validatable.should accept('XY Z-123', "+?/-:().,'", 'X' * 35, for: [:mandate_id, :mid])
   end
 
   it 'should not accept an invalid mandate_identifier' do
-    Validatable.should_not accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: [:mandate_id, :mid])
+    Validatable.should_not accept(nil, '', 'X' * 36, '#/*', 'Ümläüt', for: [:mandate_id, :mid])
   end
 end
