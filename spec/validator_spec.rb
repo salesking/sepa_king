@@ -27,11 +27,11 @@ describe SEPA::BICValidator do
   end
 
   it 'should accept valid BICs' do
-    Validatable.should accept('DEUTDEDBDUE', 'DUSSDEDDXXX', for: [:bic, :custom_bic])
+    Validatable.should accept('DEUTDEDBDUE', 'DUSSDEDDXXX', '', nil, for: [:bic, :custom_bic])
   end
 
   it 'should not accept an invalid BIC' do
-    Validatable.should_not accept('', 'GENODE61HR', 'DEUTDEDBDUEDEUTDEDBDUE', for: [:bic, :custom_bic])
+    Validatable.should_not accept('GENODE61HR', 'DEUTDEDBDUEDEUTDEDBDUE', for: [:bic, :custom_bic])
   end
 end
 

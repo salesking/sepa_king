@@ -18,7 +18,7 @@ module SEPA
       field_name = options[:field_name] || :bic
       value = record.send(field_name)
 
-      if value
+      if value.to_s != ""
         unless value.to_s.match(REGEX)
           record.errors.add(field_name, :invalid)
         end

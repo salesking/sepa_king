@@ -32,11 +32,11 @@ describe SEPA::Account do
 
   describe :bic do
     it 'should accept valid value' do
-      SEPA::Account.should accept('DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX', for: :bic)
+      SEPA::Account.should accept('DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX', '', nil, for: :bic)
     end
 
     it 'should not accept invalid value' do
-      SEPA::Account.should_not accept('', 'invalid', for: :bic)
+      SEPA::Account.should_not accept('invalid', for: :bic)
     end
   end
 end
