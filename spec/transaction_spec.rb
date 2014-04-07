@@ -38,11 +38,11 @@ describe SEPA::Transaction do
 
   context 'BIC' do
     it 'should accept valid value' do
-      SEPA::Transaction.should accept('DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX', for: :bic)
+      SEPA::Transaction.should accept('DEUTDEFF', 'DEUTDEFF500', 'SPUEDE2UXXX', '', nil, for: :bic)
     end
 
     it 'should not accept invalid value' do
-      SEPA::Transaction.should_not accept('', 'invalid', for: :bic)
+      SEPA::Transaction.should_not accept('invalid', for: :bic)
     end
   end
 
