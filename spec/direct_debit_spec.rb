@@ -192,7 +192,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain <Cdtr>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/Cdtr/Nm', 'Glaeubiger GmbH')
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/Cdtr/Nm', 'Glaubiger GmbH')
         end
 
         it 'should contain <CdtrAcct>' do
@@ -233,7 +233,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain <Dbtr>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/Dbtr/Nm', 'Zahlemann  Soehne GbR')
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/Dbtr/Nm', 'Zahlemann  Sohne GbR')
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/Dbtr/Nm', 'Meier  Schulze oHG')
         end
 
@@ -244,7 +244,7 @@ describe SEPA::DirectDebit do
 
         it 'should contain <RmtInf>' do
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/RmtInf/Ustrd', 'Unsere Rechnung vom 10.08.2013')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/RmtInf/Ustrd', 'Vielen Dank fuer Ihren Einkauf')
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/RmtInf/Ustrd', 'Vielen Dank fur Ihren Einkauf')
         end
       end
 
@@ -381,7 +381,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain two payment_informations with <Cdtr>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/Cdtr/Nm', 'Glaeubiger GmbH')
+          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/Cdtr/Nm', 'Glaubiger GmbH')
           subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/Cdtr/Nm', 'Creditor Inc.')
         end
       end

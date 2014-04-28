@@ -18,17 +18,7 @@ module SEPA
       def convert_text(value)
         return unless value
 
-        text = value.to_s.
-          # Convert german umlauts
-          gsub('Ä', 'AE').
-          gsub('Ü', 'UE').
-          gsub('Ö', 'OE').
-          gsub('ä', 'ae').
-          gsub('ü', 'ue').
-          gsub('ö', 'oe').
-          gsub('ß', 'ss')
-
-        I18n.transliterate(text).
+        I18n.transliterate(value.to_s).
           # Change linebreaks to whitespaces
           gsub(/\n+/,' ').
           # Remove all invalid characters
