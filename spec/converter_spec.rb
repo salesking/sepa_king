@@ -14,7 +14,7 @@ describe SEPA::Converter do
     end
 
     it 'should convert umlaute' do
-      convert_text('üöäÜÖÄß').should == 'ueoeaeUEOEAEss'
+      convert_text('üöäÜÖÄß').should == 'uoaUOAss'
     end
 
     it 'should convert line breaks' do
