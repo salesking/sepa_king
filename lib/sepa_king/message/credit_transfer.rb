@@ -63,6 +63,9 @@ module SEPA
     def build_transaction(builder, transaction)
       builder.CdtTrfTxInf do
         builder.PmtId do
+          if transaction.instruction.present?
+            builder.InstrId(transaction.instruction)
+          end
           builder.EndToEndId(transaction.reference)
         end
         builder.Amt do
