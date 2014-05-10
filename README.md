@@ -73,6 +73,10 @@ sdd.add_transaction(
   # Number with two decimal digit
   amount:                    39.99,
 
+  # OPTIONAL: Instruction Identification, will not be submitted to the debtor
+  # String, max. 35 char
+  instruction:               '12345',
+
   # OPTIONAL: End-To-End-Identification, will be submitted to the debtor
   # String, max. 35 char
   reference:                 'XYZ/2013-08-ABO/6789',
