@@ -6,10 +6,10 @@ RSpec::Matchers.define :validate_against do |xsd|
     @schema = Nokogiri::XML::Schema(File.read("lib/schema/#{xsd}"))
     @doc = Nokogiri::XML(actual)
 
-    @schema.should be_valid(@doc)
+    expect(@schema).to be_valid(@doc)
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     # Return the validation errors as string
     @schema.validate(@doc).join("\n")
   end
@@ -21,13 +21,13 @@ RSpec::Matchers.define :have_xml do |xpath, text|
     doc.remove_namespaces! # so we can use shorter xpath's without any namespace
 
     nodes = doc.xpath(xpath)
-    nodes.should_not be_empty
+    expect(nodes).not_to be_empty
     if text
       nodes.each do |node|
         if text.is_a?(Regexp)
-          node.content.should =~ text
+          expect(node.content).to match(text)
         else
-          node.content.should == text
+          expect(node.content).to eq(text)
         end
       end
     end
@@ -39,21 +39,21 @@ RSpec::Matchers.define :accept do |*values, options|
   attributes = Array(options[:for])
 
   attributes.each do |attribute|
-    match_for_should do |actual|
+    match do |actual|
       values.all? { |value|
         expect(
-          actual.new(attribute => value)
-        ).to have(:no).errors_on(attribute)
+          actual.new(attribute => value).errors_on(attribute).size
+        ).to eq 0
       }
     end
   end
 
   attributes.each do |attribute|
-    match_for_should_not do |actual|
+    match_when_negated do |actual|
       values.all? { |value|
         expect(
-          actual.new(attribute => value)
-        ).to have_at_least(1).errors_on(attribute)
+          actual.new(attribute => value).errors_on(attribute).size
+        ).to be >= 1
       }
     end
   end

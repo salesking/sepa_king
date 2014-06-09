@@ -20,11 +20,11 @@ describe SEPA::Message do
     end
 
     it 'should sum up all transactions' do
-      subject.amount_total.should == 3.3
+      expect(subject.amount_total).to eq(3.3)
     end
 
     it 'should sum up selected transactions' do
-      subject.amount_total([subject.transactions[0]]).should == 1.1
+      expect(subject.amount_total([subject.transactions[0]])).to eq(1.1)
     end
   end
 
@@ -32,13 +32,13 @@ describe SEPA::Message do
     subject { DummyMessage.new }
 
     it 'should fail with invalid account' do
-      subject.should_not be_valid
-      subject.should have(2).error_on(:account)
+      expect(subject).not_to be_valid
+      expect(subject.errors_on(:account).size).to eq(2)
     end
 
     it 'should fail without transactions' do
-      subject.should_not be_valid
-      subject.should have(1).error_on(:transactions)
+      expect(subject).not_to be_valid
+      expect(subject.errors_on(:transactions).size).to eq(1)
     end
   end
 
@@ -46,12 +46,12 @@ describe SEPA::Message do
     subject { DummyMessage.new }
 
     it 'should have a reader method' do
-      subject.message_identification.should match(/SEPA-KING\/[0-9]+/)
+      expect(subject.message_identification).to match(/SEPA-KING\/[0-9]+/)
     end
 
     it 'should have a writer method' do
       subject.message_identification = "MY_MESSAGE_ID/#{Time.now.to_i}"
-      subject.message_identification.should match(/MY_MESSAGE_ID/)
+      expect(subject.message_identification).to match(/MY_MESSAGE_ID/)
     end
   end
 end

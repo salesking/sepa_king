@@ -10,11 +10,11 @@ describe SEPA::IBANValidator do
   end
 
   it 'should accept valid IBAN' do
-    Validatable.should accept('DE21500500009876543210', 'DE87200500001234567890', for: [:iban, :iban_the_terrible])
+    expect(Validatable).to accept('DE21500500009876543210', 'DE87200500001234567890', for: [:iban, :iban_the_terrible])
   end
 
   it 'should not accept an invalid IBAN' do
-    Validatable.should_not accept('', 'xxx', 'DE22500500009876543210', 'DE2150050000987654321', for: [:iban, :iban_the_terrible])
+    expect(Validatable).not_to accept('', 'xxx', 'DE22500500009876543210', 'DE2150050000987654321', for: [:iban, :iban_the_terrible])
   end
 end
 
@@ -27,11 +27,11 @@ describe SEPA::BICValidator do
   end
 
   it 'should accept valid BICs' do
-    Validatable.should accept('DEUTDEDBDUE', 'DUSSDEDDXXX', for: [:bic, :custom_bic])
+    expect(Validatable).to accept('DEUTDEDBDUE', 'DUSSDEDDXXX', for: [:bic, :custom_bic])
   end
 
   it 'should not accept an invalid BIC' do
-    Validatable.should_not accept('', 'GENODE61HR', 'DEUTDEDBDUEDEUTDEDBDUE', for: [:bic, :custom_bic])
+    expect(Validatable).not_to accept('', 'GENODE61HR', 'DEUTDEDBDUEDEUTDEDBDUE', for: [:bic, :custom_bic])
   end
 end
 
@@ -44,11 +44,11 @@ describe SEPA::CreditorIdentifierValidator do
   end
 
   it 'should accept valid creditor_identifier' do
-    Validatable.should accept('DE98ZZZ09999999999', 'AT12ZZZ00000000001', 'FR12ZZZ123456', 'NL97ZZZ123456780001', for: [:creditor_identifier, :crid])
+    expect(Validatable).to accept('DE98ZZZ09999999999', 'AT12ZZZ00000000001', 'FR12ZZZ123456', 'NL97ZZZ123456780001', for: [:creditor_identifier, :crid])
   end
 
   it 'should not accept an invalid creditor_identifier' do
-    Validatable.should_not accept('', 'xxx', 'DE98ZZZ099999999990', for: [:creditor_identifier, :crid])
+    expect(Validatable).not_to accept('', 'xxx', 'DE98ZZZ099999999990', for: [:creditor_identifier, :crid])
   end
 end
 
@@ -61,10 +61,10 @@ describe SEPA::MandateIdentifierValidator do
   end
 
   it 'should accept valid mandate_identifier' do
-    Validatable.should accept('XYZ-123', "+?/-:().,'", 'X' * 35, for: [:mandate_id, :mid])
+    expect(Validatable).to accept('XYZ-123', "+?/-:().,'", 'X' * 35, for: [:mandate_id, :mid])
   end
 
   it 'should not accept an invalid mandate_identifier' do
-    Validatable.should_not accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: [:mandate_id, :mid])
+    expect(Validatable).not_to accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: [:mandate_id, :mid])
   end
 end

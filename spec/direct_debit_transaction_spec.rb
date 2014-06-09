@@ -20,39 +20,39 @@ describe SEPA::DirectDebitTransaction do
   describe :schema_compatible? do
     context 'for pain.008.003.02' do
       it 'should success' do
-        SEPA::DirectDebitTransaction.new({}).should be_schema_compatible('pain.008.003.02')
+        expect(SEPA::DirectDebitTransaction.new({})).to be_schema_compatible('pain.008.003.02')
       end
     end
 
     context 'for pain.008.002.02' do
       it 'should success for valid attributes' do
-        SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :local_instrument => 'CORE').should be_schema_compatible('pain.008.002.02')
+        expect(SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :local_instrument => 'CORE')).to be_schema_compatible('pain.008.002.02')
       end
 
       it 'should fail for invalid attributes' do
-        SEPA::DirectDebitTransaction.new(:bic => nil).should_not be_schema_compatible('pain.008.002.02')
-        SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :local_instrument => 'COR1').should_not be_schema_compatible('pain.008.002.02')
+        expect(SEPA::DirectDebitTransaction.new(:bic => nil)).not_to be_schema_compatible('pain.008.002.02')
+        expect(SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :local_instrument => 'COR1')).not_to be_schema_compatible('pain.008.002.02')
       end
     end
   end
 
   context 'Mandate Date of Signature' do
     it 'should accept valid value' do
-      SEPA::DirectDebitTransaction.should accept(Date.today, Date.today - 1, for: :mandate_date_of_signature)
+      expect(SEPA::DirectDebitTransaction).to accept(Date.today, Date.today - 1, for: :mandate_date_of_signature)
     end
 
     it 'should not accept invalid value' do
-      SEPA::DirectDebitTransaction.should_not accept(nil, '2010-12-01', Date.today + 1, for: :mandate_date_of_signature)
+      expect(SEPA::DirectDebitTransaction).not_to accept(nil, '2010-12-01', Date.today + 1, for: :mandate_date_of_signature)
     end
   end
 
   context 'Requested date' do
     it 'should allow valid value' do
-      SEPA::DirectDebitTransaction.should accept(nil, Date.today.next, Date.today + 2, for: :requested_date)
+      expect(SEPA::DirectDebitTransaction).to accept(nil, Date.today.next, Date.today + 2, for: :requested_date)
     end
 
     it 'should not allow invalid value' do
-      SEPA::DirectDebitTransaction.should_not accept(Date.new(1995,12,21), Date.today - 1, Date.today, for: :requested_date)
+      expect(SEPA::DirectDebitTransaction).not_to accept(Date.new(1995,12,21), Date.today - 1, Date.today, for: :requested_date)
     end
   end
 end

@@ -23,7 +23,7 @@ describe SEPA::DirectDebit do
         direct_debit.add_transaction(direct_debt_transaction)
       end
 
-      expect(direct_debit).to have(3).transactions
+      expect(direct_debit.transactions.size).to eq(3)
     end
 
     it 'should fail for invalid transaction' do
@@ -57,7 +57,7 @@ describe SEPA::DirectDebit do
       direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE 2", requested_date: Date.today.next.next))
       direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE 3"))
 
-      expect(direct_debit.batches).to have(2).items
+      expect(direct_debit.batches.size).to eq(2)
       expect(direct_debit.batches[0]).to match(/SEPA-KING\/[0-9]+/)
       expect(direct_debit.batches[1]).to match(/SEPA-KING\/[0-9]+/)
     end
@@ -164,87 +164,87 @@ describe SEPA::DirectDebit do
         end
 
         it 'should have message_identification' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/MsgId', /SEPA-KING\/[0-9]+/)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/MsgId', /SEPA-KING\/[0-9]+/)
         end
 
         it 'should contain <PmtInfId>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
         end
 
         it 'should contain <ReqdColltnDt>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/ReqdColltnDt', Date.today.next.iso8601)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/ReqdColltnDt', Date.today.next.iso8601)
         end
 
         it 'should contain <PmtMtd>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtMtd', 'DD')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtMtd', 'DD')
         end
 
         it 'should contain <BtchBookg>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/BtchBookg', 'true')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/BtchBookg', 'true')
         end
 
         it 'should contain <NbOfTxs>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/NbOfTxs', '2')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/NbOfTxs', '2')
         end
 
         it 'should contain <CtrlSum>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CtrlSum', '789.99')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CtrlSum', '789.99')
         end
 
         it 'should contain <Cdtr>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/Cdtr/Nm', 'Glaubiger GmbH')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/Cdtr/Nm', 'Glaubiger GmbH')
         end
 
         it 'should contain <CdtrAcct>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAcct/Id/IBAN', 'DE87200500001234567890')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAcct/Id/IBAN', 'DE87200500001234567890')
         end
 
         it 'should contain <CdtrAgt>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAgt/FinInstnId/BIC', 'BANKDEFFXXX')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAgt/FinInstnId/BIC', 'BANKDEFFXXX')
         end
 
         it 'should contain <CdtrAgt>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrSchmeId/Id/PrvtId/Othr/Id', 'DE98ZZZ09999999999')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrSchmeId/Id/PrvtId/Othr/Id', 'DE98ZZZ09999999999')
         end
 
         it 'should contain <EndToEndId>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/PmtId/EndToEndId', 'XYZ/2013-08-ABO/12345')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/PmtId/EndToEndId', 'XYZ/2013-08-ABO/6789')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/PmtId/EndToEndId', 'XYZ/2013-08-ABO/12345')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/PmtId/EndToEndId', 'XYZ/2013-08-ABO/6789')
         end
 
         it 'should contain <InstdAmt>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/InstdAmt', '39.99')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/InstdAmt', '750.00')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/InstdAmt', '39.99')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/InstdAmt', '750.00')
         end
 
         it 'should contain <MndtId>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/MndtId', 'K-02-2011-12345')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/MndtId', 'K-08-2010-42123')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/MndtId', 'K-02-2011-12345')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/MndtId', 'K-08-2010-42123')
         end
 
         it 'should contain <DtOfSgntr>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/DtOfSgntr', '2011-01-25')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/DtOfSgntr', '2010-07-25')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/DtOfSgntr', '2011-01-25')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/DtOfSgntr', '2010-07-25')
         end
 
         it 'should contain <DbtrAgt>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAgt/FinInstnId/BIC', 'SPUEDE2UXXX')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DbtrAgt/FinInstnId/Othr/Id', 'NOTPROVIDED')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAgt/FinInstnId/BIC', 'SPUEDE2UXXX')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DbtrAgt/FinInstnId/Othr/Id', 'NOTPROVIDED')
         end
 
         it 'should contain <Dbtr>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/Dbtr/Nm', 'Zahlemann  Sohne GbR')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/Dbtr/Nm', 'Meier  Schulze oHG')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/Dbtr/Nm', 'Zahlemann  Sohne GbR')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/Dbtr/Nm', 'Meier  Schulze oHG')
         end
 
         it 'should contain <DbtrAcct>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAcct/Id/IBAN', 'DE21500500009876543210')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DbtrAcct/Id/IBAN', 'DE68210501700012345678')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAcct/Id/IBAN', 'DE21500500009876543210')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DbtrAcct/Id/IBAN', 'DE68210501700012345678')
         end
 
         it 'should contain <RmtInf>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/RmtInf/Ustrd', 'Unsere Rechnung vom 10.08.2013')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/RmtInf/Ustrd', 'Vielen Dank fur Ihren Einkauf')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/RmtInf/Ustrd', 'Unsere Rechnung vom 10.08.2013')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/RmtInf/Ustrd', 'Vielen Dank fur Ihren Einkauf')
         end
       end
 
@@ -260,15 +260,15 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain two payment_informations with <ReqdColltnDt>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 2).iso8601)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 2).iso8601)
 
-          subject.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+          expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
         end
 
         it 'should contain two payment_informations with different <PmtInfId>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtInfId', /SEPA-KING\/[0-9]+\/2/)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtInfId', /SEPA-KING\/[0-9]+\/2/)
         end
       end
 
@@ -283,7 +283,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should have errors' do
-          subject.should have(1).error_on(:base)
+          expect(subject.errors_on(:base).size).to eq(1)
         end
 
         it 'should raise error on XML generation' do
@@ -305,10 +305,10 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain two payment_informations with <LclInstrm>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'FRST')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'FRST')
 
-          subject.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+          expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
         end
       end
 
@@ -324,10 +324,10 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain two payment_informations with <BtchBookg>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/BtchBookg', 'false')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/BtchBookg', 'true')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/BtchBookg', 'false')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/BtchBookg', 'true')
 
-          subject.should_not have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
+          expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]')
         end
       end
 
@@ -344,24 +344,24 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain multiple payment_informations' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/ReqdColltnDt', (Date.today + 1).iso8601)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtTpInf/SeqTp', 'OOFF')
 
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 1).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'FNAL')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/ReqdColltnDt', (Date.today + 1).iso8601)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtTpInf/SeqTp', 'FNAL')
 
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/ReqdColltnDt', (Date.today + 2).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/SeqTp', 'OOFF')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/ReqdColltnDt', (Date.today + 2).iso8601)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/PmtTpInf/SeqTp', 'OOFF')
 
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/ReqdColltnDt', (Date.today + 2).iso8601)
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/PmtTpInf/SeqTp', 'FNAL')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/ReqdColltnDt', (Date.today + 2).iso8601)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/PmtTpInf/SeqTp', 'FNAL')
         end
 
         it 'should have multiple control sums' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/CtrlSum', '1.00')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/CtrlSum', '2.00')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/CtrlSum', '4.00')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/CtrlSum', '8.00')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/CtrlSum', '1.00')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/CtrlSum', '2.00')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[3]/CtrlSum', '4.00')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[4]/CtrlSum', '8.00')
         end
       end
 
@@ -381,8 +381,8 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain two payment_informations with <Cdtr>' do
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/Cdtr/Nm', 'Glaubiger GmbH')
-          subject.should have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/Cdtr/Nm', 'Creditor Inc.')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/Cdtr/Nm', 'Glaubiger GmbH')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/Cdtr/Nm', 'Creditor Inc.')
         end
       end
     end

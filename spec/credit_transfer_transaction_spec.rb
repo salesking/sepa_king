@@ -18,29 +18,29 @@ describe SEPA::CreditTransferTransaction do
   describe :schema_compatible? do
     context 'for pain.001.003.03' do
       it 'should success' do
-        SEPA::CreditTransferTransaction.new({}).should be_schema_compatible('pain.001.003.03')
+        expect(SEPA::CreditTransferTransaction.new({})).to be_schema_compatible('pain.001.003.03')
       end
     end
 
     context 'pain.001.002.03' do
       it 'should success for valid attributes' do
-        SEPA::CreditTransferTransaction.new(:bic => 'SPUEDE2UXXX', :service_level => 'SEPA').should be_schema_compatible('pain.001.002.03')
+        expect(SEPA::CreditTransferTransaction.new(:bic => 'SPUEDE2UXXX', :service_level => 'SEPA')).to be_schema_compatible('pain.001.002.03')
       end
 
       it 'should fail for invalid attributes' do
-        SEPA::CreditTransferTransaction.new(:bic => nil).should_not be_schema_compatible('pain.001.002.03')
-        SEPA::CreditTransferTransaction.new(:bic => 'SPUEDE2UXXX', :service_level => 'URGP').should_not be_schema_compatible('pain.001.002.03')
+        expect(SEPA::CreditTransferTransaction.new(:bic => nil)).not_to be_schema_compatible('pain.001.002.03')
+        expect(SEPA::CreditTransferTransaction.new(:bic => 'SPUEDE2UXXX', :service_level => 'URGP')).not_to be_schema_compatible('pain.001.002.03')
       end
     end
   end
 
   context 'Requested date' do
     it 'should allow valid value' do
-      SEPA::CreditTransferTransaction.should accept(nil, Date.today, Date.today.next, Date.today + 2, for: :requested_date)
+      expect(SEPA::CreditTransferTransaction).to accept(nil, Date.today, Date.today.next, Date.today + 2, for: :requested_date)
     end
 
     it 'should not allow invalid value' do
-      SEPA::CreditTransferTransaction.should_not accept(Date.new(1995,12,21), Date.today - 1, for: :requested_date)
+      expect(SEPA::CreditTransferTransaction).not_to accept(Date.new(1995,12,21), Date.today - 1, for: :requested_date)
     end
   end
 end
