@@ -73,6 +73,9 @@ sdd.add_transaction(
   # Number with two decimal digit
   amount:                    39.99,
 
+  # OPTIONAL: Currency e.g. 'GBP'
+  currency:                 'EUR',
+
   # OPTIONAL: Instruction Identification, will not be submitted to the debtor
   # String, max. 35 char
   instruction:               '12345',
@@ -168,6 +171,9 @@ sct.add_transaction(
   # Amount in EUR
   # Number with two decimal digit
   amount:                 102.50,
+
+  # OPTIONAL: Currency e.g. 'GBP'
+  currency:                 'EUR',
 
   # OPTIONAL: End-To-End-Identification, will be submitted to the creditor
   # String, max. 35 char

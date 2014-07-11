@@ -4,7 +4,7 @@ module SEPA
     include ActiveModel::Validations
     extend Converter
 
-    attr_accessor :name, :iban, :bic, :amount, :instruction, :reference, :remittance_information, :requested_date, :batch_booking
+    attr_accessor :name, :iban, :bic, :amount, :instruction, :reference, :remittance_information, :requested_date, :batch_booking, :currency
     convert :name, :instruction, :reference, :remittance_information, to: :text
     convert :amount, to: :decimal
 
@@ -23,6 +23,7 @@ module SEPA
       end
 
       self.requested_date ||= Date.today.next
+      self.currency ||= 'EUR'
       self.reference ||= 'NOTPROVIDED'
       self.batch_booking = true if self.batch_booking.nil?
     end
