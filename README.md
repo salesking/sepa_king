@@ -175,7 +175,7 @@ sct.add_transaction(
 
   # OPTIONAL: Unstructured remittance information, in German "Verwendungszweck"
   # String, max. 140 char
-  remittance_information: 'Rechnung vom 22.08.2013'
+  remittance_information: 'Rechnung vom 22.08.2013',
 
   # OPTIONAL: Requested execution date, in German "Ausführungstermin"
   # Date
