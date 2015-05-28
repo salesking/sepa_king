@@ -224,6 +224,8 @@ class Payment < ActiveRecord::Base
 end
 ```
 
+**Beware:** The SEPA::IBANValidator is strict - e.g. it does not allow any spaces in the IBAN.
+
 Also see:
 * [lib/sepa_king/validator.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/validator.rb)
 * [lib/sepa_king/transaction/direct_debit_transaction.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/transaction/direct_debit_transaction.rb)

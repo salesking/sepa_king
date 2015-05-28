@@ -1,17 +1,21 @@
 # encoding: utf-8
 module SEPA
   class IBANValidator < ActiveModel::Validator
+    # IBAN2007Identifier (taken from schema)
+    REGEX = /\A[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}\z/
+
     def validate(record)
       field_name = options[:field_name] || :iban
-      value = record.send(field_name)
+      value = record.send(field_name).to_s
 
-      unless IBANTools::IBAN.valid?(value.to_s)
+      unless IBANTools::IBAN.valid?(value) && value.match(REGEX)
         record.errors.add(field_name, :invalid)
       end
     end
   end
 
   class BICValidator < ActiveModel::Validator
+    # AnyBICIdentifier (taken from schema)
     REGEX = /\A[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}\z/
 
     def validate(record)
