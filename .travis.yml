@@ -10,3 +10,4 @@ gemfile:
   - gemfiles/Gemfile-activemodel-4.0.x
   - gemfiles/Gemfile-activemodel-4.1.x
   - gemfiles/Gemfile-activemodel-4.2.x
+sudo: false
