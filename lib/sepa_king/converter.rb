@@ -18,11 +18,23 @@ module SEPA
       def convert_text(value)
         return unless value
 
-        I18n.transliterate(value.to_s).
-          # Change linebreaks to whitespaces
+        value.to_s.
+          # Replace some special characters described as "Best practices" in Chapter 6.2 of this document:
+          # http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-requirements-for-an-extended-character-set-unicode-subset-best-practices/epc217-08-best-practices-sepa-requirements-for-character-set-ssgpdf/
+          gsub('€','E').
+          gsub('@','(at)').
+          gsub('&', '+').
+          gsub('_','-').
+
+          # Replace non-ASCII characters with an ASCII approximation
+          i18n_transliterate.
+
+          # Replace linebreaks by spaces
           gsub(/\n+/,' ').
+
           # Remove all invalid characters
           gsub(/[^a-zA-Z0-9\ \'\:\?\,\-\(\+\.\)\/]/, '').
+
           # Remove leading and trailing spaces
           strip
       end
