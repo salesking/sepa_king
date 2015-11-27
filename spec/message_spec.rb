@@ -43,10 +43,14 @@ describe SEPA::Message do
   end
 
   describe :message_identification do
+    before do
+      allow(SecureRandom).to receive(:hex).and_return("randomidentificationstr-ignored_from_here")
+    end
+
     subject { DummyMessage.new }
 
     it 'should have a reader method' do
-      expect(subject.message_identification).to match(/SEPA-KING\/[0-9]+/)
+      expect(subject.message_identification).to eql('SEPA-KING/randomidentificationstr')
     end
 
     it 'should have a writer method' do

@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 describe SEPA::DirectDebit do
+  let(:message_id_regex) { /SEPA-KING\/[0-9a-z_]{23}/ }
+
   let(:direct_debit) {
     SEPA::DirectDebit.new name:                'Gläubiger GmbH',
                           bic:                 'BANKDEFFXXX',
@@ -37,7 +39,7 @@ describe SEPA::DirectDebit do
     it 'returns the id of the batch where the given transactions belongs to (1 batch)' do
       direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE"))
 
-      expect(direct_debit.batch_id("EXAMPLE REFERENCE")).to match(/SEPA-KING\/[0-9]+\/1/)
+      expect(direct_debit.batch_id("EXAMPLE REFERENCE")).to match(/#{message_id_regex}\/1/)
     end
 
     it 'returns the id of the batch where the given transactions belongs to (2 batches)' do
@@ -45,9 +47,9 @@ describe SEPA::DirectDebit do
       direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE 2", requested_date: Date.today.next.next))
       direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE 3"))
 
-      expect(direct_debit.batch_id("EXAMPLE REFERENCE 1")).to match(/SEPA-KING\/[0-9]+\/1/)
-      expect(direct_debit.batch_id("EXAMPLE REFERENCE 2")).to match(/SEPA-KING\/[0-9]+\/2/)
-      expect(direct_debit.batch_id("EXAMPLE REFERENCE 3")).to match(/SEPA-KING\/[0-9]+\/1/)
+      expect(direct_debit.batch_id("EXAMPLE REFERENCE 1")).to match(/#{message_id_regex}\/1/)
+      expect(direct_debit.batch_id("EXAMPLE REFERENCE 2")).to match(/#{message_id_regex}\/2/)
+      expect(direct_debit.batch_id("EXAMPLE REFERENCE 3")).to match(/#{message_id_regex}\/1/)
     end
   end
 
@@ -58,8 +60,8 @@ describe SEPA::DirectDebit do
       direct_debit.add_transaction(direct_debt_transaction(reference: "EXAMPLE REFERENCE 3"))
 
       expect(direct_debit.batches.size).to eq(2)
-      expect(direct_debit.batches[0]).to match(/SEPA-KING\/[0-9]+/)
-      expect(direct_debit.batches[1]).to match(/SEPA-KING\/[0-9]+/)
+      expect(direct_debit.batches[0]).to match(/#{message_id_regex}\/[0-9]+/)
+      expect(direct_debit.batches[1]).to match(/#{message_id_regex}\/[0-9]+/)
     end
   end
 
@@ -164,7 +166,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should have message_identification' do
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/MsgId', /SEPA-KING\/[0-9]+/)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/MsgId', message_id_regex)
         end
 
         it 'should have creditor identifier' do
@@ -172,7 +174,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain <PmtInfId>' do
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtInfId', /#{message_id_regex}\/1/)
         end
 
         it 'should contain <ReqdColltnDt>' do
@@ -271,8 +273,8 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain two payment_informations with different <PmtInfId>' do
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtInfId', /SEPA-KING\/[0-9]+\/2/)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/PmtInfId', /#{message_id_regex}\/1/)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/PmtInfId', /#{message_id_regex}\/2/)
         end
       end
 
