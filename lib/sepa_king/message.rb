@@ -70,7 +70,7 @@ module SEPA
 
     # Unique identifer for the whole message
     def message_identification
-      @message_identification ||= "SEPA-KING/#{SecureRandom.hex[0..22]}"
+      @message_identification ||= "SEPA-KING/#{SecureRandom.hex(11)}"
     end
 
     # Returns the id of the batch to which the given transaction belongs

@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe SEPA::DirectDebit do
-  let(:message_id_regex) { /SEPA-KING\/[0-9a-z_]{23}/ }
+  let(:message_id_regex) { /SEPA-KING\/[0-9a-z_]{22}/ }
 
   let(:direct_debit) {
     SEPA::DirectDebit.new name:                'Gläubiger GmbH',
