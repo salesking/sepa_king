@@ -4,7 +4,7 @@ module SEPA
     SEQUENCE_TYPES = %w(FRST OOFF RCUR FNAL)
     LOCAL_INSTRUMENTS = %w(CORE COR1 B2B)
 
-    attr_accessor :mandate_id, :mandate_date_of_signature, :local_instrument, :sequence_type, :creditor_account
+    attr_accessor :mandate_id, :mandate_date_of_signature, :local_instrument, :sequence_type, :creditor_account, :original_debtor_account, :same_mandate_new_debtor_agent
 
     validates_with MandateIdentifierValidator, field_name: :mandate_id
     validates_presence_of :mandate_date_of_signature
