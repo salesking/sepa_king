@@ -36,7 +36,7 @@ describe SEPA::CreditTransferTransaction do
 
   context 'Requested date' do
     it 'should allow valid value' do
-      expect(SEPA::CreditTransferTransaction).to accept(nil, Date.today, Date.today.next, Date.today + 2, for: :requested_date)
+      expect(SEPA::CreditTransferTransaction).to accept(nil, Date.new(1999, 1, 1), Date.today, Date.today.next, Date.today + 2, for: :requested_date)
     end
 
     it 'should not allow invalid value' do

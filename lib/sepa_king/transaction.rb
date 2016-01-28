@@ -4,6 +4,8 @@ module SEPA
     include ActiveModel::Validations
     extend Converter
 
+    DEFAULT_REQUESTED_DATE = Date.new(1999, 1, 1).freeze
+
     attr_accessor :name, :iban, :bic, :amount, :instruction, :reference, :remittance_information, :requested_date, :batch_booking
     convert :name, :instruction, :reference, :remittance_information, to: :text
     convert :amount, to: :decimal
@@ -22,9 +24,19 @@ module SEPA
         send("#{name}=", value)
       end
 
-      self.requested_date ||= Date.today.next
+      self.requested_date ||= DEFAULT_REQUESTED_DATE
       self.reference ||= 'NOTPROVIDED'
       self.batch_booking = true if self.batch_booking.nil?
+    end
+
+    protected
+
+    def validate_requested_date_after(min_requested_date)
+      return unless requested_date.is_a?(Date)
+
+      if requested_date != DEFAULT_REQUESTED_DATE && requested_date < min_requested_date
+        errors.add(:requested_date, "must be greater or equal to #{min_requested_date}, or nil")
+      end
     end
   end
 end

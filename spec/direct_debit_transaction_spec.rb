@@ -48,7 +48,7 @@ describe SEPA::DirectDebitTransaction do
 
   context 'Requested date' do
     it 'should allow valid value' do
-      expect(SEPA::DirectDebitTransaction).to accept(nil, Date.today.next, Date.today + 2, for: :requested_date)
+      expect(SEPA::DirectDebitTransaction).to accept(nil, Date.new(1999, 1, 1), Date.today.next, Date.today + 2, for: :requested_date)
     end
 
     it 'should not allow invalid value' do
