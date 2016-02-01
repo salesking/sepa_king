@@ -4,7 +4,7 @@ require 'bigdecimal'
 require 'builder'
 require 'iban-tools'
 
-require 'core_ext/string'
+require 'sepa_king/core_ext/string'
 
 require 'sepa_king/converter'
 require 'sepa_king/validator'
