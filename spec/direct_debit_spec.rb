@@ -178,7 +178,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should contain <ReqdColltnDt>' do
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/ReqdColltnDt', Date.today.next.iso8601)
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/ReqdColltnDt', Date.new(1999, 1, 1).iso8601)
         end
 
         it 'should contain <PmtMtd>' do

@@ -8,7 +8,7 @@ describe SEPA::Transaction do
     end
 
     it 'should have default for requested_date' do
-      expect(SEPA::Transaction.new.requested_date).to eq(Date.today.next)
+      expect(SEPA::Transaction.new.requested_date).to eq(Date.new(1999, 1, 1))
     end
 
     it 'should have default for batch_booking' do

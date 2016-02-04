@@ -11,6 +11,8 @@ module SEPA
     validates_inclusion_of :local_instrument, in: LOCAL_INSTRUMENTS
     validates_inclusion_of :sequence_type, in: SEQUENCE_TYPES
 
+    validate { |t| t.validate_requested_date_after(Date.today.next) }
+
     validate do |t|
       if creditor_account
         errors.add(:creditor_account, 'is not correct') unless creditor_account.valid?
@@ -20,10 +22,6 @@ module SEPA
         errors.add(:mandate_date_of_signature, 'is in the future') if t.mandate_date_of_signature > Date.today
       else
         errors.add(:mandate_date_of_signature, 'is not a Date')
-      end
-
-      if t.requested_date.is_a?(Date)
-        errors.add(:requested_date, 'is not in the future') if t.requested_date <= Date.today
       end
     end
 

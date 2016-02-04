@@ -129,7 +129,7 @@ describe SEPA::CreditTransfer do
         end
 
         it 'should contain <ReqdExctnDt>' do
-          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/ReqdExctnDt', Date.today.next.iso8601)
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/ReqdExctnDt', Date.new(1999, 1, 1).iso8601)
         end
 
         it 'should contain <PmtMtd>' do
