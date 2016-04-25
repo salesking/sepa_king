@@ -106,7 +106,7 @@ module SEPA
     def build_group_header(builder)
       builder.GrpHdr do
         builder.MsgId(message_identification)
-        builder.CreDtTm(Time.now.iso8601)
+        builder.CreDtTm(Time.now.strftime("%FT%T"))
         builder.NbOfTxs(transactions.length)
         builder.CtrlSum('%.2f' % amount_total)
         builder.InitgPty do
