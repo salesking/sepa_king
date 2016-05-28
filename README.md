@@ -186,10 +186,10 @@ sct.add_transaction(
   # True or False
   batch_booking: true,
 
-  # OPTIONAL: Urgent Payment
+  # OPTIONAL: Urgent Payment
   # One of these strings:
   #   'SEPA' ("SEPA-Zahlung")
-  #   'URGP' ("Taggleiche Eilüberweisung")
+  #   'URGP' ("Taggleiche Eilüberweisung")
   service_level: 'URGP'
 )
 sct.add_transaction ...
