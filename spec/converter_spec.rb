@@ -6,14 +6,14 @@ describe SEPA::Converter do
 
   describe :convert_text do
     it 'should convert special chars' do
-      expect(convert_text('GmbH & Co. KG')).to eq('GmbH + Co. KG')
       expect(convert_text('10€')).to eq('10E')
       expect(convert_text('info@bundesbank.de')).to eq('info(at)bundesbank.de')
       expect(convert_text('abc_def')).to eq('abc-def')
     end
 
-    it 'should convert umlaute' do
-      expect(convert_text('üöäÜÖÄß')).to eq('uoaUOAss')
+    it 'should not change allowed special character' do
+      expect(convert_text('üöäÜÖÄß')).to eq('üöäÜÖÄß')
+      expect(convert_text('&*$%')).to eq('&*$%')
     end
 
     it 'should convert line breaks' do
