@@ -20,7 +20,7 @@ module SEPA
 
         value.to_s.
           # Replace some special characters described as "Best practices" in Chapter 6.2 of this document:
-          # http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-requirements-for-an-extended-character-set-unicode-subset-best-practices/epc217-08-best-practices-sepa-requirements-for-character-set-ssgpdf/
+          # http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-requirements-for-an-extended-character-set-unicode-subset-best-practices/
           gsub('€','E').
           gsub('@','(at)').
           gsub('&', '+').
