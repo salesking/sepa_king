@@ -66,11 +66,19 @@ module SEPA
       end
     end
 
-    attr_writer :message_identification # Set unique identifer for the message
+    # Set unique identifer for the message
+    def message_identification=(value)
+      raise ArgumentError.new('mesage_identification must be a string!') unless value.is_a?(String)
 
-    # Unique identifer for the whole message
+      regex = /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\'|\ ]){1,35}\z/
+      raise ArgumentError.new("mesage_identification does not match #{regex}!") unless value.match(regex)
+
+      @message_identification = value
+    end
+
+    # Get unique identifer for the message (with fallback to a random string)
     def message_identification
-      @message_identification ||= "SEPA-KING/#{Time.now.to_i}"
+      @message_identification ||= "SEPA-KING/#{SecureRandom.hex(11)}"
     end
 
     # Returns the id of the batch to which the given transaction belongs
@@ -103,6 +111,13 @@ module SEPA
         builder.CtrlSum('%.2f' % amount_total)
         builder.InitgPty do
           builder.Nm(account.name)
+          builder.Id do
+            builder.OrgId do
+              builder.Othr do
+                builder.Id(account.creditor_identifier)
+              end
+            end
+          end if account.respond_to? :creditor_identifier
         end
       end
     end

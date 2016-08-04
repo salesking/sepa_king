@@ -2,6 +2,7 @@
 require 'spec_helper'
 
 describe SEPA::CreditTransfer do
+  let(:message_id_regex) { /SEPA-KING\/[0-9a-z_]{22}/ }
   let(:credit_transfer) {
     SEPA::CreditTransfer.new name:       'Schuldner GmbH',
                              bic:        'BANKDEFFXXX',
@@ -120,15 +121,15 @@ describe SEPA::CreditTransfer do
         end
 
         it 'should have message_identification' do
-          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/MsgId', /SEPA-KING\/[0-9]+/)
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/MsgId', message_id_regex)
         end
 
         it 'should contain <PmtInfId>' do
-          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/PmtInfId', /#{message_id_regex}\/1/)
         end
 
         it 'should contain <ReqdExctnDt>' do
-          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/ReqdExctnDt', Date.today.next.iso8601)
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/ReqdExctnDt', Date.new(1999, 1, 1).iso8601)
         end
 
         it 'should contain <PmtMtd>' do
@@ -209,8 +210,8 @@ describe SEPA::CreditTransfer do
         end
 
         it 'should contain two payment_informations with different <PmtInfId>' do
-          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/PmtInfId', /SEPA-KING\/[0-9]+\/1/)
-          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/PmtInfId', /SEPA-KING\/[0-9]+\/2/)
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/PmtInfId', /#{message_id_regex}\/1/)
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/PmtInfId', /#{message_id_regex}\/2/)
         end
       end
 

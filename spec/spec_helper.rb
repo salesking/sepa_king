@@ -6,19 +6,15 @@
 require 'simplecov'
 require 'coveralls'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
-]
+])
 SimpleCov.start do
   add_filter '/spec/'
 end
 
 require 'sepa_king'
-
-if I18n.respond_to?(:enforce_available_locales=)
-  I18n.enforce_available_locales = false
-end
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
