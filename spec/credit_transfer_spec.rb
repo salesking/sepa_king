@@ -267,6 +267,27 @@ describe SEPA::CreditTransfer do
           expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[4]/CtrlSum', '8.00')
         end
       end
+
+      context 'with instruction given' do
+        subject do
+          sct = credit_transfer
+
+          sct.add_transaction name:                   'Telekomiker AG',
+                              iban:                   'DE37112589611964645802',
+                              amount:                 102.50,
+                              instruction:            '1234/ABC'
+
+          sct.to_xml
+        end
+
+        it 'should create valid XML file' do
+          expect(subject).to validate_against('pain.001.003.03.xsd')
+        end
+
+        it 'should contain <InstrId>' do
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/PmtId/InstrId', '1234/ABC')
+        end
+      end
     end
   end
 end
