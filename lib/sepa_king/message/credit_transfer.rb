@@ -27,11 +27,7 @@ module SEPA
           builder.NbOfTxs(transactions.length)
           builder.CtrlSum('%.2f' % amount_total(transactions))
           builder.PmtTpInf do
-            if group[:service_level] == 'SEPA' && schema_name == PAIN_001_001_03_CH_02
-              builder.LclInstrm do
-                builder.Prtry('CH01')
-              end
-            else
+            unless schema_name == PAIN_001_001_03_CH_02 && group[:service_level] == 'SEPA'
               builder.SvcLvl do
                 builder.Cd(group[:service_level])
               end
