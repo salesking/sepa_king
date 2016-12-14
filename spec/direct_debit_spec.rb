@@ -411,6 +411,24 @@ describe SEPA::DirectDebit do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/AmdmntInfDtls/OrgnlDbtrAgt/FinInstnId/Othr/Id', 'SMNDA')
         end
       end
+
+      context 'with instruction given' do
+        subject do
+          sct = direct_debit
+
+          sct.add_transaction(direct_debt_transaction.merge(instruction: '1234/ABC'))
+
+          sct.to_xml
+        end
+
+        it 'should create valid XML file' do
+          expect(subject).to validate_against('pain.008.003.02.xsd')
+        end
+
+        it 'should contain <InstrId>' do
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/PmtId/InstrId', '1234/ABC')
+        end
+      end
     end
   end
 end

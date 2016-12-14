@@ -170,6 +170,10 @@ sct.add_transaction(
   # Number with two decimal digit
   amount:                 102.50,
 
+  # OPTIONAL: Instruction Identification, will not be submitted to the creditor
+  # String, max. 35 char
+  instruction:               '12345',
+
   # OPTIONAL: End-To-End-Identification, will be submitted to the creditor
   # String, max. 35 char
   reference:              'XYZ-1234/123',
