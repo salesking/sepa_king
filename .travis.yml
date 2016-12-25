@@ -18,4 +18,8 @@ matrix:
       gemfile: gemfiles/Gemfile-activemodel-5.0.x
     - rvm: 2.1.10
       gemfile: gemfiles/Gemfile-activemodel-5.0.x
+    - rvm: 2.4.0
+      gemfile: gemfiles/Gemfile-activemodel-4.1.x
+    - rvm: 2.4.0
+      gemfile: gemfiles/Gemfile-activemodel-4.2.x
 sudo: false
