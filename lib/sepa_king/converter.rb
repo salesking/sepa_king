@@ -37,7 +37,14 @@ module SEPA
 
       def convert_decimal(value)
         return unless value
-        BigDecimal(value.to_s).round(2)
+        value = begin
+          BigDecimal(value.to_s)
+        rescue ArgumentError
+        end
+
+        if value && value.finite? && value > 0
+          value.round(2)
+        end
       end
     end
   end

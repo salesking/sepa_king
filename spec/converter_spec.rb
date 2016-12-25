@@ -56,5 +56,19 @@ describe SEPA::Converter do
     it 'should not touch nil' do
       expect(convert_decimal(nil)).to eq(nil)
     end
+
+    it 'should not convert zero value' do
+      expect(convert_decimal(0)).to eq(nil)
+    end
+
+    it 'should not convert negative value' do
+      expect(convert_decimal(-3)).to eq(nil)
+    end
+
+    it 'should not convert invalid value' do
+      expect(convert_decimal('xyz')).to eq(nil)
+      expect(convert_decimal('NaN')).to eq(nil)
+      expect(convert_decimal('Infinity')).to eq(nil)
+    end
   end
 end
