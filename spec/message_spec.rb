@@ -42,6 +42,26 @@ describe SEPA::Message do
     end
   end
 
+  describe 'validation of payment_information_identification' do
+    subject do
+      message = DummyMessage.new
+      message.add_transaction amount: 1.1
+      message.add_transaction amount: 2.2
+      message
+    end
+
+    it 'should not fail if length is ok' do
+      subject.message_identification = 'shortID'
+      expect(subject.errors_on(:payment_information_identification).size).to eq(0)
+    end
+
+    it 'should fail if length is too long' do
+      subject.message_identification = 'A' * 35
+      expect(subject).not_to be_valid
+      expect(subject.errors_on(:payment_information_identification).size).to eq(2)
+    end
+  end
+
   describe :message_identification do
     subject { DummyMessage.new }
 

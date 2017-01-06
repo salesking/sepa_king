@@ -14,6 +14,7 @@ module SEPA
     attr_reader :account, :grouped_transactions
 
     validates_presence_of :transactions
+    validate :length_of_payment_information_identifications
     validate do |record|
       record.errors.add(:account, record.account.errors.full_messages) unless record.account.valid?
     end
@@ -146,6 +147,13 @@ module SEPA
     # Returns a key to determine the group to which the transaction belongs
     def transaction_group(transaction)
       transaction
+    end
+
+    def length_of_payment_information_identifications
+      grouped_transactions.keys.each do |group|
+        value = payment_information_identification(group)
+        errors.add :payment_information_identification, 'is longer than 35 characters!' unless value.length <= 35
+      end
     end
   end
 end
