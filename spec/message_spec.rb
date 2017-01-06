@@ -85,4 +85,44 @@ describe SEPA::Message do
       end
     end
   end
+
+  describe :creation_date_time do
+    subject { DummyMessage.new }
+
+    describe 'getter' do
+      it 'should return Time.now.iso8601' do
+        expect(subject.creation_date_time).to eq(Time.now.iso8601)
+      end
+    end
+
+    describe 'setter' do
+      it 'should accept date time strings' do
+        ['2017-01-05T12:28:52', '2017-01-05T12:28:52Z', '2017-01-05 12:28:52', '2017-01-05T12:28:52+01:00'].each do |valid_dt|
+          subject.creation_date_time = valid_dt
+          expect(subject.creation_date_time).to eq(valid_dt)
+        end
+      end
+
+      it 'should deny invalid string' do
+        [ 'an arbitrary string',
+          ''
+        ].each do |arg|
+          expect {
+            subject.creation_date_time = arg
+          }.to raise_error(ArgumentError)
+        end
+      end
+
+      it 'should deny argument other than String' do
+        [ 123,
+          nil,
+          :foo
+        ].each do |arg|
+          expect {
+            subject.creation_date_time = arg
+          }.to raise_error(ArgumentError)
+        end
+      end
+    end
+  end
 end

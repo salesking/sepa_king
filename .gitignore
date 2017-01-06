@@ -7,3 +7,6 @@ pkg/*
 Gemfile.lock
 # tmp disable
 docs/
+.idea
+.ruby-version
+.ruby-gemset

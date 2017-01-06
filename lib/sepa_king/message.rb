@@ -81,6 +81,22 @@ module SEPA
       @message_identification ||= "SEPA-KING/#{SecureRandom.hex(11)}"
     end
 
+    # Set creation date time for the message
+    # p.s. Rabobank in the Netherlands only accepts the more restricted format [0-9]{4}[-][0-9]{2,2}[-][0-9]{2,2}[T][0-9]{2,2}[:][0-9]{2,2}[:][0-9]{2,2}
+    def creation_date_time=(value)
+      raise ArgumentError.new('creation_date_time must be a string!') unless value.is_a?(String)
+
+      regex = /[0-9]{4}[-][0-9]{2,2}[-][0-9]{2,2}(?:\s|T)[0-9]{2,2}[:][0-9]{2,2}[:][0-9]{2,2}/
+      raise ArgumentError.new("creation_date_time does not match #{regex}!") unless value.match(regex)
+
+      @creation_date_time = value
+    end
+
+    # Get creation date time for the message (with fallback to Time.now.iso8601)
+    def creation_date_time
+      @creation_date_time ||= Time.now.iso8601
+    end
+
     # Returns the id of the batch to which the given transaction belongs
     # Identified based upon the reference of the transaction
     def batch_id(transaction_reference)
@@ -106,7 +122,7 @@ module SEPA
     def build_group_header(builder)
       builder.GrpHdr do
         builder.MsgId(message_identification)
-        builder.CreDtTm(Time.now.iso8601)
+        builder.CreDtTm(creation_date_time)
         builder.NbOfTxs(transactions.length)
         builder.CtrlSum('%.2f' % amount_total)
         builder.InitgPty do
