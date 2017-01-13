@@ -29,5 +29,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'coveralls'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'nokogiri'
+  s.add_development_dependency 'nokogiri', RUBY_VERSION < '2.1.0' ? '~> 1.6.0' : '~> 1'
 end
