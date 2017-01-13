@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'activemodel', '>= 3.0.0'
   s.add_runtime_dependency 'builder'
-  s.add_runtime_dependency 'iban-tools'
+  s.add_runtime_dependency 'iban-tools', '1.1.0'
 
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rspec'
