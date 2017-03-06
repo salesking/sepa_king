@@ -256,4 +256,4 @@ https://github.com/salesking/sepa_king/graphs/contributors
 
 Released under the MIT license
 
-Copyright (c) 2013-2016 Georg Leciejewski (SalesKing), Georg Ledermann (https://github.com/ledermann)
+Copyright (c) 2013-2017 Georg Leciejewski (SalesKing), Georg Ledermann (https://github.com/ledermann)
