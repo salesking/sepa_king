@@ -12,8 +12,13 @@ gemfile:
   - gemfiles/Gemfile-activemodel-4.1.x
   - gemfiles/Gemfile-activemodel-4.2.x
   - gemfiles/Gemfile-activemodel-5.0.x
+  - gemfiles/Gemfile-activemodel-5.1.x
 matrix:
   exclude:
+    - rvm: 2.0.0
+      gemfile: gemfiles/Gemfile-activemodel-5.1.x
+    - rvm: 2.1.10
+      gemfile: gemfiles/Gemfile-activemodel-5.1.x
     - rvm: 2.0.0
       gemfile: gemfiles/Gemfile-activemodel-5.0.x
     - rvm: 2.1.10
