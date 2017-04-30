@@ -5,7 +5,7 @@ module SEPA
     self.account_class = DebtorAccount
     self.transaction_class = CreditTransferTransaction
     self.xml_main_tag = 'CstmrCdtTrfInitn'
-    self.known_schemas = [ PAIN_001_003_03, PAIN_001_002_03, PAIN_001_001_03 ]
+    self.known_schemas = [ PAIN_001_003_03, PAIN_001_002_03, PAIN_001_001_03, PAIN_001_001_03_CH_02 ]
 
   private
     # Find groups of transactions which share the same values of some attributes
@@ -16,7 +16,7 @@ module SEPA
       }
     end
 
-    def build_payment_informations(builder)
+    def build_payment_informations(builder, schema_name)
       # Build a PmtInf block for every group of transactions
       grouped_transactions.each do |group, transactions|
         # All transactions with the same requested_date are placed into the same PmtInf block
@@ -27,8 +27,10 @@ module SEPA
           builder.NbOfTxs(transactions.length)
           builder.CtrlSum('%.2f' % amount_total(transactions))
           builder.PmtTpInf do
-            builder.SvcLvl do
-              builder.Cd(group[:service_level])
+            unless schema_name == PAIN_001_001_03_CH_02 && group[:service_level] == 'SEPA'
+              builder.SvcLvl do
+                builder.Cd(group[:service_level])
+              end
             end
           end
           builder.ReqdExctnDt(group[:requested_date].iso8601)
@@ -54,13 +56,13 @@ module SEPA
           builder.ChrgBr('SLEV')
 
           transactions.each do |transaction|
-            build_transaction(builder, transaction)
+            build_transaction(builder, transaction, schema_name)
           end
         end
       end
     end
 
-    def build_transaction(builder, transaction)
+    def build_transaction(builder, transaction, schema_name)
       builder.CdtTrfTxInf do
         builder.PmtId do
           if transaction.instruction.present?
@@ -69,7 +71,11 @@ module SEPA
           builder.EndToEndId(transaction.reference)
         end
         builder.Amt do
-          builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
+          if schema_name == PAIN_001_001_03_CH_02
+            builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'CHF')
+          else
+            builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
+          end
         end
         if transaction.bic
           builder.CdtrAgt do
