@@ -70,9 +70,13 @@ sdd.add_transaction(
   # String, max. 34 chars
   iban:                      'DE21500500009876543210',
 
-  # Amount in EUR
+  # Amount
   # Number with two decimal digit
   amount:                    39.99,
+
+  # OPTIONAL: Currency, EUR by default (ISO 4217 standard)
+  # String, 3 char
+  currency:                  'EUR',
 
   # OPTIONAL: Instruction Identification, will not be submitted to the debtor
   # String, max. 35 char
@@ -166,9 +170,13 @@ sct.add_transaction(
   # String, max. 34 chars
   iban:                   'DE37112589611964645802',
 
-  # Amount in EUR
+  # Amount
   # Number with two decimal digit
   amount:                 102.50,
+
+  # OPTIONAL: Currency, EUR by default (ISO 4217 standard)
+  # String, 3 char
+  currency:               'EUR',
 
   # OPTIONAL: Instruction Identification, will not be submitted to the creditor
   # String, max. 35 char
