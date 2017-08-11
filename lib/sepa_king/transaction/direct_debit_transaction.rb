@@ -34,8 +34,10 @@ module SEPA
     def schema_compatible?(schema_name)
       case schema_name
       when PAIN_008_002_02
-        self.bic.present? && %w(CORE B2B).include?(self.local_instrument)
-      when PAIN_008_003_02, PAIN_008_001_02
+        self.bic.present? && %w(CORE B2B).include?(self.local_instrument) && self.currency == 'EUR'
+      when PAIN_008_003_02
+        self.currency == 'EUR'
+      when PAIN_008_001_02
         true
       end
     end

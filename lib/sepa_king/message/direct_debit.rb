@@ -113,7 +113,7 @@ module SEPA
           end
           builder.EndToEndId(transaction.reference)
         end
-        builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
+        builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
         builder.DrctDbtTx do
           builder.MndtRltdInf do
             builder.MndtId(transaction.mandate_id)

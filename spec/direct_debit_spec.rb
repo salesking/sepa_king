@@ -429,6 +429,41 @@ describe SEPA::DirectDebit do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/PmtId/InstrId', '1234/ABC')
         end
       end
+
+      context 'with a different currency given' do
+        subject do
+          sct = direct_debit
+
+          sct.add_transaction(direct_debt_transaction.merge(instruction: '1234/ABC', currency: 'SEK'))
+
+          sct
+        end
+
+        it 'should validate against pain.001.001.03' do
+          expect(subject.to_xml(SEPA::PAIN_008_001_02)).to validate_against('pain.008.001.02.xsd')
+        end
+
+        it 'should have a CHF Ccy' do
+          doc = Nokogiri::XML(subject.to_xml('pain.008.001.02'))
+          doc.remove_namespaces!
+
+          nodes = doc.xpath('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/InstdAmt')
+          expect(nodes.length).to eql(1)
+          expect(nodes.first.attribute('Ccy').value).to eql('SEK')
+        end
+
+        it 'should fail for pain.008.002.02' do
+          expect {
+            subject.to_xml(SEPA::PAIN_008_002_02)
+          }.to raise_error(RuntimeError)
+        end
+
+        it 'should fail for pain.008.003.02' do
+          expect {
+            subject.to_xml(SEPA::PAIN_008_003_02)
+          }.to raise_error(RuntimeError)
+        end
+      end
     end
   end
 end
