@@ -41,6 +41,7 @@ describe SEPA::CreditTransferTransaction do
     context 'for pain.001.001.03' do
       it 'should succeed for valid attributes' do
         expect(SEPA::CreditTransferTransaction.new(:bic => 'SPUEDE2UXXX', :currency => 'CHF')).to be_schema_compatible('pain.001.001.03')
+        expect(SEPA::CreditTransferTransaction.new(:bic => nil)).to be_schema_compatible('pain.001.003.03')
       end
     end
   end
