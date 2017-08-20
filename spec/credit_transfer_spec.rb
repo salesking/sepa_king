@@ -62,6 +62,12 @@ describe SEPA::CreditTransfer do
           expect(subject.to_xml).to validate_against('pain.001.003.03.xsd')
         end
 
+        it 'should fail for pain.001.001.03' do
+          expect {
+            subject.to_xml(SEPA::PAIN_001_001_03)
+          }.to raise_error(RuntimeError)
+        end
+
         it 'should fail for pain.001.002.03' do
           expect {
             subject.to_xml(SEPA::PAIN_001_002_03)
@@ -325,6 +331,32 @@ describe SEPA::CreditTransfer do
           expect {
             subject.to_xml(SEPA::PAIN_001_003_03)
           }.to raise_error(RuntimeError)
+        end
+      end
+
+      context 'with a transaction without a bic' do
+        subject do
+          sct = credit_transfer
+
+          sct.add_transaction name:                   'Telekomiker AG',
+                              iban:                   'DE37112589611964645802',
+                              amount:                 102.50
+
+          sct
+        end
+
+        it 'should validate against pain.001.001.03' do
+          expect(subject.to_xml('pain.001.001.03')).to validate_against('pain.001.001.03.xsd')
+        end
+
+        it 'should fail for pain.001.002.03' do
+          expect {
+            subject.to_xml(SEPA::PAIN_001_002_03)
+          }.to raise_error(RuntimeError)
+        end
+
+        it 'should validate against pain.001.003.03' do
+          expect(subject.to_xml(SEPA::PAIN_001_003_03)).to validate_against('pain.001.003.03.xsd')
         end
       end
     end
