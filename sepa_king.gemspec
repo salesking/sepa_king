@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.0.0'
 
-  s.add_runtime_dependency 'activemodel', '>= 3.0.0'
+  s.add_runtime_dependency 'activemodel', '>= 3.1'
   s.add_runtime_dependency 'builder'
   s.add_runtime_dependency 'iban-tools'
 
