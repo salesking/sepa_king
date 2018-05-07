@@ -398,17 +398,21 @@ describe SEPA::DirectDebit do
 
           sdd.add_transaction(direct_debt_transaction.merge(original_debtor_account: 'NL08RABO0135742099'))
           sdd.add_transaction(direct_debt_transaction.merge(same_mandate_new_debtor_agent: true))
+          sdd.add_transaction(direct_debt_transaction.merge(original_creditor_account: SEPA::CreditorAccount.new(creditor_identifier: 'NL53ZZZ091734220000', name: 'Creditor Inc.')))
           sdd.to_xml
         end
 
         it 'should include amendment indicator' do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/AmdmntInd', 'true')
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/AmdmntInd', 'true')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[3]/DrctDbtTx/MndtRltdInf/AmdmntInd', 'true')
         end
 
         it 'should include amendment information details' do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/AmdmntInfDtls/OrgnlDbtrAcct/Id/IBAN', 'NL08RABO0135742099')
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/DrctDbtTx/MndtRltdInf/AmdmntInfDtls/OrgnlDbtrAgt/FinInstnId/Othr/Id', 'SMNDA')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[3]/DrctDbtTx/MndtRltdInf/AmdmntInfDtls/OrgnlCdtrSchmeId/Nm', 'Creditor Inc.')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[3]/DrctDbtTx/MndtRltdInf/AmdmntInfDtls/OrgnlCdtrSchmeId/Id/PrvtId/Othr/Id', 'NL53ZZZ091734220000')
         end
       end
 
