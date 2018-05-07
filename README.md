@@ -131,7 +131,7 @@ sdd.add_transaction(
   )
 
   # OPTIONAL: Specify the country & address of the debtor (REQUIRED for SEPA debits outside of EU)
-  debtor_account: SEPA::Debtor.new(
+  debtor_address: SEPA::DebtorAddress.new(
     country_code:        'CH',
     address_line1:       'Mustergasse 123a',
     address_line2:       '1234 Musterstadt'
