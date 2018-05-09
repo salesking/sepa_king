@@ -149,6 +149,13 @@ module SEPA
         end
         builder.Dbtr do
           builder.Nm(transaction.name)
+          if transaction.debtor_address
+            builder.PstlAdr do
+              builder.Ctry transaction.debtor_address.country_code
+              builder.AdrLine transaction.debtor_address.address_line1
+              builder.AdrLine transaction.debtor_address.address_line2
+            end
+          end
         end
         builder.DbtrAcct do
           builder.Id do

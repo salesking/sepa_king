@@ -101,7 +101,7 @@ sdd.add_transaction(
   # Local instrument, in German "Lastschriftart"
   # One of these strings:
   #   'CORE' ("Basis-Lastschrift")
-  #   'COR1' ("Basis-Lastschrift mit verkürzter Vorlagefrist")
+  #   'COR1' ("Basis-Lastschrift mit verkürzter Vorlagefrist")
   #   'B2B' ("Firmen-Lastschrift")
   local_instrument: 'CORE',
 
@@ -128,6 +128,13 @@ sdd.add_transaction(
     bic:                 'RABONL2U',
     iban:                'NL08RABO0135742099',
     creditor_identifier: 'NL53ZZZ091734220000'
+  )
+
+  # OPTIONAL: Specify the country & address of the debtor (REQUIRED for SEPA debits outside of EU)
+  debtor_address: SEPA::DebtorAddress.new(
+    country_code:        'CH',
+    address_line1:       'Mustergasse 123a',
+    address_line2:       '1234 Musterstadt'
   )
 )
 sdd.add_transaction ...

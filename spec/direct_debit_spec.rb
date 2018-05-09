@@ -74,6 +74,34 @@ describe SEPA::DirectDebit do
       end
     end
 
+    context 'setting debtor address' do
+      subject do
+        sdd = SEPA::DirectDebit.new name:                'Gläubiger GmbH',
+                                    iban:                'DE87200500001234567890',
+                                    creditor_identifier: 'DE98ZZZ09999999999'
+
+        sda = SEPA::DebtorAddress.new country_code:           'CH',
+                                address_line1:                'Mustergasse 123',
+                                address_line2:                '1234 Musterstadt'
+
+        sdd.add_transaction name:                      'Zahlemann & Söhne GbR',
+                            bic:                       'SPUEDE2UXXX',
+                            iban:                      'DE21500500009876543210',
+                            amount:                    39.99,
+                            reference:                 'XYZ/2013-08-ABO/12345',
+                            remittance_information:    'Unsere Rechnung vom 10.08.2013',
+                            mandate_id:                'K-02-2011-12345',
+                            debtor_address:            sda,
+                            mandate_date_of_signature: Date.new(2011,1,25)
+
+        sdd
+      end
+
+      it 'should validate against pain.008.003.02' do
+        expect(subject.to_xml(SEPA::PAIN_008_003_02)).to validate_against('pain.008.003.02.xsd')
+      end
+    end
+
     context 'for valid creditor' do
       context 'without BIC (IBAN-only)' do
         subject do
@@ -119,6 +147,42 @@ describe SEPA::DirectDebit do
                               reference:                 'XYZ/2013-08-ABO/12345',
                               remittance_information:    'Unsere Rechnung vom 10.08.2013',
                               mandate_id:                'K-02-2011-12345',
+                              mandate_date_of_signature: Date.new(2011,1,25)
+
+          sdd
+        end
+
+        it 'should validate against pain.008.001.02' do
+          expect(subject.to_xml(SEPA::PAIN_008_001_02)).to validate_against('pain.008.001.02.xsd')
+        end
+
+        it 'should validate against pain.008.002.02' do
+          expect(subject.to_xml(SEPA::PAIN_008_002_02)).to validate_against('pain.008.002.02.xsd')
+        end
+
+        it 'should validate against pain.008.003.02' do
+          expect(subject.to_xml(SEPA::PAIN_008_003_02)).to validate_against('pain.008.003.02.xsd')
+        end
+      end
+
+      context 'with BIC and debtor address ' do
+        subject do
+          sdd = direct_debit
+
+          sda = SEPA::DebtorAddress.new(
+            country_code: 'CH',
+            address_line1: 'Mustergasse 123',
+            address_line2: '1234 Musterstadt'
+          )
+
+          sdd.add_transaction name:                      'Zahlemann & Söhne GbR',
+                              bic:                       'SPUEDE2UXXX',
+                              iban:                      'DE21500500009876543210',
+                              amount:                    39.99,
+                              reference:                 'XYZ/2013-08-ABO/12345',
+                              remittance_information:    'Unsere Rechnung vom 10.08.2013',
+                              mandate_id:                'K-02-2011-12345',
+                              debtor_address:            sda,
                               mandate_date_of_signature: Date.new(2011,1,25)
 
           sdd

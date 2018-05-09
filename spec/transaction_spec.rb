@@ -26,6 +26,19 @@ describe SEPA::Transaction do
     end
   end
 
+  context 'Adress' do
+    it 'should accept valid value' do
+      expect(SEPA::Transaction).to accept(SEPA::DebtorAddress.new(
+        country_code: "CH",
+        address_line1: "Musterstrasse 123",
+        address_line2: "1234 Musterstadt"
+      ), for: :debtor_address)
+    end
+
+    it 'should not accept invalid value' do
+      expect(SEPA::Transaction).not_to accept('', {} , for: :name)
+    end
+  end
   context 'IBAN' do
     it 'should accept valid value' do
       expect(SEPA::Transaction).to accept('DE21500500009876543210', 'PL61109010140000071219812874', for: :iban)
