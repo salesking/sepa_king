@@ -9,7 +9,7 @@ module SEPA
 
     validates_length_of :name, within: 1..70
     validates :message_identification_prefix,
-              format: { with: /[a-zA-Z]/ },
+              format: { with: /\A[-a-zA-Z0-9_]+\z/ },
               if: -> { message_identification_prefix.present? }
     validates_with BICValidator, IBANValidator, message: "%{value} is invalid"
 

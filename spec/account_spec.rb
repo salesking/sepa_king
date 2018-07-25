@@ -42,11 +42,11 @@ describe SEPA::Account do
 
   describe :message_identification_prefix do
     it 'should accept valid value' do
-      expect(SEPA::Account).to accept(nil, '', 'Test', for: :message_identification_prefix)
+      expect(SEPA::Account).to accept(nil, '', 'S3PA-KING' 'Test', 'SEPA-KING', 'SEPA_KING', for: :message_identification_prefix)
     end
 
     it 'should not accept invalid value' do
-      expect(SEPA::Account).not_to accept(0000, '@#$%', for: :message_identification_prefix)
+      expect(SEPA::Account).not_to accept('@#$%', 'SEPA KING', for: :message_identification_prefix)
     end
   end
 end
