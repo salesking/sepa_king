@@ -4,10 +4,13 @@ module SEPA
     include ActiveModel::Validations
     extend Converter
 
-    attr_accessor :name, :iban, :bic
+    attr_accessor :name, :iban, :bic, :message_identification_prefix
     convert :name, to: :text
 
     validates_length_of :name, within: 1..70
+    validates :message_identification_prefix,
+              format: { with: /\A[-a-zA-Z0-9_]+\z/ },
+              if: -> { message_identification_prefix.present? }
     validates_with BICValidator, IBANValidator, message: "%{value} is invalid"
 
     def initialize(attributes = {})
