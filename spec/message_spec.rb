@@ -51,6 +51,15 @@ describe SEPA::Message do
       end
     end
 
+    context 'setting message_identification_prefix on account' do
+      let(:message_identification_prefix) { 'Test' }
+      subject { DummyMessage.new(message_identification_prefix: message_identification_prefix) }
+
+      it 'should return random hex string with passed prefix' do
+        expect(subject.message_identification).to match(/#{message_identification_prefix}\/([a-f0-9]{2}){11}/)
+      end
+    end
+
     describe 'setter' do
       it 'should accept valid ID' do
         [ 'gid://myMoneyApp/Payment/15108', # for example, Rails Global ID could be a candidate
