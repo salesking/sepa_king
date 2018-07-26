@@ -4,9 +4,11 @@ require 'spec_helper'
 describe SEPA::CreditTransfer do
   let(:message_id_regex) { /SEPA-KING\/[0-9a-z_]{22}/ }
   let(:credit_transfer) {
-    SEPA::CreditTransfer.new name:       'Schuldner GmbH',
-                             bic:        'BANKDEFFXXX',
-                             iban:       'DE87200500001234567890'
+    SEPA::CreditTransfer.new name:                          'Schuldner GmbH',
+                             bic:                           'BANKDEFFXXX',
+                             iban:                          'DE87200500001234567890',
+                             creditor_identifier:           'DE98ZZZ09999999999',
+                             external_organisation_id_code: 'BANK'
   }
 
   describe :new do
@@ -128,6 +130,14 @@ describe SEPA::CreditTransfer do
 
         it 'should have message_identification' do
           expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/MsgId', message_id_regex)
+        end
+
+        it 'should have creditor identifier' do
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/InitgPty/Id/OrgId/Othr/Id', credit_transfer.account.creditor_identifier)
+        end
+
+        it 'should have external organisation indentification code' do
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/InitgPty/Id/OrgId/Othr/SchmeNm/Cd', credit_transfer.account.external_organisation_id_code)
         end
 
         it 'should contain <PmtInfId>' do
@@ -358,6 +368,49 @@ describe SEPA::CreditTransfer do
         it 'should validate against pain.001.003.03' do
           expect(subject.to_xml(SEPA::PAIN_001_003_03)).to validate_against('pain.001.003.03.xsd')
         end
+      end
+    end
+
+    context 'when external organisation indentification code is not present and creditor identifier is' do
+      let(:credit_transfer) {
+        SEPA::CreditTransfer.new name:                     'Schuldner GmbH',
+                                 bic:                      'BANKDEFFXXX',
+                                 iban:                     'DE87200500001234567890',
+                                 creditor_identifier:      'DE98ZZZ09999999999'
+      }
+
+      subject do
+        credit_transfer.add_transaction(credit_transfer_transaction)
+        credit_transfer.to_xml
+      end
+
+      it 'should have creditor identifier' do
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/InitgPty/Id/OrgId/Othr/Id', credit_transfer.account.creditor_identifier)
+      end
+
+      it 'should not have external organisation indentification code' do
+        expect(subject).not_to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/InitgPty/Id/OrgId/Othr/SchmeNm/Cd')
+      end
+    end
+
+    context 'when external organisation indentification code is present and creditor identifier is not' do
+      let(:credit_transfer) {
+        SEPA::CreditTransfer.new name:                     'Schuldner GmbH',
+                                 bic:                      'BANKDEFFXXX',
+                                 iban:                     'DE87200500001234567890'
+      }
+
+      subject do
+        credit_transfer.add_transaction(credit_transfer_transaction)
+        credit_transfer.to_xml
+      end
+
+      it 'should not have creditor identifier' do
+        expect(subject).not_to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/InitgPty/Id/OrgId/Othr/Id')
+      end
+
+      it 'should not have external organisation indentification code' do
+        expect(subject).not_to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/InitgPty/Id/OrgId/Othr/SchmeNm/Cd')
       end
     end
   end

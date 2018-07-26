@@ -5,10 +5,11 @@ describe SEPA::DirectDebit do
   let(:message_id_regex) { /SEPA-KING\/[0-9a-z_]{22}/ }
 
   let(:direct_debit) {
-    SEPA::DirectDebit.new name:                'Gläubiger GmbH',
-                          bic:                 'BANKDEFFXXX',
-                          iban:                'DE87200500001234567890',
-                          creditor_identifier: 'DE98ZZZ09999999999'
+    SEPA::DirectDebit.new name:                          'Gläubiger GmbH',
+                          bic:                           'BANKDEFFXXX',
+                          iban:                          'DE87200500001234567890',
+                          creditor_identifier:           'DE98ZZZ09999999999',
+                          external_organisation_id_code: 'BANK'
   }
 
   describe :new do
@@ -235,6 +236,10 @@ describe SEPA::DirectDebit do
 
         it 'should have creditor identifier' do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/InitgPty/Id/OrgId/Othr/Id', direct_debit.account.creditor_identifier)
+        end
+
+        it 'should have external organisation indentification code' do
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/InitgPty/Id/OrgId/Othr/SchmeNm/Cd', direct_debit.account.external_organisation_id_code)
         end
 
         it 'should contain <PmtInfId>' do

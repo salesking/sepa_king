@@ -39,4 +39,14 @@ describe SEPA::Account do
       expect(SEPA::Account).not_to accept('', 'invalid', for: :bic)
     end
   end
+
+  describe :external_organisation_id_code do
+    it 'should accept valid value' do
+      expect(SEPA::Account).to accept(nil, '', 'BANK', 'CUST', for: :external_organisation_id_code)
+    end
+
+    it 'should not accept invalid value' do
+      expect(SEPA::Account).not_to accept('invalid', 0000, for: :external_organisation_id_code)
+    end
+  end
 end
