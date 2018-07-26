@@ -115,9 +115,12 @@ module SEPA
             builder.OrgId do
               builder.Othr do
                 builder.Id(account.creditor_identifier)
+                builder.SchmeNm do
+                  builder.Cd(account.external_organisation_id_code)
+                end if account.external_organisation_id_code.present?
               end
             end
-          end if account.respond_to? :creditor_identifier
+          end if account.respond_to?(:creditor_identifier) && account.creditor_identifier.present?
         end
       end
     end
