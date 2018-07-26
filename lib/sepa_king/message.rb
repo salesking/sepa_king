@@ -120,7 +120,7 @@ module SEPA
                 end if account.external_organisation_id_code.present?
               end
             end
-          end if account.creditor_identifier.present?
+          end if account.respond_to? :creditor_identifier && account.creditor_identifier.present?
         end
       end
     end
