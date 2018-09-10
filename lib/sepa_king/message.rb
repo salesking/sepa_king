@@ -38,17 +38,20 @@ module SEPA
 
     # @return [String] xml
     def to_xml(schema_name=self.known_schemas.first)
-      raise RuntimeError.new(errors.full_messages.join("\n")) unless valid?
-      raise RuntimeError.new("Incompatible with schema #{schema_name}!") unless schema_compatible?(schema_name)
+      raise SEPA::Error.new(errors.full_messages.join("\n")) unless valid?
+      raise SEPA::Error.new("Incompatible with schema #{schema_name}!") unless schema_compatible?(schema_name)
 
-      builder = Builder::XmlMarkup.new indent: 2
-      builder.instruct!
-      builder.Document(xml_schema(schema_name)) do
-        builder.__send__(xml_main_tag) do
-          build_group_header(builder)
-          build_payment_informations(builder)
+      builder = Nokogiri::XML::Builder.new do |builder|
+        builder.Document(xml_schema(schema_name)) do
+          builder.__send__(xml_main_tag) do
+            build_group_header(builder)
+            build_payment_informations(builder)
+          end
         end
       end
+
+      validate_final_document!(builder.doc, schema_name)
+      builder.to_xml
     end
 
     def amount_total(selected_transactions=transactions)
@@ -68,10 +71,10 @@ module SEPA
 
     # Set unique identifer for the message
     def message_identification=(value)
-      raise ArgumentError.new('mesage_identification must be a string!') unless value.is_a?(String)
+      raise ArgumentError.new('message_identification must be a string!') unless value.is_a?(String)
 
       regex = /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\'|\ ]){1,35}\z/
-      raise ArgumentError.new("mesage_identification does not match #{regex}!") unless value.match(regex)
+      raise ArgumentError.new("message_identification does not match #{regex}!") unless value.match(regex)
 
       @message_identification = value
     end
@@ -130,6 +133,12 @@ module SEPA
     # Returns a key to determine the group to which the transaction belongs
     def transaction_group(transaction)
       transaction
+    end
+
+    def validate_final_document!(document, schema_name)
+      xsd = Nokogiri::XML::Schema(File.read(File.expand_path("../../../lib/schema/#{schema_name}.xsd", __FILE__)))
+      errors = xsd.validate(document).map { |error| error.message }
+      raise SEPA::Error.new("Incompatible with schema #{schema_name}: #{errors.join(', ')}") if errors.any?
     end
   end
 end

@@ -111,6 +111,9 @@ module SEPA
                 builder.PrvtId do
                   builder.Othr do
                     builder.Id(transaction.original_creditor_account.creditor_identifier)
+                    builder.SchmeNm do
+                      builder.Prtry('SEPA')
+                    end
                   end
                 end
               end
