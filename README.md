@@ -130,11 +130,17 @@ sdd.add_transaction(
     creditor_identifier: 'NL53ZZZ091734220000'
   )
 
-  # OPTIONAL: Specify the country & address of the debtor (REQUIRED for SEPA debits outside of EU)
+  # OPTIONAL: Specify the country & address of the debtor (REQUIRED for SEPA debits outside of EU. The individually required fields depend on the target country)
   debtor_address: SEPA::DebtorAddress.new(
     country_code:        'CH',
+    # Not required if individual fields are used
     address_line1:       'Mustergasse 123a',
     address_line2:       '1234 Musterstadt'
+    # Not required if address_line1 and address_line2 are used
+    street_name:         'Mustergasse',
+    building_number:     '123a',
+    post_code:           '1234',
+    town_name:           'Musterstadt'
   )
 )
 sdd.add_transaction ...
@@ -210,6 +216,19 @@ sct.add_transaction(
   #   'SEPA' ("SEPA-Zahlung")
   #   'URGP' ("Taggleiche Eilüberweisung")
   service_level: 'URGP'
+
+  # OPTIONAL: Specify the country & address of the creditor (REQUIRED for SEPA debits outside of EU. The individually required fields depend on the target country)
+  creditor_address: SEPA::CreditorAddress.new(
+    country_code:        'CH',
+    # Not required if individual fields are used
+    address_line1:       'Mustergasse 123a',
+    address_line2:       '1234 Musterstadt'
+    # Not required if address_line1 and address_line2 are used
+    street_name:         'Mustergasse',
+    building_number:     '123a',
+    post_code:           '1234',
+    town_name:           'Musterstadt'
+  )
 )
 sct.add_transaction ...
 
