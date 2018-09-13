@@ -70,7 +70,7 @@ describe SEPA::DirectDebit do
       it 'should fail' do
         expect {
           SEPA::DirectDebit.new.to_xml
-        }.to raise_error(RuntimeError)
+        }.to raise_error(SEPA::Error)
       end
     end
 
@@ -128,7 +128,7 @@ describe SEPA::DirectDebit do
         it 'should fail for pain.008.002.02' do
           expect {
             subject.to_xml(SEPA::PAIN_008_002_02)
-          }.to raise_error(RuntimeError)
+          }.to raise_error(SEPA::Error)
         end
 
         it 'should validate against pain.008.001.02' do
@@ -227,10 +227,6 @@ describe SEPA::DirectDebit do
 
         it 'should create valid XML file' do
           expect(subject).to validate_against('pain.008.003.02.xsd')
-        end
-
-        it 'should have message_identification' do
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/MsgId', message_id_regex)
         end
 
         it 'should have creditor identifier' do
@@ -359,7 +355,7 @@ describe SEPA::DirectDebit do
         it 'should raise error on XML generation' do
           expect {
             subject.to_xml
-          }.to raise_error(RuntimeError)
+          }.to raise_error(SEPA::Error)
         end
       end
 
@@ -498,6 +494,19 @@ describe SEPA::DirectDebit do
         end
       end
 
+      context 'with large message identification' do
+        subject do
+          sct = direct_debit
+          sct.message_identification = 'A' * 35
+          sct.add_transaction(direct_debt_transaction.merge(instruction: '1234/ABC'))
+          sct
+        end
+
+        it 'should fail as the payment identification becomes too large' do
+          expect { subject.to_xml }.to raise_error(SEPA::Error)
+        end
+      end
+
       context 'with a different currency given' do
         subject do
           sct = direct_debit
@@ -523,13 +532,13 @@ describe SEPA::DirectDebit do
         it 'should fail for pain.008.002.02' do
           expect {
             subject.to_xml(SEPA::PAIN_008_002_02)
-          }.to raise_error(RuntimeError)
+          }.to raise_error(SEPA::Error)
         end
 
         it 'should fail for pain.008.003.02' do
           expect {
             subject.to_xml(SEPA::PAIN_008_003_02)
-          }.to raise_error(RuntimeError)
+          }.to raise_error(SEPA::Error)
         end
       end
     end

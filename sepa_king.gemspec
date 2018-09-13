@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.2'
 
   s.add_runtime_dependency 'activemodel', '>= 3.1'
-  s.add_runtime_dependency 'builder'
+  s.add_runtime_dependency 'nokogiri'
   s.add_runtime_dependency 'iban-tools'
 
   s.add_development_dependency 'bundler'
@@ -29,5 +29,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'coveralls'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'nokogiri'
 end

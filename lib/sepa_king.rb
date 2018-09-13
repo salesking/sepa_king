@@ -1,8 +1,9 @@
 require 'active_model'
 require 'bigdecimal'
-require 'builder'
+require 'nokogiri'
 require 'iban-tools'
 
+require 'sepa_king/error'
 require 'sepa_king/converter'
 require 'sepa_king/validator'
 require 'sepa_king/account'
