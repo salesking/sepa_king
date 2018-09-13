@@ -42,6 +42,59 @@ describe SEPA::CreditTransfer do
       end
     end
 
+    context 'setting creditor address with adrline' do
+      subject do
+        sct = SEPA::CreditTransfer.new name: 'Schuldner GmbH',
+                                       iban: 'DE87200500001234567890'
+
+        sca = SEPA::CreditorAddress.new country_code:  'CH',
+                                        address_line1: 'Mustergasse 123',
+                                        address_line2: '1234 Musterstadt'
+
+        sct.add_transaction name:                   'Telekomiker AG',
+                            bic:                    'PBNKDEFF370',
+                            iban:                   'DE37112589611964645802',
+                            amount:                 102.50,
+                            reference:              'XYZ-1234/123',
+                            remittance_information: 'Rechnung vom 22.08.2013',
+                            creditor_address:       sca
+
+        sct
+      end
+
+      it 'should validate against pain.001.003.01' do
+        expect(subject.to_xml(SEPA::PAIN_001_003_03)).to validate_against('pain.001.003.03.xsd')
+      end
+    end
+
+    context 'setting creditor address with structured fields' do
+      subject do
+        sct = SEPA::CreditTransfer.new name: 'Schuldner GmbH',
+                                       iban: 'DE87200500001234567890',
+                                       bic:  'BANKDEFFXXX'
+
+        sca = SEPA::CreditorAddress.new country_code:    'CH',
+                                        street_name:     'Mustergasse',
+                                        building_number: '123',
+                                        post_code:       '1234',
+                                        town_name:       'Musterstadt'
+
+        sct.add_transaction name:                   'Telekomiker AG',
+                            bic:                    'PBNKDEFF370',
+                            iban:                   'DE37112589611964645802',
+                            amount:                 102.50,
+                            reference:              'XYZ-1234/123',
+                            remittance_information: 'Rechnung vom 22.08.2013',
+                            creditor_address:       sca
+
+        sct
+      end
+
+      it 'should validate against pain.001.001.01' do
+        expect(subject.to_xml(SEPA::PAIN_001_001_03)).to validate_against('pain.001.001.03.xsd')
+      end
+    end
+
     context 'for valid debtor' do
       context 'without BIC (IBAN-only)' do
         subject do

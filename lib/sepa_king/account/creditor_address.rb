@@ -1,6 +1,6 @@
 # encoding: utf-8
 module SEPA
-  class DebtorAddress
+  class CreditorAddress
     include ActiveModel::Validations
     extend Converter
 
