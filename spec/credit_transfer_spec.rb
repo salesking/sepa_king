@@ -301,6 +301,7 @@ describe SEPA::CreditTransfer do
           sct.add_transaction(credit_transfer_transaction.merge requested_date: Date.today + 1, batch_booking: true,  amount: 2)
           sct.add_transaction(credit_transfer_transaction.merge requested_date: Date.today + 2, batch_booking: false, amount: 4)
           sct.add_transaction(credit_transfer_transaction.merge requested_date: Date.today + 2, batch_booking: true,  amount: 8)
+          sct.add_transaction(credit_transfer_transaction.merge requested_date: Date.today + 2, batch_booking: true, category_purpose: 'SALA',  amount: 6)
 
           sct.to_xml
         end
@@ -317,6 +318,9 @@ describe SEPA::CreditTransfer do
 
           expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[4]/ReqdExctnDt', (Date.today + 2).iso8601)
           expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[4]/BtchBookg', 'true')
+
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[5]/ReqdExctnDt', (Date.today + 2).iso8601)
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[5]/PmtTpInf/CtgyPurp/Cd', 'SALA')
         end
 
         it 'should have multiple control sums' do
