@@ -12,7 +12,8 @@ module SEPA
     def transaction_group(transaction)
       { requested_date: transaction.requested_date,
         batch_booking:  transaction.batch_booking,
-        service_level:  transaction.service_level
+        service_level:  transaction.service_level,
+        category_purpose: transaction.category_purpose
       }
     end
 
@@ -30,6 +31,11 @@ module SEPA
             if group[:service_level]
               builder.SvcLvl do
                 builder.Cd(group[:service_level])
+              end
+            end
+            if group[:category_purpose]
+              builder.CtgyPurp do
+                builder.Cd(group[:category_purpose])
               end
             end
           end

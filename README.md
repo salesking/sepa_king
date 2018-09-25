@@ -217,6 +217,10 @@ sct.add_transaction(
   #   'URGP' ("Taggleiche Eilüberweisung")
   service_level: 'URGP'
 
+  # OPTIONAL: Unstructured information to indicate the purpose of the payment
+  # String, max. 4 char
+  category_purpose:         'SALA',
+
   # OPTIONAL: Specify the country & address of the creditor (REQUIRED for SEPA debits outside of EU. The individually required fields depend on the target country)
   creditor_address: SEPA::CreditorAddress.new(
     country_code:        'CH',

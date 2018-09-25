@@ -2,9 +2,11 @@
 module SEPA
   class CreditTransferTransaction < Transaction
     attr_accessor :service_level,
-                  :creditor_address
+                  :creditor_address,
+                  :category_purpose
 
     validates_inclusion_of :service_level, :in => %w(SEPA URGP), :allow_nil => true
+    validates_length_of :category_purpose, within: 1..4, allow_nil: true
 
     validate { |t| t.validate_requested_date_after(Date.today) }
 

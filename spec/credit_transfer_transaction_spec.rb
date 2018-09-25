@@ -55,4 +55,14 @@ describe SEPA::CreditTransferTransaction do
       expect(SEPA::CreditTransferTransaction).not_to accept(Date.new(1995,12,21), Date.today - 1, for: :requested_date)
     end
   end
+
+  context 'Category Purpose' do
+    it 'should allow valid value' do
+      expect(SEPA::CreditTransferTransaction).to accept(nil, 'SALA', 'X' * 4, for: :category_purpose)
+    end
+
+    it 'should not allow invalid value' do
+      expect(SEPA::CreditTransferTransaction).not_to accept('', 'X' * 5, for: :category_purpose)
+    end
+  end
 end
