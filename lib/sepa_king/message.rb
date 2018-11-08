@@ -1,12 +1,13 @@
 # encoding: utf-8
 
 module SEPA
-  PAIN_008_001_02 = 'pain.008.001.02'
-  PAIN_008_002_02 = 'pain.008.002.02'
-  PAIN_008_003_02 = 'pain.008.003.02'
-  PAIN_001_001_03 = 'pain.001.001.03'
-  PAIN_001_002_03 = 'pain.001.002.03'
-  PAIN_001_003_03 = 'pain.001.003.03'
+  PAIN_008_001_02       = 'pain.008.001.02'
+  PAIN_008_002_02       = 'pain.008.002.02'
+  PAIN_008_003_02       = 'pain.008.003.02'
+  PAIN_001_001_03       = 'pain.001.001.03'
+  PAIN_001_001_03_CH_02 = 'pain.001.001.03.ch.02'
+  PAIN_001_002_03       = 'pain.001.002.03'
+  PAIN_001_003_03       = 'pain.001.003.03'
 
   class Message
     include ActiveModel::Validations
@@ -62,7 +63,7 @@ module SEPA
       raise ArgumentError.new("Schema #{schema_name} is unknown!") unless self.known_schemas.include?(schema_name)
 
       case schema_name
-        when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03
+        when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03, PAIN_001_001_03_CH_02
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
         when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02
           transactions.all? { |t| t.schema_compatible?(schema_name) }
@@ -117,9 +118,20 @@ module SEPA
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
-      { :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
-        :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-        :'xsi:schemaLocation' => "urn:iso:std:iso:20022:tech:xsd:#{schema_name} #{schema_name}.xsd" }
+      case schema_name
+      when PAIN_001_001_03_CH_02
+        {
+          :xmlns                => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd",
+          :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+          :'xsi:schemaLocation' => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd #{schema_name}.xsd"
+        }
+      else
+        {
+          :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
+          :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+          :'xsi:schemaLocation' => "urn:iso:std:iso:20022:tech:xsd:#{schema_name} #{schema_name}.xsd"
+        }
+      end
     end
 
     def build_group_header(builder)

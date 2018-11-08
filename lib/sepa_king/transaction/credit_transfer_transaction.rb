@@ -19,6 +19,8 @@ module SEPA
       case schema_name
       when PAIN_001_001_03
         !self.service_level || (self.service_level == 'SEPA' && self.currency == 'EUR')
+      when PAIN_001_001_03_CH_02
+        !self.service_level || self.service_level == 'SEPA'
       when PAIN_001_002_03
         self.bic.present? && self.service_level == 'SEPA' && self.currency == 'EUR'
       when PAIN_001_003_03

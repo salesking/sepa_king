@@ -90,8 +90,13 @@ describe SEPA::CreditTransfer do
         sct
       end
 
-      it 'should validate against pain.001.001.01' do
-        expect(subject.to_xml(SEPA::PAIN_001_001_03)).to validate_against('pain.001.001.03.xsd')
+      [
+        SEPA::PAIN_001_001_03,
+        SEPA::PAIN_001_001_03_CH_02
+      ].each do |schema|
+        it "should validate against #{schema}" do
+          expect(subject.to_xml(schema)).to validate_against("#{schema}.xsd")
+        end
       end
     end
 
@@ -144,6 +149,10 @@ describe SEPA::CreditTransfer do
 
         it 'should validate against pain.001.001.03' do
           expect(subject.to_xml('pain.001.001.03')).to validate_against('pain.001.001.03.xsd')
+        end
+
+        it 'should validate against pain.001.001.03.ch.02' do
+          expect(subject.to_xml('pain.001.001.03.ch.02')).to validate_against('pain.001.001.03.ch.02.xsd')
         end
 
         it 'should validate against pain.001.002.03' do
@@ -365,29 +374,37 @@ describe SEPA::CreditTransfer do
           sct
         end
 
-        it 'should validate against pain.001.001.03' do
-          expect(subject.to_xml('pain.001.001.03')).to validate_against('pain.001.001.03.xsd')
+        # Success
+        [
+          SEPA::PAIN_001_001_03,
+          SEPA::PAIN_001_001_03_CH_02
+        ].each do |schema|
+          context "when schema is #{schema}" do
+            it 'should validate against the schema' do
+              expect(subject.to_xml(schema)).to validate_against("#{schema}.xsd")
+            end
+
+            it 'should have a CHF Ccy' do
+              doc = Nokogiri::XML(subject.to_xml(schema))
+              doc.remove_namespaces!
+
+              nodes = doc.xpath('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/Amt/InstdAmt')
+              expect(nodes.length).to eql(1)
+              expect(nodes.first.attribute('Ccy').value).to eql('CHF')
+            end
+          end
         end
 
-        it 'should have a CHF Ccy' do
-          doc = Nokogiri::XML(subject.to_xml('pain.001.001.03'))
-          doc.remove_namespaces!
-
-          nodes = doc.xpath('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/Amt/InstdAmt')
-          expect(nodes.length).to eql(1)
-          expect(nodes.first.attribute('Ccy').value).to eql('CHF')
-        end
-
-        it 'should fail for pain.001.002.03' do
-          expect {
-            subject.to_xml(SEPA::PAIN_001_002_03)
-          }.to raise_error(SEPA::Error)
-        end
-
-        it 'should fail for pain.001.003.03' do
-          expect {
-            subject.to_xml(SEPA::PAIN_001_003_03)
-          }.to raise_error(SEPA::Error)
+        # Failure
+        [
+          SEPA::PAIN_001_002_03,
+          SEPA::PAIN_001_003_03
+        ].each do |schema|
+          it "should fail for #{schema}" do
+            expect {
+              subject.to_xml(schema)
+            }.to raise_error(SEPA::Error)
+          end
         end
       end
 
