@@ -13,7 +13,7 @@ We love building payment applications! So after developing the [DTAUS library fo
 
 This gem implements the following two messages out of the ISO 20022 standard:
 
-* Credit Transfer Initiation (`pain.001.003.03`, `pain.001.002.03` and `pain.001.001.03`)
+* Credit Transfer Initiation (`pain.001.003.03`, `pain.001.002.03` and `pain.001.001.03`, `pain.001.001.03.ch.02`)
 * Direct Debit Initiation (`pain.008.003.02`, `pain.008.002.02` and `pain.008.001.02`)
 
 It handles the _Specification of Data Formats_ v2.7 (2013-11-04).
