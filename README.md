@@ -43,9 +43,17 @@ sdd = SEPA::DirectDebit.new(
   # String, max. 70 char
   name:       'Gläubiger GmbH',
 
-  # OPTIONAL: Business Identifier Code (SWIFT-Code) of the creditor
+  # OPTIONAL: Business Identifier Code (SWIFT-Code) of the creditor. Do not pass for Swiss Direct Debits
   # String, 8 or 11 char
   bic:        'BANKDEFFXXX',
+
+  # Optional: Clearing System Member Identifier of the creditor. Only for Swiss Direct Debits
+  # String, 3 to 5 char
+  clearing_system_member_id: '4835',
+
+  # Optional: ISR Participant Number for the swiss ISR debit system. Only for Swiss Direct Debits with ISR references
+  # Numeric, 9 digits, last digit is checkdigit recursive with modulo 10
+  isr_participant_number: '010001456',
 
   # International Bank Account Number of the creditor
   # String, max. 34 chars
@@ -90,22 +98,46 @@ sdd.add_transaction(
   # String, max. 140 char
   remittance_information:    'Vielen Dank für Ihren Einkauf!',
 
-  # Mandate identifikation, in German "Mandatsreferenz"
+  # OPTIONAL: Structured remittance information, in German "Strukturierter Verwendungszweck". Required for e.g. Swiss Direct Debits
+  # StructuredRemittanceInformation
+  structured_remittance_information: SEPA::StructuredRemittanceInformation.new(
+    # Defines how the reference field should be interpreted for Swiss Direct Debits
+    # One of these strings:
+    #   'ESR' ("ESR-Referenznummer")
+    #   'IPI' ("IPI-Verwendungszweck")
+    proprietary: 'ESR',
+    # if proprietary is 'ESR': 27 character ISR reference number
+    # if proprietary is 'IPI': 20 character IPI remittance
+    reference:   '609323234234234353453423423'
+  ),
+
+  # Mandate identifikation, in German "Mandatsreferenz". Ignored for Swiss Direct Debits
   # String, max. 35 char
   mandate_id:                'K-02-2011-12345',
 
-  # Mandate Date of signature, in German "Datum, zu dem das Mandat unterschrieben wurde"
+  # Mandate Date of signature, in German "Datum, zu dem das Mandat unterschrieben wurde". Ignored for Swiss Direct Debits
   # Date
   mandate_date_of_signature: Date.new(2011,1,25),
 
+  # OPTIONAL: Service Level, default: "SEPA"
+  # One of these strings:
+  #   'SEPA' ("SEPA-Lastschrift")
+  #   'CHTA' ("Banklastschrift") - Only for Swiss Direct Debits
+  #   'CHDD' ("PostFinance-Lastschrift") - Only for Swiss Direct Debits
+  service_level: 'SEPA'
+
   # Local instrument, in German "Lastschriftart"
   # One of these strings:
-  #   'CORE' ("Basis-Lastschrift")
-  #   'COR1' ("Basis-Lastschrift mit verkürzter Vorlagefrist")
-  #   'B2B' ("Firmen-Lastschrift")
+  #   'CORE'   ("Basis-Lastschrift")
+  #   'COR1'   ("Basis-Lastschrift mit verkürzter Vorlagefrist")
+  #   'B2B'    ("Firmen-Lastschrift")
+  #   'DDCOR1' ("Basis-Lastschrift")  - only for service_level 'CHDD'
+  #   'DDB2B'  ("Firmen-Lastschrift") - only for service_level 'CHDD'
+  #   'LSV+'   ("Basis-Lastschrift")  - only for service_level 'CHTA'
+  #   'BDD'    ("Firmen-Lastschrift") - only for service_level 'CHTA'
   local_instrument: 'CORE',
 
-  # Sequence type
+  # Sequence type. Ignored fore Swiss Direct Debits
   # One of these strings:
   #   'FRST' ("Erst-Lastschrift")
   #   'RCUR' ("Folge-Lastschrift")
