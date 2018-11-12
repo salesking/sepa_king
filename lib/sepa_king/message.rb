@@ -2,6 +2,7 @@
 
 module SEPA
   PAIN_008_001_02       = 'pain.008.001.02'
+  PAIN_008_001_02_CH_03 = 'pain.008.001.02.ch.03'
   PAIN_008_002_02       = 'pain.008.002.02'
   PAIN_008_003_02       = 'pain.008.003.02'
   PAIN_001_001_03       = 'pain.001.001.03'
@@ -46,7 +47,7 @@ module SEPA
         builder.Document(xml_schema(schema_name)) do
           builder.__send__(xml_main_tag) do
             build_group_header(builder)
-            build_payment_informations(builder)
+            build_payment_informations(builder, schema_name)
           end
         end
       end
@@ -68,7 +69,8 @@ module SEPA
         when PAIN_001_003_03,
              PAIN_001_001_03_CH_02,
              PAIN_008_003_02,
-             PAIN_008_001_02
+             PAIN_008_001_02,
+             PAIN_008_001_02_CH_03
           transactions.all? { |t| t.schema_compatible?(schema_name) }
       end
     end
@@ -122,7 +124,7 @@ module SEPA
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
       case schema_name
-      when PAIN_001_001_03_CH_02
+      when PAIN_008_001_02_CH_03, PAIN_001_001_03_CH_02
         {
           :xmlns                => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd",
           :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',

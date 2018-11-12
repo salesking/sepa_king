@@ -12,48 +12,55 @@ describe SEPA::DirectDebitTransaction do
                                          reference:                 'XYZ-1234/123',
                                          remittance_information:    'Vielen Dank für Ihren Einkauf!',
                                          mandate_id:                'K-02-2011-12345',
-                                         mandate_date_of_signature: Date.new(2011,1,25)
+                                         mandate_date_of_signature: Date.new(2011, 1, 25)
       ).to be_valid
     end
   end
 
   describe :schema_compatible? do
+    let(:base_params) do
+      {
+        mandate_id:                'K-02-2011-12345',
+        mandate_date_of_signature: Date.today
+      }
+    end
+
     context 'for pain.008.003.02' do
       it 'should succeed' do
-        expect(SEPA::DirectDebitTransaction.new({})).to be_schema_compatible('pain.008.003.02')
+        expect(SEPA::DirectDebitTransaction.new(base_params)).to be_schema_compatible('pain.008.003.02')
       end
 
       it 'should fail for invalid attributes' do
-        expect(SEPA::DirectDebitTransaction.new(:currency => 'CHF')).not_to be_schema_compatible('pain.001.003.03')
+        expect(SEPA::DirectDebitTransaction.new(base_params.merge(currency: 'CHF'))).not_to be_schema_compatible('pain.001.003.03')
       end
     end
 
     context 'for pain.008.002.02' do
       it 'should succeed for valid attributes' do
-        expect(SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :local_instrument => 'CORE')).to be_schema_compatible('pain.008.002.02')
+        expect(SEPA::DirectDebitTransaction.new(base_params.merge(bic: 'SPUEDE2UXXX', local_instrument: 'CORE'))).to be_schema_compatible('pain.008.002.02')
       end
 
       it 'should fail for invalid attributes' do
-        expect(SEPA::DirectDebitTransaction.new(:bic => nil)).not_to be_schema_compatible('pain.008.002.02')
-        expect(SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :local_instrument => 'COR1')).not_to be_schema_compatible('pain.008.002.02')
-        expect(SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :currency => 'CHF')).not_to be_schema_compatible('pain.008.002.02')
+        expect(SEPA::DirectDebitTransaction.new(base_params.merge(bic: nil))).not_to be_schema_compatible('pain.008.002.02')
+        expect(SEPA::DirectDebitTransaction.new(base_params.merge(bic: 'SPUEDE2UXXX', local_instrument: 'COR1'))).not_to be_schema_compatible('pain.008.002.02')
+        expect(SEPA::DirectDebitTransaction.new(base_params.merge(bic: 'SPUEDE2UXXX', currency: 'CHF'))).not_to be_schema_compatible('pain.008.002.02')
       end
     end
 
     context 'for pain.008.001.02' do
       it 'should succeed for valid attributes' do
-        expect(SEPA::DirectDebitTransaction.new(:bic => 'SPUEDE2UXXX', :currency => 'CHF')).to be_schema_compatible('pain.008.001.02')
+        expect(SEPA::DirectDebitTransaction.new(base_params.merge(bic: 'SPUEDE2UXXX', currency: 'CHF'))).to be_schema_compatible('pain.008.001.02')
       end
     end
   end
 
   context 'Mandate Date of Signature' do
     it 'should accept valid value' do
-      expect(SEPA::DirectDebitTransaction).to accept(Date.today, Date.today - 1, for: :mandate_date_of_signature)
+      expect(SEPA::DirectDebitTransaction).to accept(nil, Date.today, Date.today - 1, for: :mandate_date_of_signature)
     end
 
     it 'should not accept invalid value' do
-      expect(SEPA::DirectDebitTransaction).not_to accept(nil, '2010-12-01', Date.today + 1, for: :mandate_date_of_signature)
+      expect(SEPA::DirectDebitTransaction).not_to accept('2010-12-01', Date.today + 1, for: :mandate_date_of_signature)
     end
   end
 

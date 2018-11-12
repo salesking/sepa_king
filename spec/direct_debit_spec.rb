@@ -231,6 +231,195 @@ describe SEPA::DirectDebit do
         end
       end
 
+      context 'for swiss direct debits' do
+        let(:direct_debit) do
+          sdd = SEPA::DirectDebit.new(
+            name:                      'Muster AG',
+            clearing_system_member_id: '81232',
+            isr_participant_number:    '010001456',
+            iban:                      'CH7081232000001998736',
+            creditor_identifier:       'ABC1W'
+          )
+
+          sda = SEPA::DebtorAddress.new(
+            country_code: 'CH',
+            address_line1: 'Mustergasse 123',
+            address_line2: '1234 Musterstadt'
+          )
+
+          sdd.add_transaction({
+            name:                      'HANS TESTER',
+            iban:                      'CH9804835011062385295',
+            clearing_system_member_id: '4835',
+            currency:                  'CHF',
+            amount:                    '100.0',
+            remittance_information:    'According to invoice 4712',
+            reference:                 'XYZ/2013-08-ABO/12345',
+            service_level:             service_level,
+            local_instrument:          local_instrument,
+            requested_date:            requested_date,
+            instruction:               23,
+            debtor_address:            sda,
+            structured_remittance_information: SEPA::StructuredRemittanceInformation.new(
+              proprietary: 'ESR',
+              reference:   '185744810000000000200800628'
+            ),
+          })
+
+          sdd
+        end
+
+        let(:requested_date) { Date.today.next }
+
+        context 'as xml' do
+          let(:service_level) { 'CHTA' }
+          let(:local_instrument) { 'LSV+' }
+
+          subject do
+            direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
+          end
+
+          it 'should have creditor identifier' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/InitgPty/Id/OrgId/Othr/Id', direct_debit.account.creditor_identifier)
+          end
+
+          it 'should contain <PmtInfId>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtInfId', /#{message_id_regex}\/1/)
+          end
+
+          it 'should contain <ReqdColltnDt>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/ReqdColltnDt', requested_date.iso8601)
+          end
+
+          it 'should contain <PmtMtd>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtMtd', 'DD')
+          end
+
+          it 'should not contain <BtchBookg>' do
+            expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/BtchBookg')
+          end
+
+          it 'should not contain <NbOfTxs>' do
+            expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/NbOfTxs')
+          end
+
+          it 'should not contain <CtrlSum>' do
+            expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CtrlSum')
+          end
+
+          it 'should contain <Cdtr>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/Cdtr/Nm', 'Muster AG')
+          end
+
+          it 'should contain <CdtrAcct>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAcct/Id/IBAN', 'CH7081232000001998736')
+          end
+
+          it 'should contain <CdtrAgt>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAgt/FinInstnId/ClrSysMmbId/MmbId', '81232')
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAgt/FinInstnId/Othr/Id', '010001456')
+          end
+
+          it 'should not contain <ChrgBr>' do
+            expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/ChrgBr')
+          end
+
+          context 'when service_level is CHTA' do
+            it 'should contain <CdtrSchmeId>' do
+              expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrSchmeId/Id/PrvtId/Othr/Id', direct_debit.account.creditor_identifier)
+              expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrSchmeId/Id/PrvtId/Othr/SchmeNm/Prtry', 'CHLS')
+            end
+          end
+
+          context 'when service_level is CHDD' do
+            let(:service_level) { 'CHDD' }
+            let(:local_instrument) { 'DDCOR1' }
+
+            it 'should contain <CdtrSchmeId>' do
+              expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrSchmeId/Id/PrvtId/Othr/Id', direct_debit.account.creditor_identifier)
+              expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrSchmeId/Id/PrvtId/Othr/SchmeNm/Prtry', 'CHDD')
+            end
+          end
+
+          it 'should contain <EndToEndId>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/PmtId/EndToEndId', 'XYZ/2013-08-ABO/12345')
+          end
+
+          it 'should contain <InstdAmt>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/InstdAmt', '100.00')
+          end
+
+          it 'should not contain <MndtId>' do
+            expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/MndtId')
+          end
+
+          it 'should not contain <DtOfSgntr>' do
+            expect(subject).not_to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DrctDbtTx/MndtRltdInf/DtOfSgntr')
+          end
+
+          it 'should contain <DbtrAgt>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAgt/FinInstnId/ClrSysMmbId/MmbId', '4835')
+          end
+
+          it 'should contain <Dbtr>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/Dbtr/Nm', 'HANS TESTER')
+          end
+
+          it 'should contain <DbtrAcct>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/DbtrAcct/Id/IBAN', 'CH9804835011062385295')
+          end
+
+          it 'should contain <Ustrd>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/RmtInf/Ustrd', 'According to invoice 4712')
+          end
+
+          it 'should contain <Strd>' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/RmtInf/Strd/CdtrRefInf/Tp/CdOrPrtry/Prtry', 'ESR')
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/RmtInf/Strd/CdtrRefInf/Ref', '185744810000000000200800628')
+          end
+        end
+
+        context 'with service_level CHDD' do
+          let(:service_level)    { 'CHDD' }
+
+          context 'with local_instrument DDCOR1' do
+            let(:local_instrument) { 'DDCOR1' }
+
+            it 'should validate against pain.008.001.02.ch.03' do
+              expect(direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)).to validate_against('pain.008.001.02.ch.03.xsd')
+            end
+          end
+
+          context 'with local_instrument DDB2B' do
+            let(:local_instrument) { 'DDB2B' }
+
+            it 'should validate against pain.008.001.02.ch.03' do
+              expect(direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)).to validate_against('pain.008.001.02.ch.03.xsd')
+            end
+          end
+        end
+
+        context 'with service_level CHTA' do
+          let(:service_level) { 'CHTA' }
+
+          context 'with local_instrument LSV+' do
+            let(:local_instrument) { 'LSV+' }
+
+            it 'should validate against pain.008.001.02.ch.03' do
+              expect(direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)).to validate_against('pain.008.001.02.ch.03.xsd')
+            end
+          end
+
+          context 'with local_instrument BDD' do
+            let(:local_instrument) { 'BDD' }
+
+            it 'should validate against pain.008.001.02.ch.03' do
+              expect(direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)).to validate_against('pain.008.001.02.ch.03.xsd')
+            end
+          end
+        end
+      end
+
       context 'without requested_date given' do
         subject do
           sdd = direct_debit
@@ -299,7 +488,7 @@ describe SEPA::DirectDebit do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrAgt/FinInstnId/BIC', 'BANKDEFFXXX')
         end
 
-        it 'should contain <CdtrAgt>' do
+        it 'should contain <CdtrSchmeId>' do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/CdtrSchmeId/Id/PrvtId/Othr/Id', 'DE98ZZZ09999999999')
         end
 

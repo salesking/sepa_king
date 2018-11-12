@@ -9,10 +9,12 @@ module SEPA
     attr_accessor :name,
                   :iban,
                   :bic,
+                  :clearing_system_member_id,
                   :amount,
                   :instruction,
                   :reference,
                   :remittance_information,
+                  :structured_remittance_information,
                   :requested_date,
                   :batch_booking,
                   :currency,
@@ -30,7 +32,10 @@ module SEPA
     validates_numericality_of :amount, greater_than: 0
     validates_presence_of :requested_date
     validates_inclusion_of :batch_booking, :in => [true, false]
-    validates_with BICValidator, IBANValidator, message: "%{value} is invalid"
+    validates_with BICValidator,
+                   IBANValidator,
+                   ClearingSystemMemberIDValidator,
+                   message: "%{value} is invalid"
 
     def initialize(attributes = {})
       attributes.each do |name, value|

@@ -5,11 +5,19 @@ module SEPA
     self.account_class = CreditorAccount
     self.transaction_class = DirectDebitTransaction
     self.xml_main_tag = 'CstmrDrctDbtInitn'
-    self.known_schemas = [ PAIN_008_003_02, PAIN_008_002_02, PAIN_008_001_02 ]
+    self.known_schemas = [
+      PAIN_008_003_02,
+      PAIN_008_002_02,
+      PAIN_008_001_02,
+      PAIN_008_001_02_CH_03
+    ]
 
     validate do |record|
       if record.transactions.map(&:local_instrument).uniq.size > 1
-        errors.add(:base, 'CORE, COR1 AND B2B must not be mixed in one message!')
+        errors.add(
+          :base,
+          'different local_instruments (e.g. CORE, COR1 AND B2B) must not be mixed in one message!'
+        )
       end
     end
 
@@ -17,6 +25,7 @@ module SEPA
     # Find groups of transactions which share the same values of some attributes
     def transaction_group(transaction)
       { requested_date:   transaction.requested_date,
+        service_level:    transaction.service_level,
         local_instrument: transaction.local_instrument,
         sequence_type:    transaction.sequence_type,
         batch_booking:    transaction.batch_booking,
@@ -24,23 +33,48 @@ module SEPA
       }
     end
 
-    def build_payment_informations(builder)
+    def is_sps?(schema) # is Swiss Payment Standard
+      schema == SEPA::PAIN_008_001_02_CH_03
+    end
+
+    def creditor_scheme_name(service_level)
+      case service_level
+      when 'CHDD'
+        return 'CHDD'
+      when 'CHTA'
+        return 'CHLS'
+      else
+        return 'SEPA'
+      end
+    end
+
+    def build_payment_informations(builder, schema)
       # Build a PmtInf block for every group of transactions
       grouped_transactions.each do |group, transactions|
         builder.PmtInf do
           builder.PmtInfId(payment_information_identification(group))
           builder.PmtMtd('DD')
-          builder.BtchBookg(group[:batch_booking])
-          builder.NbOfTxs(transactions.length)
-          builder.CtrlSum('%.2f' % amount_total(transactions))
+          if !is_sps?(schema) # Not allowed for swiss payment standard
+            builder.BtchBookg(group[:batch_booking])
+            builder.NbOfTxs(transactions.length)
+            builder.CtrlSum('%.2f' % amount_total(transactions))
+          end
           builder.PmtTpInf do
-            builder.SvcLvl do
-              builder.Cd('SEPA')
+            builder.SvcLvl do # Prtry for SPS
+              if is_sps?(schema)
+                builder.Prtry(group[:service_level])
+              else
+                builder.Cd(group[:service_level])
+              end
             end
-            builder.LclInstrm do
-              builder.Cd(group[:local_instrument])
+            builder.LclInstrm do # Prtry for SPS
+              if is_sps?(schema)
+                builder.Prtry(group[:local_instrument])
+              else
+                builder.Cd(group[:local_instrument])
+              end
             end
-            builder.SeqTp(group[:sequence_type])
+            builder.SeqTp(group[:sequence_type]) if !is_sps?(schema)
           end
           builder.ReqdColltnDt(group[:requested_date].iso8601)
           builder.Cdtr do
@@ -55,6 +89,15 @@ module SEPA
             builder.FinInstnId do
               if group[:account].bic
                 builder.BIC(group[:account].bic)
+              elsif group[:account].clearing_system_member_id
+                builder.ClrSysMmbId do # ClrSysMmbId/MmbId for SPS
+                  builder.MmbId(group[:account].clearing_system_member_id)
+                end
+                if group[:account].isr_participant_number
+                  builder.Othr do
+                    builder.Id(group[:account].isr_participant_number)
+                  end
+                end
               else
                 builder.Othr do
                   builder.Id('NOTPROVIDED')
@@ -62,14 +105,14 @@ module SEPA
               end
             end
           end
-          builder.ChrgBr('SLEV')
+          builder.ChrgBr('SLEV') if !is_sps?(schema)
           builder.CdtrSchmeId do
             builder.Id do
               builder.PrvtId do
                 builder.Othr do
                   builder.Id(group[:account].creditor_identifier)
                   builder.SchmeNm do
-                    builder.Prtry('SEPA')
+                    builder.Prtry(creditor_scheme_name(group[:service_level]))
                   end
                 end
               end
@@ -77,7 +120,7 @@ module SEPA
           end
 
           transactions.each do |transaction|
-            build_transaction(builder, transaction)
+            build_transaction(builder, transaction, schema)
           end
         end
       end
@@ -123,7 +166,7 @@ module SEPA
       end
     end
 
-    def build_transaction(builder, transaction)
+    def build_transaction(builder, transaction, schema)
       builder.DrctDbtTxInf do
         builder.PmtId do
           if transaction.instruction.present?
@@ -132,17 +175,23 @@ module SEPA
           builder.EndToEndId(transaction.reference)
         end
         builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
-        builder.DrctDbtTx do
-          builder.MndtRltdInf do
-            builder.MndtId(transaction.mandate_id)
-            builder.DtOfSgntr(transaction.mandate_date_of_signature.iso8601)
-            build_amendment_informations(builder, transaction) if transaction.amendment_informations?
+        if !is_sps?(schema)
+          builder.DrctDbtTx do
+            builder.MndtRltdInf do
+              builder.MndtId(transaction.mandate_id)
+              builder.DtOfSgntr(transaction.mandate_date_of_signature.iso8601)
+              build_amendment_informations(builder, transaction) if transaction.amendment_informations?
+            end
           end
         end
         builder.DbtrAgt do
           builder.FinInstnId do
             if transaction.bic
               builder.BIC(transaction.bic)
+            elsif transaction.clearing_system_member_id
+              builder.ClrSysMmbId do
+                builder.MmbId(transaction.clearing_system_member_id)
+              end
             else
               builder.Othr do
                 builder.Id('NOTPROVIDED')
@@ -196,9 +245,24 @@ module SEPA
             builder.IBAN(transaction.iban)
           end
         end
-        if transaction.remittance_information
+        if transaction.remittance_information || transaction.structured_remittance_information
           builder.RmtInf do
-            builder.Ustrd(transaction.remittance_information)
+            if transaction.remittance_information
+              builder.Ustrd(transaction.remittance_information)
+            end
+
+            if transaction.structured_remittance_information
+              builder.Strd do
+                builder.CdtrRefInf do
+                  builder.Tp do
+                    builder.CdOrPrtry do
+                      builder.Prtry(transaction.structured_remittance_information.proprietary)
+                    end
+                  end
+                  builder.Ref(transaction.structured_remittance_information.reference)
+                end
+              end
+            end
           end
         end
       end
