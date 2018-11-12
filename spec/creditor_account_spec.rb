@@ -11,6 +11,16 @@ describe SEPA::CreditorAccount do
     ).to be_valid
   end
 
+  describe :clearing_system_member_id do
+    it 'should accept valid value' do
+      expect(SEPA::CreditorAccount).to accept('123', '3242', '34534', for: :clearing_system_member_id)
+    end
+
+    it 'should not accept invalid value' do
+      expect(SEPA::CreditorAccount).not_to accept('', '34', 'xxx', '655656', for: :clearing_system_member_id)
+    end
+  end
+
   describe :creditor_identifier do
     it 'should accept valid value' do
       expect(SEPA::CreditorAccount).to accept('DE98ZZZ09999999999', 'AT12ZZZ00000000001', 'IT97ZZZA1B2C3D4E5F6G7H8', 'NL97ZZZ123456780001', 'FR12ZZZ123456', for: :creditor_identifier)
@@ -18,6 +28,16 @@ describe SEPA::CreditorAccount do
 
     it 'should not accept invalid value' do
       expect(SEPA::CreditorAccount).not_to accept('', 'invalid', 'DE98ZZZ099999999990', 'DEAAAAAAAAAAAAAAAA', for: :creditor_identifier)
+    end
+  end
+
+  describe :isr_participant_number do
+    it 'should accept valid value' do
+      expect(SEPA::CreditorAccount).to accept('123123123', '554544543', nil, for: :isr_participant_number)
+    end
+
+    it 'should not accept invalid value' do
+      expect(SEPA::CreditorAccount).not_to accept('32423432', 'a89898989', for: :isr_participant_number)
     end
   end
 end
