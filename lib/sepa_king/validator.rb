@@ -47,7 +47,7 @@ module SEPA
   end
 
   class CreditorIdentifierValidator < ActiveModel::Validator
-    REGEX = /\A[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}\z/
+    REGEX = /\A[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}\z|\A[A-Z0-9]{5,5}\z/
 
     def validate(record)
       field_name = options[:field_name] || :creditor_identifier
@@ -76,7 +76,7 @@ module SEPA
       field_name = options[:field_name] || :mandate_id
       value = record.send(field_name)
 
-      unless value.to_s.match(REGEX)
+      unless value.nil? || value.to_s.match(REGEX)
         record.errors.add(field_name, :invalid, message: options[:message])
       end
     end

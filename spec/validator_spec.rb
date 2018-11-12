@@ -84,7 +84,7 @@ describe SEPA::CreditorIdentifierValidator do
   end
 
   it 'should accept valid creditor_identifier' do
-    expect(Validatable).to accept('DE98ZZZ09999999999', 'AT12ZZZ00000000001', 'FR12ZZZ123456', 'NL97ZZZ123456780001', for: [:creditor_identifier, :crid])
+    expect(Validatable).to accept('DE98ZZZ09999999999', 'AT12ZZZ00000000001', 'FR12ZZZ123456', 'NL97ZZZ123456780001', 'ABC1W', for: [:creditor_identifier, :crid])
   end
 
   it 'should not accept an invalid creditor_identifier' do
@@ -107,11 +107,11 @@ describe SEPA::MandateIdentifierValidator do
   end
 
   it 'should accept valid mandate_identifier' do
-    expect(Validatable).to accept('XYZ-123', "+?/-:().,'", 'X' * 35, for: [:mandate_id, :mid])
+    expect(Validatable).to accept(nil, 'XYZ-123', "+?/-:().,'", 'X' * 35, for: [:mandate_id, :mid])
   end
 
   it 'should not accept an invalid mandate_identifier' do
-    expect(Validatable).not_to accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: [:mandate_id, :mid])
+    expect(Validatable).not_to accept('', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: [:mandate_id, :mid])
   end
 
   it "should customize error message" do
