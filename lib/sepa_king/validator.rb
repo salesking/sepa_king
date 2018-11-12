@@ -30,6 +30,22 @@ module SEPA
     end
   end
 
+  class ClearingSystemMemberIDValidator < ActiveModel::Validator
+    # 3-5 Letter bank identifier for the Swiss Clearing System
+    REGEX = /\A[0-9]{3,5}\z/
+
+    def validate(record)
+      field_name = options[:field_name] || :clearing_system_member_id
+      value = record.send(field_name)
+
+      if value
+        unless value.to_s.match(REGEX)
+          record.errors.add(field_name, :invalid, message: options[:message])
+        end
+      end
+    end
+  end
+
   class CreditorIdentifierValidator < ActiveModel::Validator
     REGEX = /\A[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}\z/
 
