@@ -49,7 +49,7 @@ sdd = SEPA::DirectDebit.new(
 
   # Optional: Clearing System Member Identifier of the creditor. Only for Swiss Direct Debits
   # String, 3 to 5 char
-  clearing_system_member_id: '4835',
+  clearing_system_member_id: '20050',
 
   # Optional: ISR Participant Number for the swiss ISR debit system. Only for Swiss Direct Debits with ISR references
   # Numeric, 9 digits, last digit is checkdigit recursive with modulo 10
@@ -73,6 +73,10 @@ sdd.add_transaction(
   # OPTIONAL: Business Identifier Code (SWIFT-Code) of the debtor's account
   # String, 8 or 11 char
   bic:                       'SPUEDE2UXXX',
+
+  # Optional: Clearing System Member Identifier of the creditor. Only for Swiss Direct Debits
+  # String, 3 to 5 char
+  clearing_system_member_id: '50050',
 
   # International Bank Account Number of the debtor's account
   # String, max. 34 chars
