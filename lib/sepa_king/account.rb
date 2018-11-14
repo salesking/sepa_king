@@ -6,14 +6,12 @@ module SEPA
 
     attr_accessor :name,
                   :iban,
-                  :bic,
-                  :clearing_system_member_id
+                  :bic
 
     convert :name, to: :text
 
     validates_length_of :name, within: 1..70
     validates_with BICValidator,
-                   ClearingSystemMemberIDValidator,
                    IBANValidator,
                    message: "%{value} is invalid"
 

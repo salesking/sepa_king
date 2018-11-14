@@ -69,9 +69,11 @@ module SEPA
         when PAIN_001_003_03,
              PAIN_001_001_03_CH_02,
              PAIN_008_003_02,
-             PAIN_008_001_02,
-             PAIN_008_001_02_CH_03
+             PAIN_008_001_02
           transactions.all? { |t| t.schema_compatible?(schema_name) }
+        when PAIN_008_001_02_CH_03
+          transactions.all? { |t| t.schema_compatible?(schema_name) } &&
+          !account.iban.to_s.match(/^(CH|LI)/).nil? # Only allowed for switzerland or liechtenstein
       end
     end
 

@@ -39,14 +39,4 @@ describe SEPA::Account do
       expect(SEPA::Account).not_to accept('', 'invalid', for: :bic)
     end
   end
-
-  describe :clearing_system_member_id do
-    it 'should accept valid value' do
-      expect(SEPA::Account).to accept('123', '3242', '34534', for: :clearing_system_member_id)
-    end
-
-    it 'should not accept invalid value' do
-      expect(SEPA::Account).not_to accept('', '34', 'xxx', '655656', for: :clearing_system_member_id)
-    end
-  end
 end

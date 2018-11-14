@@ -39,13 +39,19 @@ module SEPA
 
     def creditor_scheme_name(service_level)
       case service_level
-      when 'CHDD'
+      when 'CHDD' # PAIN_008_001_02_CH_03 only
         return 'CHDD'
-      when 'CHTA'
+      when 'CHTA' # PAIN_008_001_02_CH_03 only
         return 'CHLS'
       else
         return 'SEPA'
       end
+    end
+
+    # For IBANs from Switzerland or Liechtenstein the clearing system member id can be retrieved
+    # as the 5th to 9th digit of the IBAN, which is the local bank code.
+    def clearing_system_member_id_from_iban(iban)
+      return iban.to_s[4..8].sub(/^0*/, '')
     end
 
     def build_payment_informations(builder, schema)
@@ -89,9 +95,9 @@ module SEPA
             builder.FinInstnId do
               if group[:account].bic
                 builder.BIC(group[:account].bic)
-              elsif group[:account].clearing_system_member_id
-                builder.ClrSysMmbId do # ClrSysMmbId/MmbId for SPS
-                  builder.MmbId(group[:account].clearing_system_member_id)
+              elsif is_sps?(schema)
+                builder.ClrSysMmbId do
+                  builder.MmbId(clearing_system_member_id_from_iban(group[:account].iban))
                 end
                 if group[:account].isr_participant_number
                   builder.Othr do
@@ -188,9 +194,9 @@ module SEPA
           builder.FinInstnId do
             if transaction.bic
               builder.BIC(transaction.bic)
-            elsif transaction.clearing_system_member_id
+            elsif is_sps?(schema)
               builder.ClrSysMmbId do
-                builder.MmbId(transaction.clearing_system_member_id)
+                builder.MmbId(clearing_system_member_id_from_iban(transaction.iban))
               end
             else
               builder.Othr do

@@ -57,10 +57,6 @@ module SEPA
             builder.FinInstnId do
               if account.bic
                 builder.BIC(account.bic)
-              elsif account.clearing_system_member_id # ClrSysMmbId/MmbId for SPS
-                builder.ClrSysMmbId do
-                  builder.MmbId(account.clearing_system_member_id)
-                end
               else
                 builder.Othr do
                   builder.Id('NOTPROVIDED')
@@ -88,16 +84,10 @@ module SEPA
         builder.Amt do
           builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
         end
-        if transaction.bic || transaction.clearing_system_member_id
+        if transaction.bic
           builder.CdtrAgt do
             builder.FinInstnId do
-              if transaction.bic
-                builder.BIC(transaction.bic)
-              else # ClrSysMmbId/MmbId for SPS
-                builder.ClrSysMmbId do
-                  builder.MmbId(transaction.clearing_system_member_id)
-                end
-              end
+              builder.BIC(transaction.bic)
             end
           end
         end

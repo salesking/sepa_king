@@ -232,12 +232,14 @@ describe SEPA::DirectDebit do
       end
 
       context 'for swiss direct debits' do
+        let(:creditor_iban) { 'CH7081232000001998736' }
+        let(:debtior_iban)  { 'CH9804835011062385295' }
+
         let(:direct_debit) do
           sdd = SEPA::DirectDebit.new(
             name:                      'Muster AG',
-            clearing_system_member_id: '81232',
             isr_participant_number:    '010001456',
-            iban:                      'CH7081232000001998736',
+            iban:                      creditor_iban,
             creditor_identifier:       'ABC1W'
           )
 
@@ -247,34 +249,37 @@ describe SEPA::DirectDebit do
             address_line2: '1234 Musterstadt'
           )
 
-          sdd.add_transaction({
-            name:                      'HANS TESTER',
-            iban:                      'CH9804835011062385295',
-            clearing_system_member_id: '4835',
-            currency:                  'CHF',
-            amount:                    '100.0',
-            remittance_information:    'According to invoice 4712',
-            reference:                 'XYZ/2013-08-ABO/12345',
-            service_level:             service_level,
-            local_instrument:          local_instrument,
-            requested_date:            requested_date,
-            instruction:               23,
-            debtor_address:            sda,
-            structured_remittance_information: SEPA::StructuredRemittanceInformation.new(
-              proprietary: 'ESR',
-              reference:   '185744810000000000200800628'
-            ),
-          })
+          sdd.add_transaction(
+            {
+              name:                      'HANS TESTER',
+              iban:                      debtior_iban,
+              currency:                  'CHF',
+              amount:                    '100.0',
+              remittance_information:    'According to invoice 4712',
+              reference:                 'XYZ/2013-08-ABO/12345',
+              service_level:             service_level,
+              local_instrument:          local_instrument,
+              requested_date:            requested_date,
+              instruction:               23,
+              debtor_address:            sda,
+              structured_remittance_information: SEPA::StructuredRemittanceInformation.new(
+                proprietary: 'ESR',
+                reference:   '185744810000000000200800628'
+              )
+            }.merge(additional_fields)
+          )
 
           sdd
         end
 
+        let(:service_level) { 'CHTA' }
+        let(:local_instrument) { 'LSV+' }
+
+        let(:additional_fields) { {} }
+
         let(:requested_date) { Date.today.next }
 
         context 'as xml' do
-          let(:service_level) { 'CHTA' }
-          let(:local_instrument) { 'LSV+' }
-
           subject do
             direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
           end
@@ -382,6 +387,16 @@ describe SEPA::DirectDebit do
         context 'with service_level CHDD' do
           let(:service_level)    { 'CHDD' }
 
+          context 'when the local_instrument is not matching' do
+            let(:local_instrument) { 'LSV+' }
+
+            it 'should not be schema compatible' do
+              expect {
+                direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
+              }.to raise_error(SEPA::Error, "Incompatible with schema pain.008.001.02.ch.03!")
+            end
+          end
+
           context 'with local_instrument DDCOR1' do
             let(:local_instrument) { 'DDCOR1' }
 
@@ -402,6 +417,16 @@ describe SEPA::DirectDebit do
         context 'with service_level CHTA' do
           let(:service_level) { 'CHTA' }
 
+          context 'when the local_instrument is not matching' do
+            let(:local_instrument) { 'DDCOR1' }
+
+            it 'should not be schema compatible' do
+              expect {
+                direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
+              }.to raise_error(SEPA::Error, "Incompatible with schema pain.008.001.02.ch.03!")
+            end
+          end
+
           context 'with local_instrument LSV+' do
             let(:local_instrument) { 'LSV+' }
 
@@ -416,6 +441,61 @@ describe SEPA::DirectDebit do
             it 'should validate against pain.008.001.02.ch.03' do
               expect(direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)).to validate_against('pain.008.001.02.ch.03.xsd')
             end
+          end
+        end
+
+        context 'when the service_level is SEPA' do
+          let(:service_level) { 'SEPA' }
+
+          it 'should not be schema compatible' do
+            expect {
+              direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
+            }.to raise_error(SEPA::Error, "Incompatible with schema pain.008.001.02.ch.03!")
+          end
+        end
+
+        context 'without structured_remittance_information' do
+          it 'should not be schema compatible' do
+            direct_debit.transactions.first.structured_remittance_information = nil
+
+            expect {
+              direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
+            }.to raise_error(SEPA::Error, "Incompatible with schema pain.008.001.02.ch.03!")
+          end
+        end
+
+        context 'with mandate id' do
+          let(:additional_fields) do
+            {
+              mandate_id:                'K-02-2011-12345',
+              mandate_date_of_signature: Date.new(2011,1,25)
+            }
+          end
+
+          it 'should not be schema compatible' do
+            expect {
+              direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
+            }.to raise_error(SEPA::Error, "Incompatible with schema pain.008.001.02.ch.03!")
+          end
+        end
+
+        context 'with german creditor iban' do
+          let(:creditor_iban) { 'DE21500500009876543210' }
+
+          it 'should not be schema compatible' do
+            expect {
+              direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
+            }.to raise_error(SEPA::Error, "Incompatible with schema pain.008.001.02.ch.03!")
+          end
+        end
+
+        context 'with german debitor iban' do
+          let(:debtior_iban) { 'DE21500500009876543210' }
+
+          it 'should not be schema compatible' do
+            expect {
+              direct_debit.to_xml(SEPA::PAIN_008_001_02_CH_03)
+            }.to raise_error(SEPA::Error, "Incompatible with schema pain.008.001.02.ch.03!")
           end
         end
       end

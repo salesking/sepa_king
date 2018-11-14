@@ -57,16 +57,17 @@ module SEPA
         self.bic.present? &&
         %w(CORE B2B).include?(self.local_instrument) &&
         self.currency == 'EUR' &&
-        mandate_present?
+        self.mandate_present?
       when PAIN_008_003_02
         self.currency == 'EUR' &&
-        mandate_present?
+        self.mandate_present?
       when PAIN_008_001_02
-        mandate_present?
+        self.mandate_present?
       when PAIN_008_001_02_CH_03
+        !self.iban.to_s.match(/^(CH|LI)/).nil? && # Only allowed for switzerland or liechtenstein
         SPS_SERVICE_LEVELS.include?(self.service_level) &&
         SPS_LOCAL_INSTRUMENTS_FOR_SERVICE_LEVELS[self.service_level].include?(self.local_instrument) &&
-        !mandate_present? &&
+        !self.mandate_present? &&
         self.structured_remittance_information.present?
       end
     end

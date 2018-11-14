@@ -9,7 +9,6 @@ module SEPA
     attr_accessor :name,
                   :iban,
                   :bic,
-                  :clearing_system_member_id,
                   :amount,
                   :instruction,
                   :reference,
@@ -34,7 +33,6 @@ module SEPA
     validates_inclusion_of :batch_booking, :in => [true, false]
     validates_with BICValidator,
                    IBANValidator,
-                   ClearingSystemMemberIDValidator,
                    message: "%{value} is invalid"
 
     def initialize(attributes = {})

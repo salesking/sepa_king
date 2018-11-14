@@ -52,29 +52,6 @@ describe SEPA::BICValidator do
   end
 end
 
-describe SEPA::ClearingSystemMemberIDValidator do
-  class Validatable
-    include ActiveModel
-    attr_accessor :clearing_system_member_id, :csmid
-    validates_with SEPA::ClearingSystemMemberIDValidator, message: "%{value} seems wrong"
-    validates_with SEPA::ClearingSystemMemberIDValidator, field_name: :csmid
-  end
-
-  it 'should accept valid clearing_system_member_id' do
-    expect(Validatable).to accept('123', '2345', '34534', for: [:clearing_system_member_id, :csmid])
-  end
-
-  it 'should not accept an invalid clearing_system_member_id' do
-    expect(Validatable).not_to accept('54', 'xxx', '655656', for: [:clearing_system_member_id, :csmid])
-  end
-
-  it "should customize error message" do
-    v = Validatable.new(clearing_system_member_id: 'xxx')
-    v.valid?
-    expect(v.errors[:clearing_system_member_id]).to eq(['xxx seems wrong'])
-  end
-end
-
 describe SEPA::CreditorIdentifierValidator do
   class Validatable
     include ActiveModel::Model

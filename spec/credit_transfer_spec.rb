@@ -100,38 +100,6 @@ describe SEPA::CreditTransfer do
       end
     end
 
-    context 'using clearing_system_member_id' do
-      subject do
-        sct = SEPA::CreditTransfer.new name: 'Schuldner GmbH',
-                                       iban: 'DE87200500001234567890',
-                                       clearing_system_member_id:  '500'
-
-        sca = SEPA::CreditorAddress.new country_code:    'CH',
-                                        street_name:     'Mustergasse',
-                                        building_number: '123',
-                                        post_code:       '1234',
-                                        town_name:       'Musterstadt'
-
-        sct.add_transaction name:                      'Telekomiker AG',
-                            clearing_system_member_id: '4835',
-                            iban:                      'CH9804835011062385295',
-                            amount:                    102.50,
-                            reference:                 'XYZ-1234/123',
-                            remittance_information:    'Rechnung vom 22.08.2013',
-                            creditor_address:          sca
-
-        sct
-      end
-
-      [
-        SEPA::PAIN_001_001_03_CH_02
-      ].each do |schema|
-        it "should validate against #{schema}" do
-          expect(subject.to_xml(schema)).to validate_against("#{schema}.xsd")
-        end
-      end
-    end
-
     context 'for valid debtor' do
       context 'without BIC (IBAN-only)' do
         subject do
