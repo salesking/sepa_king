@@ -59,7 +59,9 @@ module SEPA
               end
             end
           end
-          builder.ChrgBr('SLEV')
+          if group[:service_level]
+            builder.ChrgBr('SLEV')
+          end
 
           transactions.each do |transaction|
             build_transaction(builder, transaction)
