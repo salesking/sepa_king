@@ -1,8 +1,9 @@
 rvm:
   - 2.2.10
-  - 2.3.7
-  - 2.4.4
-  - 2.5.1
+  - 2.3.8
+  - 2.4.5
+  - 2.5.3
+  - 2.6.0
 gemfile:
   - gemfiles/Gemfile-activemodel-3.1.x
   - gemfiles/Gemfile-activemodel-3.2.x
@@ -14,12 +15,16 @@ gemfile:
   - gemfiles/Gemfile-activemodel-5.2.x
 matrix:
   exclude:
-    - rvm: 2.4.4
+    - rvm: 2.4.5
       gemfile: gemfiles/Gemfile-activemodel-4.1.x
-    - rvm: 2.4.4
+    - rvm: 2.4.5
       gemfile: gemfiles/Gemfile-activemodel-4.2.x
-    - rvm: 2.5.1
+    - rvm: 2.5.3
       gemfile: gemfiles/Gemfile-activemodel-4.1.x
-    - rvm: 2.5.1
+    - rvm: 2.5.3
+      gemfile: gemfiles/Gemfile-activemodel-4.2.x
+    - rvm: 2.6.0
+      gemfile: gemfiles/Gemfile-activemodel-4.1.x
+    - rvm: 2.6.0
       gemfile: gemfiles/Gemfile-activemodel-4.2.x
 sudo: false
