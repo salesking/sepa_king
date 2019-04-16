@@ -41,7 +41,7 @@ module SEPA
       raise SEPA::Error.new(errors.full_messages.join("\n")) unless valid?
       raise SEPA::Error.new("Incompatible with schema #{schema_name}!") unless schema_compatible?(schema_name)
 
-      builder = Nokogiri::XML::Builder.new do |builder|
+      builder = Nokogiri::XML::Builder.new(encoding: 'utf-8') do |builder|
         builder.Document(xml_schema(schema_name)) do
           builder.__send__(xml_main_tag) do
             build_group_header(builder)
