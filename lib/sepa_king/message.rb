@@ -7,6 +7,7 @@ module SEPA
   PAIN_001_001_03 = 'pain.001.001.03'
   PAIN_001_002_03 = 'pain.001.002.03'
   PAIN_001_003_03 = 'pain.001.003.03'
+  PAIN_001_001_03_CH_02 = 'pain.001.001.03.ch.02'
 
   class Message
     include ActiveModel::Validations
@@ -41,7 +42,7 @@ module SEPA
       raise SEPA::Error.new(errors.full_messages.join("\n")) unless valid?
       raise SEPA::Error.new("Incompatible with schema #{schema_name}!") unless schema_compatible?(schema_name)
 
-      builder = Nokogiri::XML::Builder.new(encoding: 'utf-8') do |builder|
+      builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |builder|
         builder.Document(xml_schema(schema_name)) do
           builder.__send__(xml_main_tag) do
             build_group_header(builder)
@@ -62,7 +63,7 @@ module SEPA
       raise ArgumentError.new("Schema #{schema_name} is unknown!") unless self.known_schemas.include?(schema_name)
 
       case schema_name
-        when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03
+        when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03, PAIN_001_001_03_CH_02
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
         when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02
           transactions.all? { |t| t.schema_compatible?(schema_name) }
@@ -117,9 +118,17 @@ module SEPA
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
-      { :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
+      return {
+        :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
         :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-        :'xsi:schemaLocation' => "urn:iso:std:iso:20022:tech:xsd:#{schema_name} #{schema_name}.xsd" }
+        :'xsi:schemaLocation' => "urn:iso:std:iso:20022:tech:xsd:#{schema_name} #{schema_name}.xsd"
+      } unless schema_name == PAIN_001_001_03_CH_02
+
+      {
+        xmlns:                'http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd',
+        'xmlns:xsi':          'http://www.w3.org/2001/XMLSchema-instance',
+        'xsi:schemaLocation': 'http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd  pain.001.001.03.ch.02.xsd'
+      }
     end
 
     def build_group_header(builder)

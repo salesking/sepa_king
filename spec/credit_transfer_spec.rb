@@ -417,5 +417,104 @@ describe SEPA::CreditTransfer do
         end
       end
     end
+
+    context 'xml_schema_header' do
+      subject { credit_transfer.to_xml(format) }
+
+      let(:xml_header) do
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+          "\n<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:#{format}\"" +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+          " xsi:schemaLocation=\"urn:iso:std:iso:20022:tech:xsd:#{format} #{format}.xsd\">\n"
+      end
+
+      let(:transaction) do
+        {
+          name: 'Telekomiker AG',
+          iban: 'DE37112589611964645802',
+          bic: 'PBNKDEFF370',
+          amount: 102.50,
+          currency: 'CHF'
+        }
+      end
+
+      before do
+        credit_transfer.add_transaction transaction
+      end
+
+      context "when format is #{SEPA::PAIN_001_001_03}" do
+        let(:format) { SEPA::PAIN_001_001_03 }
+
+        it 'should return correct header' do
+          is_expected.to start_with(xml_header)
+        end
+      end
+
+      context "when format is #{SEPA::PAIN_001_002_03}" do
+        let(:format) { SEPA::PAIN_001_002_03 }
+        let(:transaction) do
+          {
+            name: 'Telekomiker AG',
+            bic: 'PBNKDEFF370',
+            iban: 'DE37112589611964645802',
+            amount: 102.50,
+            reference: 'XYZ-1234/123',
+            remittance_information: 'Rechnung vom 22.08.2013'
+          }
+        end
+
+        it 'should return correct header' do
+          is_expected.to start_with(xml_header)
+        end
+      end
+
+      context "when format is #{SEPA::PAIN_001_003_03}" do
+        let(:format) { SEPA::PAIN_001_003_03 }
+        let(:transaction) do
+          {
+            name: 'Telekomiker AG',
+            bic: 'PBNKDEFF370',
+            iban: 'DE37112589611964645802',
+            amount: 102.50,
+            reference: 'XYZ-1234/123',
+            remittance_information: 'Rechnung vom 22.08.2013'
+          }
+        end
+
+        it 'should return correct header' do
+          is_expected.to start_with(xml_header)
+        end
+      end
+
+      context "when format is #{SEPA::PAIN_001_001_03_CH_02}" do
+        let(:format) { SEPA::PAIN_001_001_03_CH_02 }
+        let(:credit_transfer) do
+          SEPA::CreditTransfer.new name: 'Schuldner GmbH',
+                                   iban: 'CH5481230000001998736',
+                                   bic:  'RAIFCH22'
+        end
+        let(:transaction) do
+          {
+            name: 'Telekomiker AG',
+            iban: 'DE62007620110623852957',
+            amount: 102.50,
+            currency: 'CHF',
+            reference: 'XYZ-1234/123',
+            remittance_information: 'Rechnung vom 22.08.2013'
+          }
+        end
+
+        let(:xml_header) do
+          '<?xml version="1.0" encoding="UTF-8"?>' +
+            "\n<Document xmlns=\"http://www.six-interbank-clearing.com/de/#{format}.xsd\"" +
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+            " xsi:schemaLocation=\"http://www.six-interbank-clearing.com/de/#{format}.xsd  #{format}.xsd\">\n"
+        end
+
+        it 'should return correct header' do
+          is_expected.to start_with(xml_header)
+        end
+      end
+    end
   end
 end
