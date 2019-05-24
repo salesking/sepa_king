@@ -23,6 +23,8 @@ module SEPA
         self.bic.present? && self.service_level == 'SEPA' && self.currency == 'EUR'
       when PAIN_001_003_03
         self.currency == 'EUR'
+      when PAIN_001_001_03_CH_02
+        self.currency == 'CHF'
       end
     end
   end

@@ -572,5 +572,86 @@ describe SEPA::DirectDebit do
         end
       end
     end
+
+    context 'xml_schema_header' do
+      subject { sepa_direct_debit.to_xml(format) }
+
+      let(:sepa_direct_debit) do
+        SEPA::DirectDebit.new name: 'Gläubiger GmbH',
+                              iban: 'DE87200500001234567890',
+                              creditor_identifier: 'DE98ZZZ09999999999'
+      end
+
+      let(:xml_header) do
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+          "\n<Document xmlns=\"urn:iso:std:iso:20022:tech:xsd:#{format}\"" +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+          " xsi:schemaLocation=\"urn:iso:std:iso:20022:tech:xsd:#{format} #{format}.xsd\">\n"
+      end
+
+      let(:transaction) do
+        {
+          name: 'Zahlemann & Söhne GbR',
+          bic: 'SPUEDE2UXXX',
+          iban: 'DE21500500009876543210',
+          amount: 39.99,
+          reference: 'XYZ/2013-08-ABO/12345',
+          remittance_information: 'Unsere Rechnung vom 10.08.2013',
+          mandate_id: 'K-02-2011-12345',
+          mandate_date_of_signature: Date.new(2011, 1, 25)
+        }
+      end
+
+      before do
+        sepa_direct_debit.add_transaction transaction
+      end
+
+      context "when format is #{SEPA::PAIN_008_001_02}" do
+        let(:format) { SEPA::PAIN_008_001_02 }
+
+        it 'should return correct header' do
+          is_expected.to start_with(xml_header)
+        end
+      end
+
+      context "when format is #{SEPA::PAIN_008_002_02}" do
+        let(:format) { SEPA::PAIN_008_002_02 }
+        let(:sepa_direct_debit) do
+          SEPA::DirectDebit.new name: 'Gläubiger GmbH',
+                                bic: 'SPUEDE2UXXX',
+                                iban: 'DE87200500001234567890',
+                                creditor_identifier: 'DE98ZZZ09999999999'
+        end
+        let(:transaction) do
+          {
+            name: 'Zahlemann & Söhne GbR',
+            bic: 'SPUEDE2UXXX',
+            iban: 'DE21500500009876543210',
+            amount: 39.99,
+            reference: 'XYZ/2013-08-ABO/12345',
+            remittance_information: 'Unsere Rechnung vom 10.08.2013',
+            mandate_id: 'K-02-2011-12345',
+            debtor_address: SEPA::DebtorAddress.new(
+              country_code: 'CH',
+              address_line1: 'Mustergasse 123',
+              address_line2: '1234 Musterstadt'
+            ),
+            mandate_date_of_signature: Date.new(2011, 1, 25)
+          }
+        end
+
+        it 'should return correct header' do
+          is_expected.to start_with(xml_header)
+        end
+      end
+
+      context "when format is #{SEPA::PAIN_008_003_02}" do
+        let(:format) { SEPA::PAIN_008_003_02 }
+
+        it 'should return correct header' do
+          is_expected.to start_with(xml_header)
+        end
+      end
+    end
   end
 end
