@@ -7,6 +7,7 @@ module SEPA
   PAIN_001_001_03 = 'pain.001.001.03'
   PAIN_001_002_03 = 'pain.001.002.03'
   PAIN_001_003_03 = 'pain.001.003.03'
+  PAIN_001_001_03_CH_02 = 'pain.001.001.03.ch.02'
 
   class Message
     include ActiveModel::Validations
@@ -38,17 +39,20 @@ module SEPA
 
     # @return [String] xml
     def to_xml(schema_name=self.known_schemas.first)
-      raise RuntimeError.new(errors.full_messages.join("\n")) unless valid?
-      raise RuntimeError.new("Incompatible with schema #{schema_name}!") unless schema_compatible?(schema_name)
+      raise SEPA::Error.new(errors.full_messages.join("\n")) unless valid?
+      raise SEPA::Error.new("Incompatible with schema #{schema_name}!") unless schema_compatible?(schema_name)
 
-      builder = Builder::XmlMarkup.new indent: 2
-      builder.instruct!
-      builder.Document(xml_schema(schema_name)) do
-        builder.__send__(xml_main_tag) do
-          build_group_header(builder)
-          build_payment_informations(builder)
+      builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |builder|
+        builder.Document(xml_schema(schema_name)) do
+          builder.__send__(xml_main_tag) do
+            build_group_header(builder)
+            build_payment_informations(builder)
+          end
         end
       end
+
+      validate_final_document!(builder.doc, schema_name)
+      builder.to_xml
     end
 
     def amount_total(selected_transactions=transactions)
@@ -59,7 +63,7 @@ module SEPA
       raise ArgumentError.new("Schema #{schema_name} is unknown!") unless self.known_schemas.include?(schema_name)
 
       case schema_name
-        when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03
+        when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03, PAIN_001_001_03_CH_02
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
         when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02
           transactions.all? { |t| t.schema_compatible?(schema_name) }
@@ -68,10 +72,10 @@ module SEPA
 
     # Set unique identifer for the message
     def message_identification=(value)
-      raise ArgumentError.new('mesage_identification must be a string!') unless value.is_a?(String)
+      raise ArgumentError.new('message_identification must be a string!') unless value.is_a?(String)
 
       regex = /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\'|\ ]){1,35}\z/
-      raise ArgumentError.new("mesage_identification does not match #{regex}!") unless value.match(regex)
+      raise ArgumentError.new("message_identification does not match #{regex}!") unless value.match(regex)
 
       @message_identification = value
     end
@@ -79,6 +83,22 @@ module SEPA
     # Get unique identifer for the message (with fallback to a random string)
     def message_identification
       @message_identification ||= "SEPA-KING/#{SecureRandom.hex(11)}"
+    end
+
+    # Set creation date time for the message
+    # p.s. Rabobank in the Netherlands only accepts the more restricted format [0-9]{4}[-][0-9]{2,2}[-][0-9]{2,2}[T][0-9]{2,2}[:][0-9]{2,2}[:][0-9]{2,2}
+    def creation_date_time=(value)
+      raise ArgumentError.new('creation_date_time must be a string!') unless value.is_a?(String)
+
+      regex = /[0-9]{4}[-][0-9]{2,2}[-][0-9]{2,2}(?:\s|T)[0-9]{2,2}[:][0-9]{2,2}[:][0-9]{2,2}/
+      raise ArgumentError.new("creation_date_time does not match #{regex}!") unless value.match(regex)
+
+      @creation_date_time = value
+    end
+
+    # Get creation date time for the message (with fallback to Time.now.iso8601)
+    def creation_date_time
+      @creation_date_time ||= Time.now.strftime("%FT%T")
     end
 
     # Returns the id of the batch to which the given transaction belongs
@@ -98,15 +118,23 @@ module SEPA
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
-      { :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
+      return {
+        :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
         :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-        :'xsi:schemaLocation' => "urn:iso:std:iso:20022:tech:xsd:#{schema_name} #{schema_name}.xsd" }
+        :'xsi:schemaLocation' => "urn:iso:std:iso:20022:tech:xsd:#{schema_name} #{schema_name}.xsd"
+      } unless schema_name == PAIN_001_001_03_CH_02
+
+      {
+        xmlns:                'http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd',
+        'xmlns:xsi':          'http://www.w3.org/2001/XMLSchema-instance',
+        'xsi:schemaLocation': 'http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd  pain.001.001.03.ch.02.xsd'
+      }
     end
 
     def build_group_header(builder)
       builder.GrpHdr do
         builder.MsgId(message_identification)
-        builder.CreDtTm(Time.now.strftime("%FT%T"))
+        builder.CreDtTm(creation_date_time)
         builder.NbOfTxs(transactions.length)
         builder.CtrlSum('%.2f' % amount_total)
         builder.InitgPty do
@@ -130,6 +158,12 @@ module SEPA
     # Returns a key to determine the group to which the transaction belongs
     def transaction_group(transaction)
       transaction
+    end
+
+    def validate_final_document!(document, schema_name)
+      xsd = Nokogiri::XML::Schema(File.read(File.expand_path("../../../lib/schema/#{schema_name}.xsd", __FILE__)))
+      errors = xsd.validate(document).map { |error| error.message }
+      raise SEPA::Error.new("Incompatible with schema #{schema_name}: #{errors.join(', ')}") if errors.any?
     end
   end
 end

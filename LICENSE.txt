@@ -1,4 +1,4 @@
-Copyright (c) 2013-2016 Georg Leciejewski (Sales King GmbH) & Georg Ledermann
+Copyright (c) 2013-2017 Georg Leciejewski (Sales King GmbH) & Georg Ledermann
 
 MIT License
 

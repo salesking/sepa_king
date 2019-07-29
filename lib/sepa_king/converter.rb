@@ -20,20 +20,16 @@ module SEPA
 
         value.to_s.
           # Replace some special characters described as "Best practices" in Chapter 6.2 of this document:
-          # http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-requirements-for-an-extended-character-set-unicode-subset-best-practices/epc217-08-best-practices-sepa-requirements-for-character-set-ssgpdf/
+          # http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-requirements-for-an-extended-character-set-unicode-subset-best-practices/
           gsub('€','E').
           gsub('@','(at)').
-          gsub('&', '+').
           gsub('_','-').
-
-          # Replace non-ASCII characters with an ASCII approximation
-          i18n_transliterate.
 
           # Replace linebreaks by spaces
           gsub(/\n+/,' ').
 
           # Remove all invalid characters
-          gsub(/[^a-zA-Z0-9\ \'\:\?\,\-\(\+\.\)\/]/, '').
+          gsub(/[^a-zA-Z0-9ÄÖÜäöüß&*$%\ \'\:\?\,\-\(\+\.\)\/]/, '').
 
           # Remove leading and trailing spaces
           strip
@@ -41,7 +37,14 @@ module SEPA
 
       def convert_decimal(value)
         return unless value
-        BigDecimal(value.to_s).round(2)
+        value = begin
+          BigDecimal(value.to_s)
+        rescue ArgumentError
+        end
+
+        if value && value.finite? && value > 0
+          value.round(2)
+        end
       end
     end
   end

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+(C) Copyright 2010, SKSF, www.sksf.ch
+
+Anregungen und Fragen zu diesem Dokument können an das jeweilige Finanzinstitut gerichtet werden. 
+Allgemeine Anregungen können auch bei der SIX Interbank Clearing AG unter folgender Adresse angebracht werden: 
+pm@six-group.com
+-->
+<Document xmlns="http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd  pain.001.001.03.ch.02.xsd">
+	<CstmrCdtTrfInitn>
+		<GrpHdr>
+			<MsgId>MSG-01</MsgId>
+			<CreDtTm>2010-02-15T07:30:00</CreDtTm>
+			<NbOfTxs>3</NbOfTxs>
+			<CtrlSum>15850.00</CtrlSum>
+			<InitgPty>
+				<Nm>MUSTER AG</Nm>
+			</InitgPty>
+		</GrpHdr>
+		<PmtInf>
+			<PmtInfId>PMTINF-01</PmtInfId>
+			<PmtMtd>TRF</PmtMtd>
+			<BtchBookg>true</BtchBookg>
+			<ReqdExctnDt>2010-02-22</ReqdExctnDt>
+			<Dbtr>
+				<Nm>MUSTER AG</Nm>
+				<PstlAdr>
+					<Ctry>CH</Ctry>
+					<AdrLine>SELDWYLA</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>CH5481230000001998736</IBAN>
+				</Id>
+			</DbtrAcct>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RAIFCH22</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<CdtTrfTxInf>
+				<PmtId>
+					<InstrId>INSTRID-01-01</InstrId>
+					<EndToEndId>ENDTOENDID-001</EndToEndId>
+				</PmtId>
+				<PmtTpInf>
+					<LclInstrm>
+						<Prtry>CH01</Prtry>
+					</LclInstrm>
+				</PmtTpInf>
+				<Amt>
+					<InstdAmt Ccy="CHF">3949.75</InstdAmt>
+				</Amt>
+				<CdtrAcct>
+					<Id>
+						<Othr>
+							<Id>01-39139-1</Id>
+						</Othr>
+					</Id>
+				</CdtrAcct>
+				<RmtInf>
+					<Strd>
+						<CdtrRefInf>
+							<Ref>210000000003139471430009017</Ref>
+						</CdtrRefInf>
+					</Strd>
+				</RmtInf>
+			</CdtTrfTxInf>
+		</PmtInf>
+		<PmtInf>
+			<PmtInfId>PMTINF-02</PmtInfId>
+			<PmtMtd>TRF</PmtMtd>
+			<BtchBookg>true</BtchBookg>
+			<ReqdExctnDt>2010-02-18</ReqdExctnDt>
+			<Dbtr>
+				<Nm>MUSTER AG</Nm>
+				<PstlAdr>
+					<Ctry>CH</Ctry>
+					<AdrLine>SELDWYLA</AdrLine>
+				</PstlAdr>
+			</Dbtr>
+			<DbtrAcct>
+				<Id>
+					<IBAN>CH5481230000001998736</IBAN>
+				</Id>
+			</DbtrAcct>
+			<DbtrAgt>
+				<FinInstnId>
+					<BIC>RAIFCH22</BIC>
+				</FinInstnId>
+			</DbtrAgt>
+			<CdtTrfTxInf>
+				<PmtId>
+					<InstrId>INSTRID-02-01</InstrId>
+					<EndToEndId>ENDTOENDID-002</EndToEndId>
+				</PmtId>
+				<PmtTpInf>
+					<LclInstrm>
+						<Prtry>CH02</Prtry>
+					</LclInstrm>
+				</PmtTpInf>
+				<Amt>
+					<InstdAmt Ccy="CHF">8479.25</InstdAmt>
+				</Amt>
+				<Cdtr>
+					<Nm>Robert Scheider SA</Nm>
+					<PstlAdr>
+						<StrtNm>Rue de la gare</StrtNm>
+						<BldgNb>24</BldgNb>
+						<PstCd>2501</PstCd>
+						<TwnNm>Biel</TwnNm>
+						<Ctry>CH</Ctry>
+					</PstlAdr>
+				</Cdtr>
+				<CdtrAcct>
+					<Id>
+						<Othr>
+							<Id>25-9034-2</Id>
+						</Othr>
+					</Id>
+				</CdtrAcct>
+				<RmtInf>
+					<Ustrd>Rechnung Nr. 408</Ustrd>
+				</RmtInf>
+			</CdtTrfTxInf>
+			<CdtTrfTxInf>
+				<PmtId>
+					<InstrId>INSTRID-02-02</InstrId>
+					<EndToEndId>ENDTOENDID-003</EndToEndId>
+				</PmtId>
+				<PmtTpInf>
+					<SvcLvl>
+						<Cd>SEPA</Cd>
+					</SvcLvl>
+				</PmtTpInf>
+				<Amt>
+					<InstdAmt Ccy="EUR">3421.00</InstdAmt>
+				</Amt>
+				<CdtrAgt>
+					<FinInstnId>
+						<BIC>DEUTDEFF</BIC>
+					</FinInstnId>
+				</CdtrAgt>
+				<Cdtr>
+					<Nm>Peter Haller</Nm>
+					<PstlAdr>
+						<AdrLine>Rosenauweg 4</AdrLine>
+						<AdrLine>DE-80036 München</AdrLine>
+					</PstlAdr>
+				</Cdtr>
+				<CdtrAcct>
+					<Id>
+						<IBAN>DE62007620110623852957</IBAN>
+					</Id>
+				</CdtrAcct>
+				<RmtInf>
+					<Strd>
+						<CdtrRefInf>
+							<Tp>
+								<CdOrPrtry>
+									<Cd>SCOR</Cd>
+								</CdOrPrtry>
+							</Tp>
+							<Ref>RF712348231</Ref>
+						</CdtrRefInf>
+					</Strd>
+				</RmtInf>
+			</CdtTrfTxInf>
+		</PmtInf>
+	</CstmrCdtTrfInitn>
+</Document>

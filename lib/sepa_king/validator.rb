@@ -9,7 +9,7 @@ module SEPA
       value = record.send(field_name).to_s
 
       unless IBANTools::IBAN.valid?(value) && value.match(REGEX)
-        record.errors.add(field_name, :invalid)
+        record.errors.add(field_name, :invalid, message: options[:message])
       end
     end
   end
@@ -24,7 +24,7 @@ module SEPA
 
       if value
         unless value.to_s.match(REGEX)
-          record.errors.add(field_name, :invalid)
+          record.errors.add(field_name, :invalid, message: options[:message])
         end
       end
     end
@@ -38,7 +38,7 @@ module SEPA
       value = record.send(field_name)
 
       unless valid?(value)
-        record.errors.add(field_name, :invalid)
+        record.errors.add(field_name, :invalid, message: options[:message])
       end
     end
 
@@ -61,7 +61,7 @@ module SEPA
       value = record.send(field_name)
 
       unless value.to_s.match(REGEX)
-        record.errors.add(field_name, :invalid)
+        record.errors.add(field_name, :invalid, message: options[:message])
       end
     end
   end

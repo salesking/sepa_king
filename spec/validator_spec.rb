@@ -5,7 +5,7 @@ describe SEPA::IBANValidator do
   class Validatable
     include ActiveModel::Model
     attr_accessor :iban, :iban_the_terrible
-    validates_with SEPA::IBANValidator
+    validates_with SEPA::IBANValidator, message: "%{value} seems wrong"
     validates_with SEPA::IBANValidator, field_name: :iban_the_terrible
   end
 
@@ -21,13 +21,19 @@ describe SEPA::IBANValidator do
                                       'DE87 2005 0000 1234 5678 90', # spaces included
                                for: [:iban, :iban_the_terrible])
   end
+
+  it "should customize error message" do
+    v = Validatable.new(:iban => 'xxx')
+    v.valid?
+    expect(v.errors[:iban]).to eq(['xxx seems wrong'])
+  end
 end
 
 describe SEPA::BICValidator do
   class Validatable
     include ActiveModel::Model
     attr_accessor :bic, :custom_bic
-    validates_with SEPA::BICValidator
+    validates_with SEPA::BICValidator, message: "%{value} seems wrong"
     validates_with SEPA::BICValidator, field_name: :custom_bic
   end
 
@@ -38,13 +44,19 @@ describe SEPA::BICValidator do
   it 'should not accept an invalid BIC' do
     expect(Validatable).not_to accept('', 'GENODE61HR', 'DEUTDEDBDUEDEUTDEDBDUE', for: [:bic, :custom_bic])
   end
+
+  it "should customize error message" do
+    v = Validatable.new(:bic => 'xxx')
+    v.valid?
+    expect(v.errors[:bic]).to eq(['xxx seems wrong'])
+  end
 end
 
 describe SEPA::CreditorIdentifierValidator do
   class Validatable
     include ActiveModel::Model
     attr_accessor :creditor_identifier, :crid
-    validates_with SEPA::CreditorIdentifierValidator
+    validates_with SEPA::CreditorIdentifierValidator, message: "%{value} seems wrong"
     validates_with SEPA::CreditorIdentifierValidator, field_name: :crid
   end
 
@@ -55,13 +67,19 @@ describe SEPA::CreditorIdentifierValidator do
   it 'should not accept an invalid creditor_identifier' do
     expect(Validatable).not_to accept('', 'xxx', 'DE98ZZZ099999999990', for: [:creditor_identifier, :crid])
   end
+
+  it "should customize error message" do
+    v = Validatable.new(:creditor_identifier => 'xxx')
+    v.valid?
+    expect(v.errors[:creditor_identifier]).to eq(['xxx seems wrong'])
+  end
 end
 
 describe SEPA::MandateIdentifierValidator do
   class Validatable
     include ActiveModel::Model
     attr_accessor :mandate_id, :mid
-    validates_with SEPA::MandateIdentifierValidator
+    validates_with SEPA::MandateIdentifierValidator, message: "%{value} seems wrong"
     validates_with SEPA::MandateIdentifierValidator, field_name: :mid
   end
 
@@ -71,5 +89,11 @@ describe SEPA::MandateIdentifierValidator do
 
   it 'should not accept an invalid mandate_identifier' do
     expect(Validatable).not_to accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: [:mandate_id, :mid])
+  end
+
+  it "should customize error message" do
+    v = Validatable.new(:mandate_id => 'ABC 123')
+    v.valid?
+    expect(v.errors[:mandate_id]).to eq(['ABC 123 seems wrong'])
   end
 end

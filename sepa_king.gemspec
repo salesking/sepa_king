@@ -14,21 +14,18 @@ Gem::Specification.new do |s|
   s.license       = 'MIT'
 
   s.files         = `git ls-files`.split($/)
-  s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ['lib']
 
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 2.2'
 
-  s.add_runtime_dependency 'activemodel', '>= 3.0.0'
-  s.add_runtime_dependency 'i18n'
-  s.add_runtime_dependency 'builder'
+  s.add_runtime_dependency 'activemodel', '>= 3.1'
+  s.add_runtime_dependency 'nokogiri'
   s.add_runtime_dependency 'iban-tools'
 
   s.add_development_dependency 'bundler'
-  s.add_development_dependency 'rspec', '~> 3.0'
+  s.add_development_dependency 'rspec'
   s.add_development_dependency 'coveralls'
-  s.add_development_dependency 'simplecov', '~> 0.11.0'
+  s.add_development_dependency 'simplecov'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'nokogiri'
 end

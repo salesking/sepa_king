@@ -84,7 +84,6 @@ module SEPA
     end
 
     def build_amendment_informations(builder, transaction)
-      return unless transaction.original_debtor_account || transaction.same_mandate_new_debtor_agent
       builder.AmdmntInd(true)
       builder.AmdmntInfDtls do
         if transaction.original_debtor_account
@@ -93,11 +92,30 @@ module SEPA
               builder.IBAN(transaction.original_debtor_account)
             end
           end
-        else
+        elsif transaction.same_mandate_new_debtor_agent
           builder.OrgnlDbtrAgt do
             builder.FinInstnId do
               builder.Othr do
                 builder.Id('SMNDA')
+              end
+            end
+          end
+        end
+        if transaction.original_creditor_account
+          builder.OrgnlCdtrSchmeId do
+            if transaction.original_creditor_account.name
+              builder.Nm(transaction.original_creditor_account.name)
+            end
+            if transaction.original_creditor_account.creditor_identifier
+              builder.Id do
+                builder.PrvtId do
+                  builder.Othr do
+                    builder.Id(transaction.original_creditor_account.creditor_identifier)
+                    builder.SchmeNm do
+                      builder.Prtry('SEPA')
+                    end
+                  end
+                end
               end
             end
           end
@@ -108,14 +126,17 @@ module SEPA
     def build_transaction(builder, transaction)
       builder.DrctDbtTxInf do
         builder.PmtId do
+          if transaction.instruction.present?
+            builder.InstrId(transaction.instruction)
+          end
           builder.EndToEndId(transaction.reference)
         end
-        builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
+        builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
         builder.DrctDbtTx do
           builder.MndtRltdInf do
             builder.MndtId(transaction.mandate_id)
             builder.DtOfSgntr(transaction.mandate_date_of_signature.iso8601)
-            build_amendment_informations(builder, transaction)
+            build_amendment_informations(builder, transaction) if transaction.amendment_informations?
           end
         end
         builder.DbtrAgt do
@@ -131,6 +152,44 @@ module SEPA
         end
         builder.Dbtr do
           builder.Nm(transaction.name)
+          if transaction.debtor_address
+            builder.PstlAdr do
+              # Only set the fields that are actually provided.
+              # StrtNm, BldgNb, PstCd, TwnNm provide a structured address
+              # separated into its individual fields.
+              # AdrLine provides the address in free format text.
+              # Both are currently allowed and the actual preference depends on the bank.
+              # Also the fields that are required legally may vary depending on the country
+              # or change over time.
+              if transaction.debtor_address.street_name
+                builder.StrtNm transaction.debtor_address.street_name
+              end
+
+              if transaction.debtor_address.building_number
+                builder.BldgNb transaction.debtor_address.building_number
+              end
+
+              if transaction.debtor_address.post_code
+                builder.PstCd transaction.debtor_address.post_code
+              end
+
+              if transaction.debtor_address.town_name
+                builder.TwnNm transaction.debtor_address.town_name
+              end
+
+              if transaction.debtor_address.country_code
+                builder.Ctry transaction.debtor_address.country_code
+              end
+
+              if transaction.debtor_address.address_line1
+                builder.AdrLine transaction.debtor_address.address_line1
+              end
+
+              if transaction.debtor_address.address_line2
+                builder.AdrLine transaction.debtor_address.address_line2
+              end
+            end
+          end
         end
         builder.DbtrAcct do
           builder.Id do
