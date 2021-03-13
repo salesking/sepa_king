@@ -15,6 +15,8 @@ module SEPA
     end
 
     module InstanceMethods
+      ALLOWED_CHARS = Regexp.escape(File.read('lib/misc/allowed_chars.txt')).freeze
+
       def convert_text(value)
         return unless value
 
@@ -29,7 +31,7 @@ module SEPA
           gsub(/\n+/,' ').
 
           # Remove all invalid characters
-          gsub(/[^a-zA-Z0-9ÄÖÜäöüß&*$%\ \'\:\?\,\-\(\+\.\)\/]/, '').
+          gsub(/[^#{ALLOWED_CHARS}]/, '').
 
           # Remove leading and trailing spaces
           strip
