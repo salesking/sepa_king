@@ -1,6 +1,6 @@
 # Ruby gem for creating SEPA XML files
 
-[![Build Status](https://travis-ci.org/salesking/sepa_king.svg)](http://travis-ci.org/salesking/sepa_king)
+[![Build Status](https://github.com/salesking/sepa_king/workflows/Test/badge.svg?branch=master)](https://github.com/salesking/sepa_king/actions)
 [![Code Climate](https://codeclimate.com/github/salesking/sepa_king/badges/gpa.svg)](https://codeclimate.com/github/salesking/sepa_king)
 [![Coverage Status](https://coveralls.io/repos/salesking/sepa_king/badge.svg?branch=master)](https://coveralls.io/r/salesking/sepa_king?branch=master)
 [![Gem Version](https://badge.fury.io/rb/sepa_king.svg)](http://badge.fury.io/rb/sepa_king)
@@ -22,8 +22,8 @@ BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
 ## Requirements
 
-* Ruby 2.2 or newer
-* ActiveModel 3.1 or newer (including 6.0)
+* Ruby 2.6 or newer
+* ActiveModel 4.2 or newer (including 6.1)
 
 
 ## Installation
