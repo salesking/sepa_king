@@ -88,12 +88,12 @@ describe SEPA::MandateIdentifierValidator do
   end
 
   it 'should not accept an invalid mandate_identifier' do
-    expect(Validatable).not_to accept(nil, '', 'X' * 36, 'ABC 123', '#/*', 'Ümläüt', for: [:mandate_id, :mid])
+    expect(Validatable).not_to accept(nil, '', 'X' * 36, '#/*', 'Ümläüt', for: [:mandate_id, :mid])
   end
 
   it "should customize error message" do
-    v = Validatable.new(:mandate_id => 'ABC 123')
+    v = Validatable.new(:mandate_id => '*** 123')
     v.valid?
-    expect(v.errors[:mandate_id]).to eq(['ABC 123 seems wrong'])
+    expect(v.errors[:mandate_id]).to eq(['*** 123 seems wrong'])
   end
 end
