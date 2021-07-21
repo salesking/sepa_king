@@ -31,7 +31,12 @@ module SEPA
   end
 
   class CreditorIdentifierValidator < ActiveModel::Validator
-    REGEX = %r{\A[a-zA-Z]{2,2}[0-9]{2,2}[A-Za-z0-9+?/-:().,']{3,3}[A-Za-z0-9+?/-:().,']{1,28}\z}
+    REGEX = %r{\A
+      [a-zA-Z]{2}                 # ISO country code
+      [0-9]{2}                    # Check digits
+      [A-Za-z0-9]{3}              # Creditor business code
+      [A-Za-z0-9+?/:().,'-]{1,28} # National identifier
+    \z}x
 
     def validate(record)
       field_name = options[:field_name] || :creditor_identifier
