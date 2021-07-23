@@ -285,7 +285,7 @@ https://github.com/salesking/sepa_king/graphs/contributors
 
 ## Resources
 
-* http://www.ebics.de/index.php?id=77
+* https://www.ebics.de/de/datenformate
 * SalesKing: http://salesking.eu
 
 

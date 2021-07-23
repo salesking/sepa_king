@@ -31,7 +31,12 @@ module SEPA
   end
 
   class CreditorIdentifierValidator < ActiveModel::Validator
-    REGEX = /\A[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|,|']){3,3}([A-Za-z0-9]|[\+|\?|\/|\-|:|\(|\)|\.|,|']){1,28}\z/
+    REGEX = %r{\A
+      [a-zA-Z]{2}                 # ISO country code
+      [0-9]{2}                    # Check digits
+      [A-Za-z0-9]{3}              # Creditor business code
+      [A-Za-z0-9+?/:().,'-]{1,28} # National identifier
+    \z}x
 
     def validate(record)
       field_name = options[:field_name] || :creditor_identifier
@@ -54,7 +59,7 @@ module SEPA
   end
 
   class MandateIdentifierValidator < ActiveModel::Validator
-    REGEX = /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\']){1,35}\z/
+    REGEX = %r{\A[A-Za-z0-9 +?/:().,'-]{1,35}\z}
 
     def validate(record)
       field_name = options[:field_name] || :mandate_id
