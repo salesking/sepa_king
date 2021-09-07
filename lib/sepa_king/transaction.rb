@@ -9,6 +9,10 @@ module SEPA
     attr_accessor :name,
                   :iban,
                   :bic,
+                  :bban, # bankgiro 5748964
+                  :bban_proprietary, # BGNR
+                  :clearing_code, # SESBA
+                  :clearing_bank_identifier, # 9960
                   :amount,
                   :instruction,
                   :reference,
@@ -31,6 +35,8 @@ module SEPA
     validates_presence_of :requested_date
     validates_inclusion_of :batch_booking, :in => [true, false]
     validates_with BICValidator, IBANValidator, message: "%{value} is invalid"
+    validates :iban, presence: true, unless: :bban
+    validates :bban, presence: true, unless: :iban
 
     def initialize(attributes = {})
       attributes.each do |name, value|

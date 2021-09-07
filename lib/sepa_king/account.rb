@@ -8,6 +8,7 @@ module SEPA
     convert :name, to: :text
 
     validates_length_of :name, within: 1..70
+    validates_presence_of :iban
     validates_with BICValidator, IBANValidator, message: "%{value} is invalid"
 
     def initialize(attributes = {})

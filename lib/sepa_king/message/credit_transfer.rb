@@ -88,6 +88,20 @@ module SEPA
             end
           end
         end
+
+        if transaction.clearing_bank_identifier
+          builder.CdtrAgt do
+            builder.FinInstnId do
+              builder.ClrSysMmbId do
+                builder.ClrSysId do
+                  builder.Cd(transaction.clearing_code)
+                end
+                builder.MmbId(transaction.clearing_bank_identifier)
+              end
+            end
+          end
+        end
+
         builder.Cdtr do
           builder.Nm(transaction.name)
           if transaction.creditor_address
@@ -129,9 +143,26 @@ module SEPA
             end
           end
         end
+
         builder.CdtrAcct do
           builder.Id do
-            builder.IBAN(transaction.iban)
+            if transaction.iban
+              builder.IBAN(transaction.iban)
+            end
+
+            if transaction.bban
+              builder.Othr do
+                builder.Id(transaction.bban)
+                builder.SchmeNm do
+                  if transaction.bban_proprietary
+                    builder.Prtry(transaction.bban_proprietary)
+                  else
+                    builder.Cd("BBAN")
+                  end
+                end
+              end
+            end
+
           end
         end
         if transaction.remittance_information
