@@ -14,7 +14,7 @@ RSpec.describe SEPA::IBANValidator do
   end
 
   it 'should not accept an invalid IBAN' do
-    expect(Validatable).not_to accept('', 'xxx',                     # Oviously no IBAN
+    expect(Validatable).not_to accept('xxx',                         # Oviously no IBAN
                                       'DE22500500009876543210',      # wrong checksum
                                       'DE2150050000987654321',       # too short
                                       'de87200500001234567890',      # downcase characters
