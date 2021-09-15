@@ -62,7 +62,7 @@ describe SEPA::CreditTransfer do
         sct
       end
 
-      it 'should validate against pain.001.003.01' do
+      it 'should validate against pain.001.003.03' do
         expect(subject.to_xml(SEPA::PAIN_001_003_03)).to validate_against('pain.001.003.03.xsd')
       end
     end
@@ -90,7 +90,7 @@ describe SEPA::CreditTransfer do
         sct
       end
 
-      it 'should validate against pain.001.001.01' do
+      it 'should validate against pain.001.001.03' do
         expect(subject.to_xml(SEPA::PAIN_001_001_03)).to validate_against('pain.001.001.03.xsd')
       end
     end
