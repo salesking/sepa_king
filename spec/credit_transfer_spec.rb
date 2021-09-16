@@ -331,6 +331,33 @@ RSpec.describe SEPA::CreditTransfer do
         end
       end
 
+      context 'with transactions containing different debtor_account' do
+        subject do
+          sdd = credit_transfer
+
+          debtor_account = SEPA::DebtorAccount.new( name: 'Debtor Inc.',
+                                                    bic:  'RABONL2U',
+                                                    iban: 'NL08RABO0135742099',
+                                                    debtor_identifier: '8001011234'
+                                                  )
+
+          sdd.add_transaction(credit_transfer_transaction)
+          sdd.add_transaction(credit_transfer_transaction.merge(debtor_account: debtor_account))
+          sdd.add_transaction(credit_transfer_transaction.merge(debtor_account: debtor_account))
+
+          sdd.to_xml
+        end
+
+        it 'should contain two payment_informations with <Cdtr>' do
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/Dbtr/Nm', 'Schuldner GmbH')
+          expect(subject).not_to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/Dbtr/Id/OrgId/Othr/Id')
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/Dbtr/Nm', 'Debtor Inc.')
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/Dbtr/Id/OrgId/Othr/Id', '8001011234')
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/Dbtr/Id/OrgId/Othr/SchmeNm/Cd', 'CUST')
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/CdtTrfTxInf[2]/Cdtr/Nm') # Check that we have two CdtTrfTxInf
+        end
+      end
+
       context 'with instruction given' do
         subject do
           sct = credit_transfer

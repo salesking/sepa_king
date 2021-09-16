@@ -11,9 +11,10 @@ module SEPA
     # Find groups of transactions which share the same values of some attributes
     def transaction_group(transaction)
       { requested_date: transaction.requested_date,
-        batch_booking:  transaction.batch_booking,
-        service_level:  transaction.service_level,
-        category_purpose: transaction.category_purpose
+        batch_booking: transaction.batch_booking,
+        service_level: transaction.service_level,
+        category_purpose: transaction.category_purpose,
+        account: transaction.debtor_account || account
       }
     end
 
@@ -41,17 +42,27 @@ module SEPA
           end
           builder.ReqdExctnDt(group[:requested_date].iso8601)
           builder.Dbtr do
-            builder.Nm(account.name)
+            builder.Nm(group[:account].name)
+            builder.Id do
+              builder.OrgId do
+                builder.Othr do
+                  builder.Id(group[:account].debtor_identifier)
+                  builder.SchmeNm do
+                    builder.Cd('CUST')
+                  end
+                end
+              end
+            end if group[:account].debtor_identifier
           end
           builder.DbtrAcct do
             builder.Id do
-              builder.IBAN(account.iban)
+              builder.IBAN(group[:account].iban)
             end
           end
           builder.DbtrAgt do
             builder.FinInstnId do
-              if account.bic
-                builder.BIC(account.bic)
+              if group[:account].bic
+                builder.BIC(group[:account].bic)
               else
                 builder.Othr do
                   builder.Id('NOTPROVIDED')
