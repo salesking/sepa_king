@@ -60,6 +60,21 @@ module SEPA
     end
   end
 
+  class DebtorIdentifierValidator < ActiveModel::Validator
+    def validate(record)
+      field_name = options[:field_name] || :debtor_identifier
+      value = record.send(field_name)
+
+      unless valid?(value)
+        record.errors.add(field_name, :invalid, message: options[:message])
+      end
+    end
+
+    def valid?(debtor_identifier)
+      debtor_identifier.to_s.length <= 35 # Field is Max35Text
+    end
+  end
+
   class MandateIdentifierValidator < ActiveModel::Validator
     REGEX = %r{\A[A-Za-z0-9 +?/:().,'-]{1,35}\z}
 

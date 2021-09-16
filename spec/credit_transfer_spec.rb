@@ -179,6 +179,30 @@ describe SEPA::CreditTransfer do
       end
     end
 
+    context 'with debtor identifier' do
+      subject do
+        sct = SEPA::CreditTransfer.new name: 'Schuldner GmbH',
+                                       iban: 'DE87200500001234567890',
+                                       bic:  'BANKDEFFXXX',
+                                       debtor_identifier: 'Debtor Identifier AG'
+
+        sct.add_transaction name:   'Telekomiker AG',
+                            bban:   '123456',
+                            amount: 102.50
+
+        sct.to_xml(SEPA::PAIN_001_001_03)
+      end
+
+      it 'should validate against pain.001.001.03' do
+        expect(subject).to validate_against('pain.001.001.03.xsd')
+      end
+
+      it 'should contain <GrpHdr/InitgPty/Id/OrgId/Othr> with expected <Id> and <SchmeNm/Cd>' do
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/InitgPty/Id/OrgId/Othr/SchmeNm/Cd', 'CUST')
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/GrpHdr/InitgPty/Id/OrgId/Othr/Id', 'Debtor Identifier AG')
+      end
+    end
+
     context 'for valid debtor' do
       context 'without BIC (IBAN-only)' do
         subject do
@@ -412,6 +436,33 @@ describe SEPA::CreditTransfer do
           expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/CtrlSum', '2.00')
           expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[3]/CtrlSum', '4.00')
           expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[4]/CtrlSum', '8.00')
+        end
+      end
+
+      context 'with transactions containing different debtor_account' do
+        subject do
+          sdd = credit_transfer
+
+          debtor_account = SEPA::DebtorAccount.new( name: 'Debtor Inc.',
+                                                    bic:  'RABONL2U',
+                                                    iban: 'NL08RABO0135742099',
+                                                    debtor_identifier: '8001011234'
+                                                  )
+
+          sdd.add_transaction(credit_transfer_transaction)
+          sdd.add_transaction(credit_transfer_transaction.merge(debtor_account: debtor_account))
+          sdd.add_transaction(credit_transfer_transaction.merge(debtor_account: debtor_account))
+
+          sdd.to_xml
+        end
+
+        it 'should contain two payment_informations with <Cdtr>' do
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/Dbtr/Nm', 'Schuldner GmbH')
+          expect(subject).not_to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[1]/Dbtr/Id/OrgId/Othr/Id')
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/Dbtr/Nm', 'Debtor Inc.')
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/Dbtr/Id/OrgId/Othr/Id', '8001011234')
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/Dbtr/Id/OrgId/Othr/SchmeNm/Cd', 'CUST')
+          expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf[2]/CdtTrfTxInf[2]/Cdtr/Nm') # Check that we have two CdtTrfTxInf
         end
       end
 

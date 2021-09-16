@@ -142,10 +142,13 @@ module SEPA
           builder.Id do
             builder.OrgId do
               builder.Othr do
-                builder.Id(account.creditor_identifier)
+                builder.Id(account.identifier)
+                builder.SchmeNm do
+                  builder.Cd('CUST')
+                end
               end
             end
-          end if account.respond_to? :creditor_identifier
+          end if account.identifier
         end
       end
     end
