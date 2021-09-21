@@ -40,7 +40,9 @@ jobs:
             rails: '5.2'
 
     name: Ruby ${{ matrix.ruby }} / Rails ${{ matrix.rails }}
-
+    env:
+      BUNDLE_GEMFILE: gemfiles/Gemfile-activemodel-${{ matrix.rails }}.x
+      
     steps:
     - uses: actions/checkout@v2
 
@@ -48,13 +50,7 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-
-    - name: Install gems
-      env:
-        MATRIX_RAILS_VERSION: ${{ matrix.rails }}
-      run: |
-        export BUNDLE_GEMFILE="${GITHUB_WORKSPACE}/gemfiles/Gemfile-activemodel-${MATRIX_RAILS_VERSION}.x"
-        bundle install --jobs 4 --retry 3
+        bundler-cache: true # 'bundle install' and cache gems
 
     - name: RSpec
       run: bundle exec rake
