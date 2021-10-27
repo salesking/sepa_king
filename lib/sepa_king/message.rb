@@ -75,7 +75,7 @@ module SEPA
       raise ArgumentError.new('message_identification must be a string!') unless value.is_a?(String)
 
       regex = /\A([A-Za-z0-9]|[\+|\?|\/|\-|\:|\(|\)|\.|\,|\'|\ ]){1,35}\z/
-      raise ArgumentError.new("message_identification does not match #{regex}!") unless value.match(regex)
+      raise ArgumentError.new("message_identification does not match #{regex}!") unless value.match?(regex)
 
       @message_identification = value
     end
@@ -91,7 +91,7 @@ module SEPA
       raise ArgumentError.new('creation_date_time must be a string!') unless value.is_a?(String)
 
       regex = /[0-9]{4}[-][0-9]{2,2}[-][0-9]{2,2}(?:\s|T)[0-9]{2,2}[:][0-9]{2,2}[:][0-9]{2,2}/
-      raise ArgumentError.new("creation_date_time does not match #{regex}!") unless value.match(regex)
+      raise ArgumentError.new("creation_date_time does not match #{regex}!") unless value.match?(regex)
 
       @creation_date_time = value
     end
