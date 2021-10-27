@@ -8,7 +8,7 @@ module SEPA
       field_name = options[:field_name] || :iban
       value = record.send(field_name).to_s
 
-      unless IBANTools::IBAN.valid?(value) && value.match(REGEX)
+      unless IBANTools::IBAN.valid?(value) && value.match?(REGEX)
         record.errors.add(field_name, :invalid, message: options[:message])
       end
     end
@@ -48,9 +48,9 @@ module SEPA
     end
 
     def valid?(creditor_identifier)
-      if ok = creditor_identifier.to_s.match(REGEX)
+      if ok = creditor_identifier.to_s.match?(REGEX)
         # In Germany, the identifier has to be exactly 18 chars long
-        if creditor_identifier[0..1].match(/DE/i)
+        if creditor_identifier[0..1].match?(/DE/i)
           ok = creditor_identifier.length == 18
         end
       end
@@ -65,7 +65,7 @@ module SEPA
       field_name = options[:field_name] || :mandate_id
       value = record.send(field_name)
 
-      unless value.to_s.match(REGEX)
+      unless value.to_s.match?(REGEX)
         record.errors.add(field_name, :invalid, message: options[:message])
       end
     end
