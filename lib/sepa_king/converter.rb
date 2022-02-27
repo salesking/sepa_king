@@ -15,24 +15,24 @@ module SEPA
     end
 
     module InstanceMethods
+      require 'csv'
+
+      # ‘.’, a full stop (U+002E) denotes that there is no restricted character
+      # set equivalent and hence a full stop is to be used.
+      FALLBACK_EPC_CHAR = '.'.freeze
+      private_constant :FALLBACK_EPC_CHAR
+
+      EPC_MAPPING = CSV.read("lib/misc/epc_mapping.csv", col_sep: ",").
+        each_with_object(Hash.new(FALLBACK_EPC_CHAR)) { |v, mappings| mappings[v.first] = v.last }.
+        freeze
+      private_constant :EPC_MAPPING
+
       def convert_text(value)
-        return unless value
+        return value unless value.present?
 
-        value.to_s.
-          # Replace some special characters described as "Best practices" in Chapter 6.2 of this document:
-          # http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-requirements-for-an-extended-character-set-unicode-subset-best-practices/
-          gsub('€','E').
-          gsub('@','(at)').
-          gsub('_','-').
-
-          # Replace linebreaks by spaces
-          gsub(/\n+/,' ').
-
-          # Remove all invalid characters
-          gsub(/[^a-zA-Z0-9ÄÖÜäöüß&*$%\ \'\:\?\,\-\(\+\.\)\/]/, '').
-
-          # Remove leading and trailing spaces
-          strip
+        # Map chars according to:
+        # http://www.europeanpaymentscouncil.eu/index.cfm/knowledge-bank/epc-documents/sepa-requirements-for-an-extended-character-set-unicode-subset-best-practices/
+        value.to_s.gsub(/\n+/,' ').each_char.map { |c| EPC_MAPPING[c] }.join.strip
       end
 
       def convert_decimal(value)
