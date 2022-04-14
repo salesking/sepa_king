@@ -15,7 +15,7 @@ This gem implements the following two messages out of the ISO 20022 standard:
 * Credit Transfer Initiation (`pain.001.003.03`, `pain.001.002.03` and `pain.001.001.03`)
 * Direct Debit Initiation (`pain.008.003.02`, `pain.008.002.02` and `pain.008.001.02`)
 
-It handles the _Specification of Data Formats_ v2.7 (2013-11-04).
+It handles the _Specification of Data Formats_ v3.3 (2019-11-17).
 
 BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
@@ -236,8 +236,8 @@ sct.add_transaction(
 sct.add_transaction ...
 
 # Last: create XML string
-xml_string = sct.to_xml # Use latest schema pain.001.003.03
-xml_string = sct.to_xml('pain.001.002.03') # Use former schema pain.001.002.03
+xml_string = sct.to_xml # Use schema pain.001.001.03
+xml_string = sct.to_xml('pain.001.002.03') # Use schema pain.001.002.03
 ```
 
 ## Validations

@@ -4,6 +4,6 @@ coverage/*
 rdoc/*
 pkg/*
 .DS_Store
-Gemfile.lock
+Gemfile*.lock
 # tmp disable
 docs/

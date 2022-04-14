@@ -2,9 +2,7 @@ name: Test
 
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
 
 jobs:
   test:
@@ -44,7 +42,7 @@ jobs:
     name: Ruby ${{ matrix.ruby }} / Rails ${{ matrix.rails }}
     env:
       BUNDLE_GEMFILE: gemfiles/Gemfile-activemodel-${{ matrix.rails }}.x
-      
+
     steps:
     - uses: actions/checkout@v2
 
