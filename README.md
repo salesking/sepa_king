@@ -22,8 +22,8 @@ BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
 ## Requirements
 
-* Ruby 2.6 or newer
-* ActiveModel 4.2 or newer (including 6.1)
+* Ruby 2.7 or newer
+* ActiveModel 4.2 or newer (including 7.0)
 
 
 ## Installation

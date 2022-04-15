@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split($/)
   s.require_paths = ['lib']
 
-  s.required_ruby_version = '>= 2.6'
+  s.required_ruby_version = '>= 2.7'
 
   s.add_runtime_dependency 'activemodel', '>= 4.2'
   s.add_runtime_dependency 'nokogiri'
