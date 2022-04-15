@@ -145,8 +145,8 @@ sdd.add_transaction(
 sdd.add_transaction ...
 
 # Last: create XML string
-xml_string = sdd.to_xml # Use latest schema pain.008.003.02
-xml_string = sdd.to_xml('pain.008.002.02') # Use former schema pain.008.002.02
+xml_string = sdd.to_xml                    # Use schema pain.008.001.02
+xml_string = sdd.to_xml('pain.008.002.02') # Use schema pain.008.002.02
 ```
 
 
@@ -236,7 +236,7 @@ sct.add_transaction(
 sct.add_transaction ...
 
 # Last: create XML string
-xml_string = sct.to_xml # Use schema pain.001.001.03
+xml_string = sct.to_xml                    # Use schema pain.001.001.03
 xml_string = sct.to_xml('pain.001.002.03') # Use schema pain.001.002.03
 ```
 
