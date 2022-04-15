@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.name          = 'sepa_king'
   s.version       = SEPA::VERSION
   s.authors       = ['Georg Leciejewski', 'Georg Ledermann']
-  s.email         = ['gl@salesking.eu', 'mail@georg-ledermann.de']
-  s.description   = 'Implemention of pain.001.002.03 and pain.008.002.02 (ISO 20022)'
+  s.email         = ['gl@salesking.eu', 'georg@ledermann.dev']
+  s.description   = 'Implemention of Payments Initiation (ISO 20022)'
   s.summary       = 'Ruby gem for creating SEPA XML files'
   s.homepage      = 'https://github.com/salesking/sepa_king'
   s.license       = 'MIT'
