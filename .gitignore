@@ -3,8 +3,8 @@ nbproject/*
 coverage/*
 rdoc/*
 pkg/*
+tmp/*
 .DS_Store
-Gemfile.lock
-tmp/
+Gemfile*.lock
 # tmp disable
 docs/

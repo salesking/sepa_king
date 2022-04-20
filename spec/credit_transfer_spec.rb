@@ -38,7 +38,7 @@ describe SEPA::CreditTransfer do
       it 'should fail' do
         expect {
           SEPA::CreditTransfer.new.to_xml
-        }.to raise_error(SEPA::Error)
+        }.to raise_error(SEPA::Error, /Name is too short/)
       end
     end
 
@@ -220,19 +220,19 @@ describe SEPA::CreditTransfer do
         end
 
         it 'should create valid XML file' do
-          expect(subject.to_xml).to validate_against('pain.001.003.03.xsd')
+          expect(subject.to_xml(SEPA::PAIN_001_003_03)).to validate_against('pain.001.003.03.xsd')
         end
 
         it 'should fail for pain.001.001.03' do
           expect {
             subject.to_xml(SEPA::PAIN_001_001_03)
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
         end
 
         it 'should fail for pain.001.002.03' do
           expect {
             subject.to_xml(SEPA::PAIN_001_002_03)
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
         end
       end
 
@@ -251,7 +251,7 @@ describe SEPA::CreditTransfer do
         end
 
         it 'should validate against pain.001.001.03' do
-          expect(subject.to_xml('pain.001.001.03')).to validate_against('pain.001.001.03.xsd')
+          expect(subject.to_xml).to validate_against('pain.001.001.03.xsd')
         end
 
         it 'should validate against pain.001.002.03' do
@@ -284,7 +284,7 @@ describe SEPA::CreditTransfer do
         end
 
         it 'should create valid XML file' do
-          expect(subject).to validate_against('pain.001.003.03.xsd')
+          expect(subject).to validate_against('pain.001.001.03.xsd')
         end
 
         it 'should have message_identification' do
@@ -479,7 +479,7 @@ describe SEPA::CreditTransfer do
         end
 
         it 'should create valid XML file' do
-          expect(subject).to validate_against('pain.001.003.03.xsd')
+          expect(subject).to validate_against('pain.001.001.03.xsd')
         end
 
         it 'should contain <InstrId>' do
@@ -516,13 +516,13 @@ describe SEPA::CreditTransfer do
         it 'should fail for pain.001.002.03' do
           expect {
             subject.to_xml(SEPA::PAIN_001_002_03)
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
         end
 
         it 'should fail for pain.001.003.03' do
           expect {
             subject.to_xml(SEPA::PAIN_001_003_03)
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
         end
       end
 
@@ -544,7 +544,7 @@ describe SEPA::CreditTransfer do
         it 'should fail for pain.001.002.03' do
           expect {
             subject.to_xml(SEPA::PAIN_001_002_03)
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
         end
 
         it 'should validate against pain.001.003.03' do

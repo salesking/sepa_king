@@ -70,7 +70,7 @@ describe SEPA::DirectDebit do
       it 'should fail' do
         expect {
           SEPA::DirectDebit.new.to_xml
-        }.to raise_error(SEPA::Error)
+        }.to raise_error(SEPA::Error, /Name is too short/)
       end
     end
 
@@ -158,7 +158,7 @@ describe SEPA::DirectDebit do
         it 'should fail for pain.008.002.02' do
           expect {
             subject.to_xml(SEPA::PAIN_008_002_02)
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
         end
 
         it 'should validate against pain.008.001.02' do
@@ -256,7 +256,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should create valid XML file' do
-          expect(subject).to validate_against('pain.008.003.02.xsd')
+          expect(subject).to validate_against('pain.008.001.02.xsd')
         end
 
         it 'should have creditor identifier' do
@@ -385,7 +385,7 @@ describe SEPA::DirectDebit do
         it 'should raise error on XML generation' do
           expect {
             subject.to_xml
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /CORE, COR1 AND B2B must not be mixed in one message/)
         end
       end
 
@@ -516,7 +516,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should create valid XML file' do
-          expect(subject).to validate_against('pain.008.003.02.xsd')
+          expect(subject).to validate_against('pain.008.001.02.xsd')
         end
 
         it 'should contain <InstrId>' do
@@ -533,7 +533,7 @@ describe SEPA::DirectDebit do
         end
 
         it 'should fail as the payment identification becomes too large' do
-          expect { subject.to_xml }.to raise_error(SEPA::Error)
+          expect { subject.to_xml }.to raise_error(SEPA::Error, /The value has a length of '37'; this exceeds the allowed maximum length of '35'/)
         end
       end
 
@@ -546,7 +546,7 @@ describe SEPA::DirectDebit do
           sct
         end
 
-        it 'should validate against pain.001.001.03' do
+        it 'should validate against pain.008.001.02' do
           expect(subject.to_xml(SEPA::PAIN_008_001_02)).to validate_against('pain.008.001.02.xsd')
         end
 
@@ -562,13 +562,13 @@ describe SEPA::DirectDebit do
         it 'should fail for pain.008.002.02' do
           expect {
             subject.to_xml(SEPA::PAIN_008_002_02)
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
         end
 
         it 'should fail for pain.008.003.02' do
           expect {
             subject.to_xml(SEPA::PAIN_008_003_02)
-          }.to raise_error(SEPA::Error)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
         end
       end
     end
