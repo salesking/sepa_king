@@ -10,7 +10,7 @@ class DummyMessage < SEPA::Message
   self.transaction_class = DummyTransaction
 end
 
-describe SEPA::Message do
+RSpec.describe SEPA::Message do
   describe :amount_total do
     subject do
       message = DummyMessage.new
@@ -86,7 +86,7 @@ describe SEPA::Message do
     end
   end
 
-describe :creation_date_time do
+  describe :creation_date_time do
     subject { DummyMessage.new }
 
     describe 'getter' do

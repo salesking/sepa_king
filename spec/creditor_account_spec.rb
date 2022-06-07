@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::CreditorAccount do
+RSpec.describe SEPA::CreditorAccount do
   it 'should initialize a new account' do
     expect(
       SEPA::CreditorAccount.new name:                'Gläubiger GmbH',

@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::Transaction do
+RSpec.describe SEPA::Transaction do
   describe :new do
     it 'should have default for reference' do
       expect(SEPA::Transaction.new.reference).to eq('NOTPROVIDED')
