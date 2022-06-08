@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::Converter do
+RSpec.describe SEPA::Converter do
   include SEPA::Converter::InstanceMethods
 
   describe :convert_text do

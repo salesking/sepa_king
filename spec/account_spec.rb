@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::Account do
+RSpec.describe SEPA::Account do
   describe :new do
     it 'should not accept unknown keys' do
       expect {

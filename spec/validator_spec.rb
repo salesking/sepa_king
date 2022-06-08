@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::IBANValidator do
+RSpec.describe SEPA::IBANValidator do
   class Validatable
     include ActiveModel::Model
     attr_accessor :iban, :iban_the_terrible
@@ -29,7 +29,7 @@ describe SEPA::IBANValidator do
   end
 end
 
-describe SEPA::BICValidator do
+RSpec.describe SEPA::BICValidator do
   class Validatable
     include ActiveModel::Model
     attr_accessor :bic, :custom_bic
@@ -52,7 +52,7 @@ describe SEPA::BICValidator do
   end
 end
 
-describe SEPA::CreditorIdentifierValidator do
+RSpec.describe SEPA::CreditorIdentifierValidator do
   class Validatable
     include ActiveModel::Model
     attr_accessor :creditor_identifier, :crid
@@ -93,7 +93,7 @@ describe SEPA::CreditorIdentifierValidator do
   end
 end
 
-describe SEPA::MandateIdentifierValidator do
+RSpec.describe SEPA::MandateIdentifierValidator do
   class Validatable
     include ActiveModel::Model
     attr_accessor :mandate_id, :mid

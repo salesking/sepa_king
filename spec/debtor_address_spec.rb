@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::DebtorAddress do
+RSpec.describe SEPA::DebtorAddress do
   it 'should initialize a new address' do
     expect(
       SEPA::DebtorAddress.new country_code:       'CH',

@@ -25,7 +25,7 @@ module SEPA
       value = record.send(field_name)
 
       if value
-        unless value.to_s.match(REGEX)
+        unless value.to_s.match?(REGEX)
           record.errors.add(field_name, :invalid, message: options[:message])
         end
       end

@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::Transaction do
+RSpec.describe SEPA::Transaction do
   describe :new do
     it 'should have default for reference' do
       expect(SEPA::Transaction.new.reference).to eq('NOTPROVIDED')
@@ -26,7 +26,7 @@ describe SEPA::Transaction do
     end
   end
 
-  context 'Adress' do
+  context 'Address' do
     context 'with address_line' do
       it 'should accept valid value' do
         expect(SEPA::Transaction).to accept(SEPA::DebtorAddress.new(

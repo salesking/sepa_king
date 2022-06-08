@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::DebtorAccount do
+RSpec.describe SEPA::DebtorAccount do
   it 'should initialize a new account' do
     expect(
       SEPA::DebtorAccount.new name:       'Gläubiger GmbH',
