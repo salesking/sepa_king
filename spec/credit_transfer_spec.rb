@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::CreditTransfer do
+RSpec.describe SEPA::CreditTransfer do
   let(:message_id_regex) { /SEPA-KING\/[0-9a-z_]{22}/ }
   let(:credit_transfer) {
     SEPA::CreditTransfer.new name:       'Schuldner GmbH',

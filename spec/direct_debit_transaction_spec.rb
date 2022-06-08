@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::DirectDebitTransaction do
+RSpec.describe SEPA::DirectDebitTransaction do
   describe :initialize do
     it 'should create a valid transaction' do
       expect(

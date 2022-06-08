@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe SEPA::DirectDebit do
+RSpec.describe SEPA::DirectDebit do
   let(:message_id_regex) { /SEPA-KING\/[0-9a-z_]{22}/ }
 
   let(:direct_debit) {
