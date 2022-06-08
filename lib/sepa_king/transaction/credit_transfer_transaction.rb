@@ -3,12 +3,19 @@ module SEPA
   class CreditTransferTransaction < Transaction
     attr_accessor :service_level,
                   :creditor_address,
-                  :category_purpose
+                  :category_purpose,
+                  :debtor_account
 
     validates_inclusion_of :service_level, :in => %w(SEPA URGP), :allow_nil => true
     validates_length_of :category_purpose, within: 1..4, allow_nil: true
 
-    validate { |t| t.validate_requested_date_after(Date.today) }
+    validate do |t|
+      t.validate_requested_date_after(Date.today)
+
+      if debtor_account
+        errors.add(:debtor_account, 'is not correct') unless debtor_account.valid?
+      end
+    end
 
     def initialize(attributes = {})
       super
