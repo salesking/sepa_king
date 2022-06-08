@@ -26,7 +26,7 @@ describe SEPA::Transaction do
     end
   end
 
-  context 'Adress' do
+  context 'Address' do
     context 'with address_line' do
       it 'should accept valid value' do
         expect(SEPA::Transaction).to accept(SEPA::DebtorAddress.new(
