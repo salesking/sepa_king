@@ -24,7 +24,7 @@ module SEPA
       }
     end
 
-    def build_payment_informations(builder)
+    def build_payment_informations(builder, schema_name)
       # Build a PmtInf block for every group of transactions
       grouped_transactions.each do |group, transactions|
         builder.PmtInf do
