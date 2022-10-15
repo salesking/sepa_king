@@ -105,20 +105,29 @@ RSpec.describe SEPA::CreditTransfer do
                               bic:                    'PBNKDEFF370',
                               iban:                   'DE37112589611964645802',
                               amount:                 102.50,
+                              currency:               currency,
                               reference:              'XYZ-1234/123',
                               remittance_information: 'Rechnung vom 22.08.2013'
 
           sct
         end
 
-        it 'should create valid XML file' do
+        let(:currency) { nil }
+
+        it 'should validate against pain.001.003.03' do
           expect(subject.to_xml(SEPA::PAIN_001_003_03)).to validate_against('pain.001.003.03.xsd')
         end
 
-        it 'should fail for pain.001.001.03' do
-          expect {
-            subject.to_xml(SEPA::PAIN_001_001_03)
-          }.to raise_error(SEPA::Error, /Incompatible with schema/)
+        it 'should validate against pain.001.001.03' do
+          expect(subject.to_xml(SEPA::PAIN_001_001_03)).to validate_against('pain.001.001.03.xsd')
+        end
+
+        context 'with CHF as currency' do
+          let(:currency) { 'CHF' }
+
+          it 'should validate against pain.001.001.03.ch.02' do
+            expect(subject.to_xml(SEPA::PAIN_001_001_03_CH_02)).to validate_against('pain.001.001.03.ch.02.xsd')
+          end
         end
 
         it 'should fail for pain.001.002.03' do

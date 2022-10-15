@@ -17,7 +17,7 @@ module SEPA
       }
     end
 
-    def build_payment_informations(builder)
+    def build_payment_informations(builder, schema_name)
       # Build a PmtInf block for every group of transactions
       grouped_transactions.each do |group, transactions|
         # All transactions with the same requested_date are placed into the same PmtInf block
@@ -52,7 +52,7 @@ module SEPA
             builder.FinInstnId do
               if account.bic
                 builder.BIC(account.bic)
-              else
+              elsif schema_name != PAIN_001_001_03_CH_02
                 builder.Othr do
                   builder.Id('NOTPROVIDED')
                 end
