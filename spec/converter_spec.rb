@@ -5,15 +5,14 @@ RSpec.describe SEPA::Converter do
   include SEPA::Converter::InstanceMethods
 
   describe :convert_text do
-    it 'should convert special chars' do
+    it 'should map characters to the SEPA Requirements for an Extended Character Set' do
       expect(convert_text('10€')).to eq('10E')
       expect(convert_text('info@bundesbank.de')).to eq('info(at)bundesbank.de')
       expect(convert_text('abc_def')).to eq('abc-def')
-    end
-
-    it 'should not change allowed special character' do
-      expect(convert_text('üöäÜÖÄß')).to eq('üöäÜÖÄß')
-      expect(convert_text('&*$%')).to eq('&*$%')
+      expect(convert_text('"=<>!')).to eq('&quot;.&lt;&gt;.')
+      expect(convert_text('ЖЩθĚŠũΦ')).to eq('ZHSHTthESuF')
+      expect(convert_text('&*$%')).to eq('+...')
+      expect(convert_text('"=<>!')).to eq('&quot;.&lt;&gt;.')
     end
 
     it 'should convert line breaks' do
@@ -27,12 +26,8 @@ RSpec.describe SEPA::Converter do
       expect(convert_text(1234)).to eq('1234')
     end
 
-    it 'should remove invalid chars' do
-      expect(convert_text('"=<>!')).to eq('')
-    end
-
     it 'should not touch valid chars' do
-      expect(convert_text("abc-ABC-0123- ':?,-(+.)/")).to eq("abc-ABC-0123- ':?,-(+.)/")
+      expect(convert_text("abc-ABC-0123- :?,-(+.)/")).to eq("abc-ABC-0123- :?,-(+.)/")
     end
 
     it 'should not touch nil' do

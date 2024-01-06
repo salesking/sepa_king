@@ -288,7 +288,7 @@ RSpec.describe SEPA::DirectDebit do
         end
 
         it 'should contain <Cdtr>' do
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/Cdtr/Nm', 'Gläubiger GmbH')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/Cdtr/Nm', 'Glaubiger GmbH')
         end
 
         it 'should contain <CdtrAcct>' do
@@ -329,8 +329,8 @@ RSpec.describe SEPA::DirectDebit do
         end
 
         it 'should contain <Dbtr>' do
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/Dbtr/Nm', 'Zahlemann & Söhne GbR')
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/Dbtr/Nm', 'Meier & Schulze oHG')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/Dbtr/Nm', 'Zahlemann + Sohne GbR')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/Dbtr/Nm', 'Meier + Schulze oHG')
         end
 
         it 'should contain <DbtrAcct>' do
@@ -340,7 +340,7 @@ RSpec.describe SEPA::DirectDebit do
 
         it 'should contain <RmtInf>' do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[1]/RmtInf/Ustrd', 'Unsere Rechnung vom 10.08.2013')
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/RmtInf/Ustrd', 'Vielen Dank für Ihren Einkauf')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/DrctDbtTxInf[2]/RmtInf/Ustrd', 'Vielen Dank fur Ihren Einkauf.')
         end
       end
 
@@ -477,7 +477,7 @@ RSpec.describe SEPA::DirectDebit do
         end
 
         it 'should contain two payment_informations with <Cdtr>' do
-          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/Cdtr/Nm', 'Gläubiger GmbH')
+          expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[1]/Cdtr/Nm', 'Glaubiger GmbH')
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf[2]/Cdtr/Nm', 'Creditor Inc.')
         end
       end

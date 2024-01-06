@@ -22,7 +22,7 @@ RSpec.describe SEPA::Transaction do
     end
 
     it 'should not accept invalid value' do
-      expect(SEPA::Transaction).not_to accept(nil, '', 'X' * 71, for: :name)
+      expect(SEPA::Transaction).not_to accept(nil, '', {}, 'X' * 71, for: :name)
     end
   end
 
@@ -65,10 +65,6 @@ RSpec.describe SEPA::Transaction do
           town_name:       'Musterstadt'
         ), for: :creditor_address)
       end
-    end
-
-    it 'should not accept invalid value' do
-      expect(SEPA::Transaction).not_to accept('', {} , for: :name)
     end
   end
 
