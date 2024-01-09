@@ -95,6 +95,90 @@ RSpec.describe SEPA::CreditTransfer do
       end
     end
 
+    context 'with a bankgiro creditor account' do
+      subject do
+        sct = credit_transfer
+
+        sct.add_transaction name:                     'Telekomiker AG',
+                            bban:                     '123456',
+                            clearing_bank_identifier: '9900', # bankgiro
+                            clearing_code:            'SESBA',
+                            bban_proprietary:         'BGNR',
+                            amount:                   102.50,
+                            reference:                'XYZ-1234/123',
+                            remittance_information:   'Rechnung vom 22.08.2013'
+
+        sct.to_xml(SEPA::PAIN_001_001_03)
+      end
+
+      it 'should validate against pain.001.001.03' do
+        expect(subject).to validate_against('pain.001.001.03.xsd')
+      end
+
+      it 'should contain <CdtrAcct/Id/Othr> with expected <Id> and <SchmeNm/Prtry>' do
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAcct/Id/Othr/Id', '123456')
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAcct/Id/Othr/SchmeNm/Prtry', 'BGNR')
+      end
+
+      it 'should contain <ClrSysMmbId> with expected <MmbId> and <ClrSysId/Cd>' do
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAgt/FinInstnId/ClrSysMmbId/MmbId', '9900')
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAgt/FinInstnId/ClrSysMmbId/ClrSysId/Cd', 'SESBA')
+      end
+    end
+
+    context 'with a plusgiro creditor account' do
+      subject do
+        sct = credit_transfer
+
+        sct.add_transaction name:                     'Telekomiker AG',
+                            bban:                     '123456',
+                            clearing_bank_identifier: '9960', # plusgiro
+                            clearing_code:            'SESBA',
+                            amount:                   102.50,
+                            reference:                'XYZ-1234/123',
+                            remittance_information:   'Rechnung vom 22.08.2013'
+
+        sct.to_xml(SEPA::PAIN_001_001_03)
+      end
+
+      it 'should validate against pain.001.001.03' do
+        expect(subject).to validate_against('pain.001.001.03.xsd')
+      end
+
+      it 'should contain <CdtrAcct/Id/Othr> with expected <Id> and <SchmeNm/Cd>' do
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAcct/Id/Othr/Id', '123456')
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAcct/Id/Othr/SchmeNm/Cd', 'BBAN')
+      end
+
+      it 'should contain <ClrSysMmbId> with expected <MmbId> and <ClrSysId/Cd>' do
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAgt/FinInstnId/ClrSysMmbId/MmbId', '9960')
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAgt/FinInstnId/ClrSysMmbId/ClrSysId/Cd', 'SESBA')
+      end
+    end
+
+    context 'with a bban creditor account' do
+      subject do
+        sct = credit_transfer
+
+        sct.add_transaction name:                        'Telekomiker AG',
+                            bban:                        '123456',
+                            amount:                      102.50,
+                            reference:                   'XYZ-1234/123',
+                            remittance_information:      'Rechnung vom 22.08.2013'
+
+        sct.to_xml(SEPA::PAIN_001_001_03)
+      end
+
+      it 'should validate against pain.001.001.03' do
+        expect(subject).to validate_against('pain.001.001.03.xsd')
+      end
+
+      it 'should contain <CdtrAcct/Id/Othr> with expected <Id> and <SchmeNm/Cd>' do
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAcct/Id/Othr/Id', '123456')
+        expect(subject).to have_xml('//Document/CstmrCdtTrfInitn/PmtInf/CdtTrfTxInf[1]/CdtrAcct/Id/Othr/SchmeNm/Cd', 'BBAN')
+      end
+    end
+
     context 'for valid debtor' do
       context 'without BIC (IBAN-only)' do
         subject do
