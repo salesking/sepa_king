@@ -3,7 +3,10 @@ require 'nokogiri'
 
 RSpec::Matchers.define :validate_against do |xsd|
   match do |actual|
-    @schema = Nokogiri::XML::Schema(File.read("lib/schema/#{xsd}"))
+    @schema = nil
+    Dir.chdir('lib/schema') do
+      @schema = Nokogiri::XML::Schema(File.read(xsd))
+    end
     @doc = Nokogiri::XML(actual)
 
     expect(@schema).to be_valid(@doc)

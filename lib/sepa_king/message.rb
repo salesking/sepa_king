@@ -2,9 +2,11 @@
 
 module SEPA
   PAIN_008_001_02 = 'pain.008.001.02'
+  PAIN_008_001_08 = 'pain.008.001.08'
   PAIN_008_002_02 = 'pain.008.002.02'
   PAIN_008_003_02 = 'pain.008.003.02'
   PAIN_001_001_03 = 'pain.001.001.03'
+  PAIN_001_001_09 = 'pain.001.001.09'
   PAIN_001_002_03 = 'pain.001.002.03'
   PAIN_001_003_03 = 'pain.001.003.03'
   PAIN_001_001_03_CH_02 = 'pain.001.001.03.ch.02'
@@ -65,7 +67,7 @@ module SEPA
       case schema_name
         when PAIN_001_002_03, PAIN_008_002_02
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
-        when PAIN_001_001_03, PAIN_001_001_03_CH_02, PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02
+        when PAIN_001_001_03, PAIN_001_001_09, PAIN_001_001_03_CH_02, PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02, PAIN_008_001_08
           transactions.all? { |t| t.schema_compatible?(schema_name) }
       end
     end
@@ -132,6 +134,15 @@ module SEPA
     end
 
     def build_group_header(builder)
+      other_id = nil
+      if account.respond_to?(:creditor_identifier)
+        other_id = account.creditor_identifier
+      end
+
+      if account.organization_id != nil
+        other_id = account.organization_id
+      end
+
       builder.GrpHdr do
         builder.MsgId(message_identification)
         builder.CreDtTm(creation_date_time)
@@ -142,10 +153,10 @@ module SEPA
           builder.Id do
             builder.OrgId do
               builder.Othr do
-                builder.Id(account.creditor_identifier)
+                builder.Id(other_id)
               end
             end
-          end if account.respond_to? :creditor_identifier
+          end if other_id
         end
       end
     end

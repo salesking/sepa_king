@@ -48,7 +48,7 @@ module SEPA
         self.bic.present? && %w(CORE B2B).include?(self.local_instrument) && self.currency == 'EUR'
       when PAIN_008_003_02
         self.currency == 'EUR'
-      when PAIN_008_001_02
+      when PAIN_008_001_02, PAIN_008_001_08
         true
       end
     end

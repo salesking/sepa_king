@@ -5,7 +5,7 @@ module SEPA
     self.account_class = DebtorAccount
     self.transaction_class = CreditTransferTransaction
     self.xml_main_tag = 'CstmrCdtTrfInitn'
-    self.known_schemas = [ PAIN_001_001_03, PAIN_001_001_03_CH_02, PAIN_001_003_03, PAIN_001_002_03 ]
+    self.known_schemas = [ PAIN_001_001_03, PAIN_001_001_03_CH_02, PAIN_001_001_09, PAIN_001_003_03, PAIN_001_002_03 ]
 
   private
     # Find groups of transactions which share the same values of some attributes
@@ -39,7 +39,13 @@ module SEPA
               end
             end
           end
-          builder.ReqdExctnDt(group[:requested_date].iso8601)
+          if schema_name == PAIN_001_001_09
+            builder.ReqdExctnDt do
+              builder.Dt(group[:requested_date].iso8601)
+            end
+          else
+            builder.ReqdExctnDt(group[:requested_date].to_date.iso8601)
+          end
           builder.Dbtr do
             builder.Nm(account.name)
           end
@@ -51,7 +57,11 @@ module SEPA
           builder.DbtrAgt do
             builder.FinInstnId do
               if account.bic
-                builder.BIC(account.bic)
+                if schema_name == PAIN_001_001_09
+                  builder.BICFI(account.bic)
+                else
+                  builder.BIC(account.bic)
+                end
               elsif schema_name != PAIN_001_001_03_CH_02
                 builder.Othr do
                   builder.Id('NOTPROVIDED')
@@ -64,13 +74,13 @@ module SEPA
           end
 
           transactions.each do |transaction|
-            build_transaction(builder, transaction)
+            build_transaction(builder, transaction, schema_name)
           end
         end
       end
     end
 
-    def build_transaction(builder, transaction)
+    def build_transaction(builder, transaction, schema_name)
       builder.CdtTrfTxInf do
         builder.PmtId do
           if transaction.instruction.present?
@@ -84,7 +94,11 @@ module SEPA
         if transaction.bic
           builder.CdtrAgt do
             builder.FinInstnId do
-              builder.BIC(transaction.bic)
+              if schema_name == PAIN_001_001_09
+                builder.BICFI(transaction.bic)
+              else
+                builder.BIC(transaction.bic)
+              end
             end
           end
         end

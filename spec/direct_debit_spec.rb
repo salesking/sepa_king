@@ -263,6 +263,20 @@ RSpec.describe SEPA::DirectDebit do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/InitgPty/Id/OrgId/Othr/Id', direct_debit.account.creditor_identifier)
         end
 
+        context 'when initiating party is set' do
+          let(:direct_debit) do
+            SEPA::DirectDebit.new name:                'Gläubiger GmbH',
+                                  bic:                 'BANKDEFFXXX',
+                                  iban:                'DE87200500001234567890',
+                                  creditor_identifier: 'DE98ZZZ09999999999',
+                                  organization_id:     'EXAMPLE1'
+          end
+
+          it 'should have initiating party' do
+            expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/GrpHdr/InitgPty/Id/OrgId/Othr/Id', direct_debit.account.organization_id)
+          end
+        end
+
         it 'should contain <PmtInfId>' do
           expect(subject).to have_xml('//Document/CstmrDrctDbtInitn/PmtInf/PmtInfId', /#{message_id_regex}\/1/)
         end

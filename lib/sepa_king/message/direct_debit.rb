@@ -5,7 +5,7 @@ module SEPA
     self.account_class = CreditorAccount
     self.transaction_class = DirectDebitTransaction
     self.xml_main_tag = 'CstmrDrctDbtInitn'
-    self.known_schemas = [ PAIN_008_001_02, PAIN_008_003_02, PAIN_008_002_02 ]
+    self.known_schemas = [ PAIN_008_001_02, PAIN_008_001_08, PAIN_008_003_02, PAIN_008_002_02 ]
 
     validate do |record|
       if record.transactions.map(&:local_instrument).uniq.size > 1
@@ -54,7 +54,11 @@ module SEPA
           builder.CdtrAgt do
             builder.FinInstnId do
               if group[:account].bic
-                builder.BIC(group[:account].bic)
+                if schema_name == PAIN_008_001_08
+                  builder.BICFI(account.bic)
+                else
+                  builder.BIC(account.bic)
+                end
               else
                 builder.Othr do
                   builder.Id('NOTPROVIDED')
@@ -77,7 +81,7 @@ module SEPA
           end
 
           transactions.each do |transaction|
-            build_transaction(builder, transaction)
+            build_transaction(builder, transaction, schema_name)
           end
         end
       end
@@ -123,7 +127,7 @@ module SEPA
       end
     end
 
-    def build_transaction(builder, transaction)
+    def build_transaction(builder, transaction, schema_name)
       builder.DrctDbtTxInf do
         builder.PmtId do
           if transaction.instruction.present?
@@ -142,7 +146,11 @@ module SEPA
         builder.DbtrAgt do
           builder.FinInstnId do
             if transaction.bic
-              builder.BIC(transaction.bic)
+              if schema_name == PAIN_008_001_08
+                builder.BICFI(transaction.bic)
+              else
+                builder.BIC(transaction.bic)
+              end
             else
               builder.Othr do
                 builder.Id('NOTPROVIDED')

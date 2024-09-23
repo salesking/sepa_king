@@ -12,10 +12,10 @@ We love building payment applications! So after developing the [DTAUS library fo
 
 This gem implements the following two messages out of the ISO 20022 standard:
 
-* Credit Transfer Initiation (`pain.001.003.03`, `pain.001.002.03` and `pain.001.001.03`)
-* Direct Debit Initiation (`pain.008.003.02`, `pain.008.002.02` and `pain.008.001.02`)
+* Credit Transfer Initiation (`pain.001.003.03`, `pain.001.002.03`, `pain.001.001.03`, and `pain.001.001.09`)
+* Direct Debit Initiation (`pain.008.003.02`, `pain.008.002.02`, `pain.008.001.02`, and `pain.008.001.08`)
 
-It handles the _Specification of Data Formats_ v3.3 (2019-11-17).
+It handles the _Specification of Data Formats_ v3.3 (2019-11-17) and partially v3.7 (2023-11-19).
 
 BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
@@ -52,7 +52,12 @@ sdd = SEPA::DirectDebit.new(
 
   # Creditor Identifier, in German: Gläubiger-Identifikationsnummer
   # String, max. 35 chars
-  creditor_identifier: 'DE98ZZZ09999999999'
+  creditor_identifier: 'DE98ZZZ09999999999',
+
+  # Optional: Organization ID, in German: Organisationsidentifier
+  # Can be e.g. an EBICS Account ID
+  # String
+  organization_id: 'EXAMPLE1'
 )
 
 # Second: Add transactions
@@ -118,7 +123,7 @@ sdd.add_transaction(
 
   # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
   # True or False
-  batch_booking: true
+  batch_booking: true,
 
   # OPTIONAL: Use a different creditor account
   # CreditorAccount
@@ -165,7 +170,12 @@ sct = SEPA::CreditTransfer.new(
 
   # International Bank Account Number of the debtor
   # String, max. 34 chars
-  iban: 'DE87200500001234567890'
+  iban: 'DE87200500001234567890',
+
+  # Optional: Organization ID, in German: Organisationsidentifier
+  # Can be e.g. an EBICS Account ID
+  # String
+  organization_id: 'EXAMPLE1'
 )
 
 # Second: Add transactions
@@ -238,6 +248,42 @@ sct.add_transaction ...
 # Last: create XML string
 xml_string = sct.to_xml                    # Use schema pain.001.001.03
 xml_string = sct.to_xml('pain.001.002.03') # Use schema pain.001.002.03
+```
+
+How to create the XML for Container files
+
+```ruby
+sct = SEPA::CreditTransfer.new(
+  name: 'Schuldner GmbH',
+  bic:  'BANKDEFFXXX',
+  iban: 'DE87200500001234567890'
+)
+
+sct.add_transaction(
+  name:                   'Telekomiker AG',
+  bic:                    'PBNKDEFF370',
+  iban:                   'DE37112589611964645802',
+  amount:                 102.50,
+  currency:               'EUR',
+  instruction:            '12345',
+  reference:              'XYZ-1234/123',
+  remittance_information: 'Rechnung vom 22.08.2013',
+  requested_date:         Date.new(2024,6,5),
+)
+
+
+container = SEPA::Container.new(
+  # Depends on alignment with the bank executing the file
+  sender_id: 'ABCDEFGH',
+  # Depends on alignment with the bank executing the file
+  id_type:   'EBIC',
+)
+
+container.add_message(sct)
+container.add_message ...
+
+container.to_xml                         # Use schema container.nnn.001.GBIC4
+container.to_xml('container.nnn.001.04') # Use schema container.nnn.001.04
 ```
 
 ## Validations
