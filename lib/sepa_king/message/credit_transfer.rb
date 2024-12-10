@@ -13,7 +13,8 @@ module SEPA
       { requested_date: transaction.requested_date,
         batch_booking:  transaction.batch_booking,
         service_level:  transaction.service_level,
-        category_purpose: transaction.category_purpose
+        category_purpose: transaction.category_purpose,
+        local_instrument: transaction.local_instrument
       }
     end
 
@@ -31,6 +32,11 @@ module SEPA
             if group[:service_level]
               builder.SvcLvl do
                 builder.Cd(group[:service_level])
+              end
+            end
+            if group[:local_instrument]
+              builder.LclInstrm do
+                builder.Cd(group[:local_instrument])
               end
             end
             if group[:category_purpose]

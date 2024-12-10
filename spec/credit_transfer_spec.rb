@@ -525,5 +525,44 @@ RSpec.describe SEPA::CreditTransfer do
         end
       end
     end
+
+    context 'when SEPA INST' do
+      context 'with local instrument INST' do
+        subject do
+          sct = credit_transfer
+
+          sct.add_transaction name:                   'Telekomiker AG',
+                              iban:                   'FR7630003012340001234567854',
+                              bic:                    'SOGEFRPP',
+                              amount:                 345.87,
+                              currency:               'EUR',
+                              local_instrument:       'INST'
+
+          sct
+        end
+
+        it 'should validate against pain.001.001.03' do
+          expect(subject.to_xml(SEPA::PAIN_001_001_03)).to validate_against('pain.001.001.03.xsd')
+        end
+
+        it 'should validate against pain.001.002.03' do
+          expect {
+            subject.to_xml(SEPA::PAIN_001_002_03)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
+        end
+
+        it 'should validate against pain.001.003.03' do
+          expect {
+            subject.to_xml(SEPA::PAIN_001_003_03)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
+        end
+
+        it 'should fail for pain.001.001.03.CH.02' do
+          expect {
+            subject.to_xml(SEPA::PAIN_001_001_03_CH_02)
+          }.to raise_error(SEPA::Error, /Incompatible with schema/)
+        end
+      end
+    end
   end
 end

@@ -71,4 +71,87 @@ RSpec.describe SEPA::CreditTransferTransaction do
       expect(SEPA::CreditTransferTransaction).not_to accept('', 'X' * 5, for: :category_purpose)
     end
   end
+
+  context 'Local Instrument' do
+    it 'should allow valid value' do
+      expect(SEPA::CreditTransferTransaction).to accept(nil, 'INST', for: :local_instrument)
+    end
+
+    it 'should not allow invalid value' do
+      expect(SEPA::CreditTransferTransaction).not_to accept('SEPA', 'X' * 5, for: :local_instrument)
+    end
+
+    context 'for pain.001.001.03' do
+      it 'should be valid' do
+        expect(SEPA::CreditTransferTransaction.new(:currency => 'EUR', :local_instrument => 'INST')).to be_schema_compatible('pain.001.001.03')
+      end
+    end
+
+    context 'for pain.001.002.03' do
+      it 'should not be valid' do
+        expect(SEPA::CreditTransferTransaction.new(:currency => 'EUR', :local_instrument => 'INST')).not_to be_schema_compatible('pain.001.002.03')
+      end
+    end
+
+    context 'for pain.001.003.03' do
+      it 'should not be valid' do
+        expect(SEPA::CreditTransferTransaction.new(:currency => 'EUR', :local_instrument => 'INST')).not_to be_schema_compatible('pain.001.003.03')
+      end
+    end
+
+    context 'when Local Instrument is INST' do
+      context 'when service level is SEPA' do
+        it 'should be valid' do
+          expect(
+            SEPA::CreditTransferTransaction.new name:                   'Telekomiker AG',
+                                                iban:                   'FR7630003012340001234567854',
+                                                bic:                    'SOGEFRPP',
+                                                amount:                 406.57,
+                                                currency:               'EUR',
+                                                service_level:          'SEPA',
+                                                reference:              'XYZ-1234/123',
+                                                remittance_information: 'Rechnung 123 vom 22.08.2013',
+                                                local_instrument:       'INST'
+          ).to be_valid
+        end
+      end
+
+      context 'when currency is EUR' do
+        it 'should be valid' do
+          expect(
+            SEPA::CreditTransferTransaction.new name:                   'Telekomiker AG',
+                                                iban:                   'FR7630003012340001234567854',
+                                                bic:                    'SOGEFRPP',
+                                                amount:                 142.50,
+                                                currency:               'EUR',
+                                                reference:              'XYZ-1234/123',
+                                                remittance_information: 'Rechnung 123 vom 22.08.2013',
+                                                local_instrument:       'INST'
+          ).to be_valid
+        end
+      end
+
+      context 'when service level is URGP' do
+        subject {
+          SEPA::CreditTransferTransaction.new name:                   'Telekomiker AG',
+                                              iban:                   'FR7630003012340001234567854',
+                                              bic:                    'SOGEFRPP',
+                                              amount:                 102.53,
+                                              reference:              'XYZ-1234/123',
+                                              remittance_information: 'Rechnung 123 vom 22.08.2013',
+                                              local_instrument:       'INST',
+                                              service_level:          'URGP'
+        }
+
+        it 'should not be valid' do
+          expect(subject).not_to be_valid
+        end
+
+        it 'returns errors' do
+          subject.valid?
+          expect(subject.errors_on(:local_instrument).size).to eq(1)
+        end
+      end
+    end
+  end
 end
