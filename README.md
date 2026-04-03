@@ -2,11 +2,9 @@
 
 [![Build Status](https://github.com/salesking/sepa_king/workflows/Test/badge.svg?branch=master)](https://github.com/salesking/sepa_king/actions)
 [![Code Climate](https://codeclimate.com/github/salesking/sepa_king/badges/gpa.svg)](https://codeclimate.com/github/salesking/sepa_king)
-[![Coverage Status](https://coveralls.io/repos/salesking/sepa_king/badge.svg?branch=master)](https://coveralls.io/r/salesking/sepa_king?branch=master)
 [![Gem Version](https://badge.fury.io/rb/sepa_king.svg)](http://badge.fury.io/rb/sepa_king)
 
 We love building payment applications! So after developing the [DTAUS library for Ruby](https://github.com/salesking/king_dtaus) we move on with SEPA.
-
 
 ## Features
 
@@ -19,17 +17,14 @@ It handles the _Specification of Data Formats_ up to the latest ISO 20022 versio
 
 BTW: **pain** is a shortcut for **Pa**yment **In**itiation.
 
-
 ## Requirements
 
 * Ruby 2.7 or newer
 * ActiveModel 4.2 or newer (including 7.0)
 
-
 ## Installation
 
     gem install sepa_king
-
 
 ## Usage
 
@@ -148,7 +143,6 @@ sdd.add_transaction ...
 xml_string = sdd.to_xml                    # Use schema pain.008.001.02
 xml_string = sdd.to_xml('pain.008.002.02') # Use schema pain.008.002.02
 ```
-
 
 How to create the XML for **Credit Transfer Initiation** (in German: "Überweisungen")
 
@@ -269,28 +263,25 @@ end
 **Beware:** The SEPA::IBANValidator is strict - e.g. it does not allow any spaces in the IBAN.
 
 Also see:
+
 * [lib/sepa_king/validator.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/validator.rb)
 * [lib/sepa_king/transaction/direct_debit_transaction.rb](https://github.com/salesking/sepa_king/blob/master/lib/sepa_king/transaction/direct_debit_transaction.rb)
 
-
 ## Changelog
 
-https://github.com/salesking/sepa_king/releases
-
+<https://github.com/salesking/sepa_king/releases>
 
 ## Contributors
 
-https://github.com/salesking/sepa_king/graphs/contributors
-
+<https://github.com/salesking/sepa_king/graphs/contributors>
 
 ## Resources
 
-* https://www.ebics.de/de/datenformate
-* SalesKing: http://salesking.eu
-
+* <https://www.ebics.de/de/datenformate>
+* SalesKing: <http://salesking.eu>
 
 ## License
 
 Released under the MIT license
 
-Copyright (c) 2013-2022 Georg Leciejewski (SalesKing), Georg Ledermann (https://github.com/ledermann)
+Copyright (c) 2013-2022 Georg Leciejewski (SalesKing), Georg Ledermann (<https://github.com/ledermann>)

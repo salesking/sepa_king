@@ -12,6 +12,5 @@ end
 
 group :test do
   gem 'activesupport'
-  gem 'coveralls_reborn', require: false
   gem 'simplecov', require: false
 end
