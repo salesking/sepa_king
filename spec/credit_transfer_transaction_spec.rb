@@ -50,6 +50,13 @@ RSpec.describe SEPA::CreditTransferTransaction do
         expect(SEPA::CreditTransferTransaction.new(:bic => 'SPUEDE2UXXX', :currency => 'CHF')).to be_schema_compatible('pain.001.001.03.ch.02')
       end
     end
+
+    context 'for pain.001.001.09' do
+      it 'should succeed for valid attributes' do
+        expect(SEPA::CreditTransferTransaction.new(:bic => 'SPUEDE2UXXX', :currency => 'EUR')).to be_schema_compatible('pain.001.001.09')
+        expect(SEPA::CreditTransferTransaction.new(:bic => nil)).to be_schema_compatible('pain.001.001.09')
+      end
+    end
   end
 
   context 'Requested date' do
