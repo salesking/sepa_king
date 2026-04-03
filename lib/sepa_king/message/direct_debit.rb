@@ -55,9 +55,9 @@ module SEPA
             builder.FinInstnId do
               if group[:account].bic
                 if schema_name == PAIN_008_001_08
-                  builder.BICFI(account.bic)
+                  builder.BICFI(group[:account].bic)
                 else
-                  builder.BIC(account.bic)
+                  builder.BIC(group[:account].bic)
                 end
               else
                 builder.Othr do
