@@ -7,6 +7,7 @@ module SEPA
   PAIN_001_001_03 = 'pain.001.001.03'
   PAIN_001_002_03 = 'pain.001.002.03'
   PAIN_001_003_03 = 'pain.001.003.03'
+  PAIN_001_003_03 = 'pain.001.001.09'
 
   class Message
     include ActiveModel::Validations
@@ -61,7 +62,7 @@ module SEPA
       case schema_name
         when PAIN_001_002_03, PAIN_008_002_02
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
-        when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02, PAIN_001_001_03
+        when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02, PAIN_001_001_03, PAIN_001_001_09
           transactions.all? { |t| t.schema_compatible?(schema_name) }
       end
     end
